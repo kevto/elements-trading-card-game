@@ -5,5 +5,5 @@ An online fictional trading card game for a group assignment of Fontys Universit
 Maarten Verboogen  
 Mick Wonnink  
 Rick van Duijnhoven  
-Kevin Berendsen  (GitHub: kevto)
+Kevin Berendsen  (GitHub: kevto)  
 Danny ter Haar (GitHub: eternia16)
