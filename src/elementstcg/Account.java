@@ -21,7 +21,7 @@ public class Account {
      * @return
      */
     public boolean login(String username, String password){
-        //TODO
+        //TODO : implement login()
 
         return false;
     }
@@ -42,6 +42,8 @@ public class Account {
 
     /**
      * Constructor of Account, creates an instance of Account.
+     * ip can be empty, port can be -1.
+     * username and password can't be empty.
      * @author Mick Wonnink
      * @param username
      * @param password
@@ -50,8 +52,13 @@ public class Account {
      */
     private Account(String username, String password, String ip, int port){
 
-        this.username = username;
-        this.password = password;
+        if (!username.isEmpty() && !password.isEmpty()) {
+            this.username = username;
+            this.password = password;
+        }
+        else{
+            throw new IllegalArgumentException("username and password can't be empty.");
+        }
         this.ip = ip;
         this.port = port;
 
@@ -59,14 +66,16 @@ public class Account {
 
     /**
      * Returns the current Account instance.
+     * can return null.
      * @return
      */
-    public Account getInstance(){
+    public static Account getInstance(){
         return instance;
     }
 
     /**
      * Return the email field.
+     * can return null.
      * @return
      */
     public String getEmail(){
@@ -75,6 +84,7 @@ public class Account {
 
     /**
      * Returns the port field.
+     * can return -1.
      * @return
      */
     public int getPort(){
@@ -82,7 +92,8 @@ public class Account {
     }
 
     /**
-     * Return the ip fied.
+     * Return the ip field.
+     * can return null.
      * @return
      */
     public String getIp(){
@@ -91,6 +102,7 @@ public class Account {
 
     /**
      * Return the userName field.
+     * can return null.
      * @return
      */
     public String getUserName(){
@@ -99,18 +111,28 @@ public class Account {
 
     /**
      * Sets the ip and port field.
+     * port must be a number between 0 and 65535.
+     * ip can't be empty.
      * @param ip
      * @param port
      */
-    public void setIPAndPort(String ip, String port){
-        //TODO
+    public void setIPAndPort(String ip, int port){
+        if (!ip.isEmpty()) {
+            this.ip = ip;
+        }
+        if (port <= 65535 && port >= 0) {
+            this.port = port;
+        }
+        else if (ip.isEmpty()){
+            throw new IllegalArgumentException("port must be a number between 0 and 65535, ip can't be empty");
+        }
     }
 
     /**
      * Clears the Account instance.
      */
     public void logout(){
-        //TODO
+        //TODO : further implementation
         instance = null;
     }
 

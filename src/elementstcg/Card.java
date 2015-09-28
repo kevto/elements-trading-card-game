@@ -80,11 +80,13 @@ public class Card {
 
     /**
      * Add param value, positive or negative, to the hp field.
+     * hp can not be a value below 0.
      * @param change
      * @return
      */
     public int modifyHP(int change){
-        hp += change;
+        if ((hp - change) < 0){ hp = 0; }
+        else { hp += change; }
         return hp;
     }
 
