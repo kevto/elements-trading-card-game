@@ -35,7 +35,7 @@ public class Account {
      * @return
      */
     public boolean register(String username, String password, String email){
-        //TODO
+        //TODO : implement register()
 
         return false;
     }
@@ -94,7 +94,7 @@ public class Account {
      * @return
      */
     public String getUserName(){
-        return userName;
+        return username;
     }
 
     /**
