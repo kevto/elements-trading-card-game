@@ -6,7 +6,7 @@ package elementstcg;
 public class Deck {
 
     private List<Card> cards;
-    private static int MAX_CARDS = 0;
+    public static int MAX_CARDS = 0;
 
     /**
      * Initialize an Deck object with an empty ArrayList<Card>()

@@ -6,6 +6,7 @@ package elementstcg;
 public class Hand {
 
     private List<Card> cards;
+    public static int MAX_CARDS = 0;
 
     /**
      * Initializes the Hand object
