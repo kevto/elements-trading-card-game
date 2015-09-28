@@ -1,7 +1,5 @@
 package elementstcg;
 
-import elementstcg.Elements;
-
 /**
  * Created by Mick on 28-9-2015.
  */
@@ -13,7 +11,7 @@ public class Card {
     private boolean attacked;
     private int capacityPoints;
 
-    private Elements.Element element;
+    private Element element;
 
     /**
      * Constructor of Card, creates a new instance of Card.
@@ -24,7 +22,7 @@ public class Card {
      * @param name
      * @param cPoints
      */
-    public Card(Elements.Element element, int attack, int hp, String name, int cPoints){
+    public Card(Element element, int attack, int hp, String name, int cPoints){
         this.attack = attack;
         this.hp = hp;
         this.name = name;
@@ -68,7 +66,7 @@ public class Card {
      * Return the element Enumeration field.
      * @return
      */
-    public Elements.Element getElement(){
+    public Element getElement(){
         return this.element;
     }
 
