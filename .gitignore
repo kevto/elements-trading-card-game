@@ -11,3 +11,4 @@ build/
 bin/
 
 *.class
+target/
