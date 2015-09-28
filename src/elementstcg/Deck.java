@@ -1,5 +1,8 @@
 package elementstcg;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Maarten on 28-9-2015.
  */
