@@ -5,18 +5,18 @@ package elementstcg;
  */
 public class Hand {
 
-    private List<Card> cardList;
+    private List<Card> cards;
 
     /**
      * Initializes the Hand object
      * @author Maarten Verboogen
      */
     public Hand() {
-        cardList = new ArrayList<Card>();
+        cards = new ArrayList<Card>();
     }
 
     /**
-     * Add an card to the list cardList
+     * Add an card to the list cards
      * @author Maarten Verboogen
      * @param card
      */
@@ -25,7 +25,7 @@ public class Hand {
     }
 
     /**
-     * Get the card at the specified index of the cardList
+     * Get the card at the specified index of the cards
      * @author Maarten Verboogen
      * @param index the index of the card
      * @return the Card object at the specified index
@@ -36,9 +36,9 @@ public class Hand {
     }
 
     /**
-     * Get the size of the cardList object
+     * Get the size of the cards object
      * @author Maarten Verboogen
-     * @return get the size of the cardList object
+     * @return get the size of the cards object
      */
     public int getAmountCards(){
         //TODO: implement getAmountCards
@@ -46,7 +46,7 @@ public class Hand {
     }
 
     /**
-     * Get the card at the specified index of cardList, and remove it from the list
+     * Get the card at the specified index of cards, and remove it from the list
      * @author Maarten Verboogen
      * @param index the index of the card
      * @return the Card object at the specified index
