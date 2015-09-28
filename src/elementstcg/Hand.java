@@ -1,5 +1,8 @@
 package elementstcg;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Maarten on 28-9-2015.
  */
@@ -21,19 +24,23 @@ public class Hand {
      * @author Maarten Verboogen
      * @param card
      */
-    public void addCard(Card card) {
-        //TODO: implement addCard
-    }
+    public void addCard(Card card) { cards.add(card); }
 
     /**
      * Get the card at the specified index of the cards
+     * Can return null if out of bounds.
      * @author Maarten Verboogen
      * @param index the index of the card
      * @return the Card object at the specified index
      */
     public Card getCard(int index){
-        //TODO: implement getCard methode
-        return null;
+        if ((index <= cards.size()-1) && (index >= 0)){
+            return cards.get(index);
+        }
+        else{
+            return null;
+        }
+
     }
 
     /**
@@ -41,19 +48,23 @@ public class Hand {
      * @author Maarten Verboogen
      * @return get the size of the cards object
      */
-    public int getAmountCards(){
-        //TODO: implement getAmountCards
-        return 0;
-    }
+    public int getAmountCards(){ return cards.size(); }
 
     /**
      * Get the card at the specified index of cards, and remove it from the list
+     * Can return null if index out of bounds.
      * @author Maarten Verboogen
      * @param index the index of the card
      * @return the Card object at the specified index
      */
     public Card playCard(int index) {
-        //TODO: implement playCard methode
-        return null;
+        if ((index <= cards.size()-1) && (index >= 0)){
+            Card PlayingCard = cards.get(index);
+            cards.remove(index);
+            return PlayingCard;
+        }
+        else{
+            return null;
+        }
     }
 }
