@@ -69,7 +69,7 @@ public class Account {
      * can return null.
      * @return
      */
-    public Account getInstance(){
+    public static Account getInstance(){
         return instance;
     }
 
