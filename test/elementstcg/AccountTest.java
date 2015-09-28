@@ -1,19 +1,15 @@
 package elementstcg;
 
 import junit.framework.TestCase;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertNull;
 
 /**
  * Created by Maarten on 28-9-2015.
  */
 public class AccountTest extends TestCase {
-
-    private Account account = Account().getInstance();
+    private Account account = Account.getInstance();
 
     @Test
     public void testLogin() throws Exception {
@@ -186,6 +182,7 @@ public class AccountTest extends TestCase {
     @Test
     public void testLogout() throws Exception {
         assertNull("Object was not null", account);
-        account = Account().getInstance();
+        account = Account.getInstance();
     }
+
 }
