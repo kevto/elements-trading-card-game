@@ -1,8 +1,5 @@
 package elementstcg;
 
-/**
- * Created by Maarten on 28-9-2015.
- */
 public class Player {
 
     private int hp;
@@ -27,8 +24,11 @@ public class Player {
      * @return the drawn Card object from the deck
      */
     public Card drawCard(){
-        //TODO: implement draw card
-        return null;
+        Card card = deck.getRandomCard();
+
+        hand.addCard(card);
+
+        return card;
     }
 
     /**
@@ -38,7 +38,6 @@ public class Player {
      * @param hp the amount by wich the player hp should be changed
      */
     public void modifyHp(int hp){
-        //TODO: implement modifyHp
         hp -= hp;
     }
 
