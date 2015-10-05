@@ -22,12 +22,11 @@ public class Board {
      * @param enemyName
      */
     public void setupPlayer(String enemyName){
-        //TODO : implement setupPlayer()
-
+        enemy = new Player(initialHp, enemyName);
     }
 
     /**
-     * Updates the players HP with the given value.
+     * Updates the players HP with the given value. And checks if the game is over
      * @param hp
      */
     public void updatePlayerHP(int hp){
@@ -37,7 +36,7 @@ public class Board {
     }
 
     /**
-     * Updates the enemy's HP with the given value.
+     * Updates the enemy's HP with the given value. And checks if the game is over
      * @param hp
      */
     public void updateEnemyHP(int hp){
@@ -48,16 +47,21 @@ public class Board {
 
     /**
      * Checks if the game is over (presumably by checking if either players HP is <= 0).
+     * @return if the game is over.
      */
-    public void isGameOver(){
+    public boolean isGameOver(){
 
         if(player.getHp() <= 0) {
             //TODO: Implement Player LOST
+            return true;
         }
 
         if(enemy.getHp() <= 0) {
             //TODO: Implement Player WIN
+            return true;
         }
+
+        return false;
     }
 
     /**
@@ -73,20 +77,28 @@ public class Board {
      * @param card Which card gets placed.
      */
     public void putCardPlayer(int point, Card card){
-        Card fieldCard = playerField.get(point);
+        int cap = 0;
 
-        if(fieldCard == null){
-            playerField.add(point, card);
+        for (Card c : playerField) {
+            if(c != null) {
+                cap = c.getCapacityPoints();
+            }
         }
-        else {
-            if(!card.getAttacked()) {
-                //TODO: Show options (Switch cards/ Do nothing)
+
+        if(cap + card.getCapacityPoints() <= MAX_CAP_POINTS){
+
+            Card fieldCard = playerField.get(point);
+
+            if(fieldCard == null){
+                playerField.add(point, card);
             }
             else {
-                //TODO: Notify player no action avialable
+                //TODO: Notify player point is used
             }
         }
-
+        else {
+            //TODO: Notify player that the cap points are exceeded
+        }
     }
 
     /**
@@ -100,27 +112,37 @@ public class Board {
 
     /**
      * Method that gets called when the player attacks an enemy's card.
+     * @param card The card that attacks.
      * @param point Location of the card that gets attacked.
-     * @param parameter Amount of damage that will be dealt to the card.
      */
-    public void attackEnemyCard(int point, int parameter){
-        Card card = enemyField.get(point);
+    public void attackEnemyCard(Card card, int point){
+        Card fieldCard = enemyField.get(point);
 
-        if(card != null) {
-            card.modifyHP(parameter);
+        if(fieldCard != null) {
+            fieldCard.modifyHP(card.getAttack());
+            fieldCard.setAttacked(true);
+
+            if(fieldCard.getHP() <= 0) {
+                enemyField.remove(point);
+
+                //TODO: Implement notifying enemy to remove card from field
+            }
+        }
+        else {
+            //TODO: Notify player no card was selected
         }
     }
 
     /**
      * Constructor with the enemy player.
-     * @param enemyname
+     * @param enemyName
      */
-    public Board(String enemyname){
+    public Board(String enemyName){
         playerField = new ArrayList<Card>();
         enemyField = new ArrayList<Card>();
 
         player = new Player(initialHp, account.getUserName());
-        enemy = new Player(initialHp, enemyname);
+        setupPlayer(enemyName);
     }
 
     /**
@@ -131,9 +153,6 @@ public class Board {
         enemyField = new ArrayList<Card>();
 
         player = new Player(initialHp, account.getUserName());
-        enemy = new Player(initialHp, "Enemy");
+        setupPlayer("Enemy");
     }
-
-
-
 }
