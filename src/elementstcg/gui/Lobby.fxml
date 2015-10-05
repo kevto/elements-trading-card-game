@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<TitledPane animated="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="383.0" prefWidth="542.0" text="Lobby" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8">
+  <content>
+    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="294.0" prefWidth="511.0">
+         <children>
+            <ImageView fitHeight="417.0" fitWidth="550.0" layoutX="-7.0" layoutY="-3.0" opacity="0.5" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@stacks-of-cards.jpg" />
+               </image>
+               <effect>
+                  <BoxBlur height="29.88" iterations="2" width="0.0" />
+               </effect>
+            </ImageView>
+            <Button layoutX="14.0" layoutY="14.0" mnemonicParsing="false" text="Logout" />
+            <Button layoutX="193.0" layoutY="142.0" mnemonicParsing="false" prefHeight="67.0" prefWidth="151.0" text="Play match" />
+         </children></AnchorPane>
+  </content>
+</TitledPane>

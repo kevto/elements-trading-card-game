@@ -1,9 +1,11 @@
 package elementstcg;
 
+import java.io.Serializable;
+
 /**
  * Created by Mick on 28-9-2015.
  */
-public class Account {
+public class Account implements Serializable {
 
     private static Account instance;
     private String username;
