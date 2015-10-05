@@ -2,10 +2,8 @@ package elementstcg;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
-/**
- * Created by Maarten on 28-9-2015.
- */
 public class Deck {
 
     private List<Card> cards;
@@ -34,8 +32,13 @@ public class Deck {
      * @return the randomly selected Card from the deck
      */
     public Card getRandomCard() {
-        //TODO: implement getRandomCard
-        return null;
+        Random random = new Random();
+        int index =  (random.nextInt() * getAmountCards());
+        Card card = cards.get(index);
+
+        cards.remove(card);
+
+        return card;
     }
 
     /**
@@ -44,8 +47,7 @@ public class Deck {
      * @return an int of the size of the cards list object
      */
     public int getAmountCards() {
-        //TODO: implement getAmountCards
-        return 0;
+        return cards.size();
     }
 
     /**
@@ -53,8 +55,7 @@ public class Deck {
      * @author Maarten Verboogen
      * @return all Card objects in Deck
      */
-    public ArrayList<Card> getCards() {
-        //TODO: implement getCards
-        return null;
+    public List<Card> getCards() {
+        return cards;
     }
 }
