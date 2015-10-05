@@ -1,13 +1,21 @@
 package elementstcg;
 
-/**
- * Created by Mick on 28-9-2015.
- */
+import java.util.ArrayList;
+import java.util.List;
+
 public class Board {
 
+    private int initialHp = 20;
     private boolean playerTurn;
-
     public static int MAX_CAP_POINTS;
+
+    private Player player;
+    private Player enemy;
+
+    private List<Card> playerField;
+    private List<Card> enemyField;
+
+    private Account account = Account.getInstance();
 
     /**
      * Gets the opponent and sets him up/adds him to the board.
@@ -23,7 +31,9 @@ public class Board {
      * @param hp
      */
     public void updatePlayerHP(int hp){
-        //TODO
+        player.modifyHp(hp);
+
+        isGameOver();
     }
 
     /**
@@ -31,21 +41,30 @@ public class Board {
      * @param hp
      */
     public void updateEnemyHP(int hp){
-        //TODO
+        enemy.modifyHp(hp);
+
+        isGameOver();
     }
 
     /**
      * Checks if the game is over (presumably by checking if either players HP is <= 0).
      */
     public void isGameOver(){
-        //TODO
+
+        if(player.getHp() <= 0) {
+            //TODO: Implement Player LOST
+        }
+
+        if(enemy.getHp() <= 0) {
+            //TODO: Implement Player WIN
+        }
     }
 
     /**
      * This method gets called when the turn advances to the other player.
      */
     public void nextTurn(){
-        //TODO
+        playerTurn = !playerTurn;
     }
 
     /**
@@ -54,7 +73,20 @@ public class Board {
      * @param card Which card gets placed.
      */
     public void putCardPlayer(int point, Card card){
-        //TODO
+        Card fieldCard = playerField.get(point);
+
+        if(fieldCard == null){
+            playerField.add(point, card);
+        }
+        else {
+            if(!card.getAttacked()) {
+                //TODO: Show options (Switch cards/ Do nothing)
+            }
+            else {
+                //TODO: Notify player no action avialable
+            }
+        }
+
     }
 
     /**
@@ -63,7 +95,7 @@ public class Board {
      * @param card Which card gets placed.
      */
     public void putCardEnemy(int point, Card card){
-        //TODO
+        enemyField.add(point, card);
     }
 
     /**
@@ -72,7 +104,11 @@ public class Board {
      * @param parameter Amount of damage that will be dealt to the card.
      */
     public void attackEnemyCard(int point, int parameter){
-        //TODO
+        Card card = enemyField.get(point);
+
+        if(card != null) {
+            card.modifyHP(parameter);
+        }
     }
 
     /**
@@ -80,14 +116,22 @@ public class Board {
      * @param enemyname
      */
     public Board(String enemyname){
-        //TODO
+        playerField = new ArrayList<Card>();
+        enemyField = new ArrayList<Card>();
+
+        player = new Player(initialHp, account.getUserName());
+        enemy = new Player(initialHp, enemyname);
     }
 
     /**
      * Constructor without the enemy player.
      */
     public Board(){
-        //TODO
+        playerField = new ArrayList<Card>();
+        enemyField = new ArrayList<Card>();
+
+        player = new Player(initialHp, account.getUserName());
+        enemy = new Player(initialHp, "Enemy");
     }
 
 
