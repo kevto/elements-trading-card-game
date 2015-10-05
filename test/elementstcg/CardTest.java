@@ -43,7 +43,7 @@ public class CardTest extends TestCase {
 
     @Test
     public void testGetElement() throws Exception {
-        assertEquals("Element isn't correct", "Fire", card.getElement());
+        assertEquals("Element isn't correct", Element.Fire, card.getElement());
         assertNotNull("Element can't be null", card.getElement());
     }
 
@@ -55,10 +55,12 @@ public class CardTest extends TestCase {
 
     @Test
     public void testModifyHP() throws Exception {
-        card.modifyHP(5);
-        assertEquals("HP hasn't been modified", 10, card.getHP());
-        card.modifyHP(-10);
-        assertEquals("HP didn't go up", 20, card.getHP());
+        Card healthCard = new Card(Element.Fire, 10, 15, "testcard", 4);
+
+        healthCard.modifyHP(-5);
+        assertEquals("HP hasn't been modified", 10, healthCard.getHP());
+        healthCard.modifyHP(10);
+        assertEquals("HP didn't go up", 20, healthCard.getHP());
     }
 
     @Test
