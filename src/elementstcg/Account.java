@@ -1,6 +1,7 @@
 package elementstcg;
 
-import java.io.Serializable;
+import java.io.*;
+import java.nio.file.Files;
 
 /**
  * Created by Mick on 28-9-2015.
@@ -22,9 +23,37 @@ public class Account implements Serializable {
      * @param password
      * @return
      */
-    public boolean login(String username, String password){
+    public static boolean login(String username, String password){
         //TODO : implement login()
+        Account savedAccount = null;
+        try
+        {
+            File filePath = new File("savedaccount.ser");
+            if (filePath.exists()) {
+                FileInputStream fileIn = new FileInputStream(filePath);
+                ObjectInputStream in = new ObjectInputStream(fileIn);
+                savedAccount = (Account) in.readObject();
+                in.close();
+                fileIn.close();
+            }
 
+        }catch(IOException i)
+        {
+            i.printStackTrace();
+
+        }catch(ClassNotFoundException c)
+        {
+            System.out.println("Account class not found");
+            c.printStackTrace();
+
+        }
+        if (savedAccount != null){
+            instance = savedAccount;
+            if (savedAccount.getUserName() == username && savedAccount.getPassword() == password) {
+                return true;
+            }
+
+        }
         return false;
     }
 
@@ -36,8 +65,30 @@ public class Account implements Serializable {
      * @param email
      * @return
      */
-    public boolean register(String username, String password, String email){
+    public static boolean register(String username, String password, String email){
         //TODO : implement register()
+        instance = new Account(username, password, "127.0.0.1", 22);
+        instance.setEmail(email);
+
+        //Serialization
+        try
+        {
+            File filepath = new File("savedaccount.ser");
+            if (filepath.exists()) {
+                Files.delete(filepath.toPath());
+            }
+            FileOutputStream fileOut =
+                    new FileOutputStream(filepath);
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(instance);
+            out.close();
+            fileOut.close();
+            System.out.printf("Serialized account is saved in savedaccount.ser");
+            return true;
+        }catch(IOException i)
+        {
+            i.printStackTrace();
+        }
 
         return false;
     }
@@ -85,6 +136,16 @@ public class Account implements Serializable {
     }
 
     /**
+     * Return the email field.
+     * can return null.
+     * @return
+     */
+    public void setEmail(String emailString){
+        email = emailString;
+    }
+
+
+    /**
      * Returns the port field.
      * can return -1.
      * @return
@@ -109,6 +170,15 @@ public class Account implements Serializable {
      */
     public String getUserName(){
         return username;
+    }
+
+    /**
+     * Return the password field.
+     * can return null.
+     * @return
+     */
+    public String getPassword(){
+        return password;
     }
 
     /**

@@ -51,12 +51,12 @@ import javafx.stage.Stage;
  */
 public class ScreensFramework extends Application {
     
-    public static String screen1ID = "loginscreen";
-    public static String screen1File = "InlogScreen.fxml";
-    public static String screen2ID = "registerscreen";
-    public static String screen2File = "RegisterScreen.fxml";
-    public static String screen3ID = "lobbyscreen";
-    public static String screen3File = "Lobby.fxml";
+    public static String screen1ID = "loginregisterscreen";
+    public static String screen1File = "Login_Register_Screen.fxml";
+   // public static String screen2ID = "registerscreen";
+    //public static String screen2File = "RegisterScreen.fxml";
+   // public static String screen3ID = "lobby";
+   // public static String screen3File = "Lobby.fxml";
     
     
     @Override
@@ -64,8 +64,8 @@ public class ScreensFramework extends Application {
         
         ScreensController mainContainer = new ScreensController();
         mainContainer.loadScreen(ScreensFramework.screen1ID, ScreensFramework.screen1File);
-        mainContainer.loadScreen(ScreensFramework.screen2ID, ScreensFramework.screen2File);
-        mainContainer.loadScreen(ScreensFramework.screen3ID, ScreensFramework.screen3File);
+       // mainContainer.loadScreen(ScreensFramework.screen2ID, ScreensFramework.screen2File);
+       // mainContainer.loadScreen(ScreensFramework.screen3ID, ScreensFramework.screen3File);
         
         mainContainer.setScreen(ScreensFramework.screen1ID);
         
