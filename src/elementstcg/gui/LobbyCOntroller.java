@@ -1,30 +1,32 @@
 package elementstcg.gui;
 
 import elementstcg.Account;
+import javafx.event.Event;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 
+import javax.swing.text.html.ImageView;
+import java.awt.*;
 import java.net.URL;
 import java.util.ResourceBundle;
-
-import javafx.event.Event;
-import javafx.fxml.Initializable;
-import javafx.scene.control.*;
 
 
 /**
  * Created by Mick on 5-10-2015.
  */
-public class LobbyCOntroller implements Initializable, ControlledScreen {
+public class LobbyController implements Initializable, ControlledScreen {
 
-    @FXML Button LoginButton;
-    @FXML Hyperlink RegisterButton;
-    @FXML TextField tbPassword;
-    @FXML TextField tbUsername;
-    @FXML TextField tbEmail;
-    @FXML Label lblMessage;
-
+    @FXML Button
+            ButtonPlayVsAi;
+    @FXML Button
+            ButtonNormalGame;
+    @FXML Label lblSearchText;
     ScreensController myController;
-    boolean isRegistering = false;
+
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -37,75 +39,24 @@ public class LobbyCOntroller implements Initializable, ControlledScreen {
     }
 
     /**
-     * Fires when the user clicks the login button.
-     * Checks if the username and password field are entered.
-     * When the user is registering the email will be checked for validity.
-     * Password must be at least 8 characters.
-     * Username must be at least 6 characters.
+     * Button event occurs when the user clicks "PLAY VS AI"
+     * Starts a game with the computer as opponent.
+     * @param event
      */
-    public void ClickedLogin(Event event) {
-        //TODO
-        if (!isRegistering) {
-            //User is logging in.
-            if (tbUsername.getText().isEmpty() || tbPassword.getText().isEmpty()) {
-                lblMessage.setText("Please enter both your username and password.");
-            }
-            else{
-                if (Account.login(tbUsername.getText(), tbPassword.getText())){
-                    lblMessage.setText("Succesfully logged in.");
-                }
-                else{
-                    lblMessage.setText("Invalid username or password.");
-                }
-            }
-        }
-        else{
-            //User is registering
-            //Check email
-            String ePattern = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$";
-            java.util.regex.Pattern p = java.util.regex.Pattern.compile(ePattern);
-            java.util.regex.Matcher m = p.matcher(tbEmail.getText());
-
-            //Check the username and password
-            if (tbUsername.getText().isEmpty() || tbPassword.getText().isEmpty() || tbEmail.getText().isEmpty())  {
-                lblMessage.setText("Please enter all fields.");
-            }
-            else if (tbUsername.getText().length() < 6){
-                lblMessage.setText("Username must be at least 6 characters.");
-            }
-            else if (tbPassword.getText().length() < 8){
-                lblMessage.setText("Password must be at least 8 characters.");
-            }
-            else if (!m.matches()){ //Is invalid email
-                lblMessage.setText("Please use a valid Email address");
-            }
-            else{
-                //All fields are valid.
-                if (Account.register(tbUsername.getText(), tbPassword.getText(), tbEmail.getText())){
-                    lblMessage.setText("Succesfully registered.");
-                }
-            }
-
-
-        }
+    public void ClickedVsAi(Event event) {
+        //TODO implementation
     }
 
     /**
-     * Opens the registration form.
+     * Button event occurs when the user clicks "NORMAL GAME"
+     * Queues the user for searching match against other players.
+     * @param event
      */
-    public void ClickedRegister(Event event) {
-        //myController.setScreen(ScreensFramework.screen2ID);
-        if (!isRegistering) {
-            tbEmail.setVisible(true);
-            LoginButton.setText("REGISTER");
-            RegisterButton.setText("Login");
-            isRegistering = true;
-        }
-        else{
-            tbEmail.setVisible(false);
-            LoginButton.setText("LOGIN");
-            RegisterButton.setText("Register");
-            isRegistering = false;
-        }
+    public void ClickedNormalGame(Event event) {
+        //TODO implementation
+        lblSearchText.setVisible(true);
+        lblSearchText.setText("SEARCHING FOR GAME.... XX SECONDS");
     }
+
+
 }

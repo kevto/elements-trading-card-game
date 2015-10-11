@@ -15,7 +15,7 @@ public class LobbyView extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("Login_Register_Screen.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("Lobby.fxml"));
 
         stage = primaryStage;
         Scene scene = new Scene(root);

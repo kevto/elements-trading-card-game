@@ -61,6 +61,7 @@ public class InlogRegisterScreenController implements Initializable, ControlledS
             else{
                 if (Account.login(tbUsername.getText(), tbPassword.getText())){
                     lblMessage.setText("Succesfully logged in.");
+                    myController.setScreen(ScreensFramework.screen2ID);
                 }
                 else{
                     lblMessage.setText("Invalid username or password.");
@@ -96,6 +97,7 @@ public class InlogRegisterScreenController implements Initializable, ControlledS
 
 
         }
+
     }
 
     /**
