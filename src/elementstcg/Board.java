@@ -149,6 +149,11 @@ public class Board {
         playerField = new ArrayList<Card>();
         enemyField = new ArrayList<Card>();
 
+        if (enemyName == null || enemyName == "")
+        {
+            throw new IllegalArgumentException("enemyName cannot be empty in this constructor.");
+        }
+
         //TODO: Implement get username
         player = new Player(initialHp, "Account");
         setupPlayer(enemyName);

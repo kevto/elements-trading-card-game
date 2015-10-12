@@ -8,6 +8,9 @@ import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Test class made for unit tests of the class Board.
  */
@@ -72,16 +75,66 @@ public class BoardTest extends TestCase {
 
     @Test
     public void testPutCardPlayer(){
+        board.putCardPlayer(1, card);
+        List<Card> testCards = board.getPlayerField();
+        if (testCards.isEmpty())
+        {
+            fail("Card was not entered into player field");
+        }
+        Card testCard = testCards.get(1);
+        if (testCard == null)
+        {
+            fail("No card returned");
+        }
 
+        assertEquals("The wrong card was returned.", testCard.getName(), card.getName());
     }
 
     @Test
     public void testPutCardEnemy() throws Exception {
+        board.putCardEnemy(1, card);
+        List<Card> testCards = board.getEnemyField();
+        if (testCards.isEmpty())
+        {
+            fail("Card was not entered into player field");
+        }
+        Card testCard = testCards.get(1);
+        if (testCard == null)
+        {
+            fail("No card returned");
+        }
 
+        assertEquals("The wrong card was returned.", testCard.getName(), card.getName());
     }
 
     @Test
-    public void testAttackEnemyCard() throws Exception {
+    public void testAttackEnemyCard(){
+        board.putCardEnemy(1, card);
+        Card testCard = new Card(Element.Air, 4, 10, "alakazam", 3);
+        board.attackEnemyCard(testCard, 1);
+        List<Card> testcards = board.getEnemyField();
 
+        if (testcards == null)
+        {
+            fail("No cards found");
+        }
+
+        Card c = testcards.get(1);
+
+        if (c == null)
+        {
+            fail("No card found");
+        }
+
+        assertEquals("Attack didn't go through.", c.getHP(), 6);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testConstructor()
+    {
+        Board b = new Board("testName");
+        assertEquals("Board failed to create", b.getEnemy().getName(), "testName");
+
+        Board failBoard = new Board("");
     }
 }
