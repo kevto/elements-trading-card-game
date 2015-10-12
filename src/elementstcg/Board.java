@@ -70,6 +70,14 @@ public class Board {
     }
 
     /**
+     * Get the value of the playerTurn field
+     * @return value of playerTurn
+     */
+    public boolean getTurn() {
+        return playerTurn;
+    }
+
+    /**
      * This method gets called when the turn advances to the other player.
      */
     public void nextTurn(){
@@ -149,7 +157,13 @@ public class Board {
         playerField = new ArrayList<Card>();
         enemyField = new ArrayList<Card>();
 
-        player = new Player(initialHp, account.getUserName());
+        if (enemyName == null || enemyName == "")
+        {
+            throw new IllegalArgumentException("enemyName cannot be empty in this constructor.");
+        }
+
+        //TODO: Implement get username
+        player = new Player(initialHp, "Account");
         setupPlayer(enemyName);
     }
 
@@ -160,7 +174,29 @@ public class Board {
         playerField = new ArrayList<Card>();
         enemyField = new ArrayList<Card>();
 
-        player = new Player(initialHp, account.getUserName());
+        //TODO: Implement get username
+        player = new Player(initialHp, "Account");
         setupPlayer("Enemy");
     }
+
+    public Player getEnemy()
+    {
+        return enemy;
+    }
+
+    public Player getPlayer()
+    {
+        return player;
+    }
+
+    public List<Card> getPlayerField()
+    {
+        return playerField;
+    }
+
+    public List<Card> getEnemyField()
+    {
+        return enemyField;
+    }
+
 }
