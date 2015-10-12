@@ -9,15 +9,15 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
-<VBox prefHeight="782.0" prefWidth="1408.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<VBox id="main" prefHeight="782.0" prefWidth="1408.0" stylesheets="@../../../public/stylesheets/boardview.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <Pane prefHeight="733.0" prefWidth="1013.0">
+      <Pane prefHeight="785.0" prefWidth="1408.0">
          <children>
             <BorderPane layoutX="304.0" layoutY="132.0" prefHeight="472.0" prefWidth="847.0">
                <bottom>
-                  <GridPane gridLinesVisible="true" prefHeight="252.0" prefWidth="721.0" BorderPane.alignment="CENTER">
+                  <GridPane fx:id="gridPanePlayerField" gridLinesVisible="true" prefHeight="252.0" prefWidth="721.0" styleClass="field" BorderPane.alignment="CENTER">
                     <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="423.0" minWidth="10.0" prefWidth="423.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="423.0" minWidth="10.0" prefWidth="382.0" />
                       <ColumnConstraints hgrow="SOMETIMES" maxWidth="475.0" minWidth="10.0" prefWidth="382.0" />
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="475.0" minWidth="10.0" prefWidth="382.0" />
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="475.0" minWidth="10.0" prefWidth="382.0" />
@@ -28,26 +28,12 @@
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
-                     <children>
-                        <ImageView fitHeight="117.0" fitWidth="177.0" pickOnBounds="true" preserveRatio="true" />
-                        <ImageView fitHeight="127.0" fitWidth="131.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" />
-                        <ImageView fitHeight="128.0" fitWidth="133.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" />
-                        <ImageView fitHeight="128.0" fitWidth="133.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" />
-                        <ImageView fitHeight="128.0" fitWidth="135.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="4" />
-                        <ImageView fitHeight="130.0" fitWidth="136.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="5" />
-                        <ImageView fitHeight="137.0" fitWidth="177.0" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="1" />
-                        <ImageView fitHeight="127.0" fitWidth="133.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <ImageView fitHeight="131.0" fitWidth="133.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                        <ImageView fitHeight="124.0" fitWidth="136.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                        <ImageView fitHeight="130.0" fitWidth="136.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="4" GridPane.rowIndex="1" />
-                        <ImageView fitHeight="127.0" fitWidth="135.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="5" GridPane.rowIndex="1" />
-                     </children>
                   </GridPane>
                </bottom>
                <top>
-                  <GridPane gridLinesVisible="true" prefHeight="253.0" prefWidth="1018.0" BorderPane.alignment="CENTER">
+                  <GridPane fx:id="gridPaneEnemyField" gridLinesVisible="true" prefHeight="253.0" prefWidth="1018.0" stylesheets="@../../../public/stylesheets/boardview.css" BorderPane.alignment="CENTER">
                      <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="423.0" minWidth="10.0" prefWidth="423.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="423.0" minWidth="10.0" prefWidth="382.0" />
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="475.0" minWidth="10.0" prefWidth="382.0" />
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="475.0" minWidth="10.0" prefWidth="382.0" />
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="475.0" minWidth="10.0" prefWidth="382.0" />
@@ -58,45 +44,93 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
-                     <children>
-                        <ImageView fitHeight="124.0" fitWidth="175.0" pickOnBounds="true" preserveRatio="true" />
-                        <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" />
-                        <ImageView fitHeight="128.0" fitWidth="131.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" />
-                        <ImageView fitHeight="123.0" fitWidth="133.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" />
-                        <ImageView fitHeight="124.0" fitWidth="138.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="4" />
-                        <ImageView fitHeight="125.0" fitWidth="133.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="5" />
-                        <ImageView fitHeight="127.0" fitWidth="175.0" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="1" />
-                        <ImageView fitHeight="125.0" fitWidth="133.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <ImageView fitHeight="127.0" fitWidth="131.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                        <ImageView fitHeight="125.0" fitWidth="132.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                        <ImageView fitHeight="127.0" fitWidth="135.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="4" GridPane.rowIndex="1" />
-                        <ImageView fitHeight="124.0" fitWidth="133.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="5" GridPane.rowIndex="1" />
-                     </children>
+                     <styleClass>
+                        <String fx:value="field" />
+                        <String fx:value="field-enemy" />
+                     </styleClass>
                   </GridPane>
                </top>
             </BorderPane>
-            <HBox layoutX="304.0" prefHeight="121.0" prefWidth="847.0" />
-            <HBox layoutX="304.0" layoutY="645.0" prefHeight="143.0" prefWidth="847.0" />
-            <Label layoutX="69.0" layoutY="357.0" prefHeight="49.0" prefWidth="156.0" text="GameInfo ">
-               <font>
-                  <Font size="26.0" />
-               </font>
-            </Label>
-            <Label layoutX="1203.0" layoutY="356.0" prefHeight="49.0" prefWidth="156.0" text="GameInfo ">
-               <font>
-                  <Font size="26.0" />
-               </font>
-            </Label>
-            <ImageView fitHeight="227.0" fitWidth="196.0" layoutX="38.0" layoutY="51.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../../../../Desktop/5af1f1328ebeea8b0fd8e401146816d8.jpg" />
-               </image>
-            </ImageView>
-            <ImageView fitHeight="227.0" fitWidth="196.0" layoutX="39.0" layoutY="487.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../../../../Desktop/5af1f1328ebeea8b0fd8e401146816d8.jpg" />
-               </image>
-            </ImageView>
+            <HBox fx:id="hboxEnemyHand" layoutX="304.0" prefHeight="121.0" prefWidth="847.0" />
+            <HBox id="hboxPlayerHand" fx:id="hboxPlayerHand" layoutX="304.0" layoutY="645.0" prefHeight="143.0" prefWidth="847.0" />
+            <Pane layoutX="38.0" layoutY="278.0">
+               <children>
+                  <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../public/images/score_view_player2.png" />
+                     </image>
+                  </ImageView>
+                  <Label fx:id="labelEnemyHP" alignment="CENTER" layoutX="149.0" layoutY="14.0" prefHeight="17.0" prefWidth="26.0" text="0" textFill="WHITE" />
+                  <Label fx:id="labelEnemyName" layoutX="21.0" layoutY="45.0" text="Vijand">
+                     <font>
+                        <Font size="15.0" />
+                     </font>
+                  </Label>
+               </children>
+            </Pane>
+            <Pane layoutX="38.0" layoutY="32.0" prefHeight="200.0" prefWidth="200.0">
+               <children>
+                  <ImageView fitHeight="227.0" fitWidth="196.0" pickOnBounds="true" preserveRatio="true" styleClass="deck">
+                     <image>
+                        <Image url="@../../../public/images/deck_view.png" />
+                     </image>
+                  </ImageView>
+                  <Label fx:id="labelEnemyDeckSize" alignment="CENTER" layoutY="89.0" prefHeight="49.0" prefWidth="136.0" text="0">
+                     <font>
+                        <Font size="26.0" />
+                     </font>
+                  </Label>
+               </children>
+            </Pane>
+            <Pane layoutX="38.0" layoutY="517.0" prefHeight="200.0" prefWidth="200.0">
+               <children>
+                  <ImageView fitHeight="227.0" fitWidth="196.0" pickOnBounds="true" preserveRatio="true" styleClass="deck">
+                     <image>
+                        <Image url="@../../../public/images/deck_view.png" />
+                     </image>
+                  </ImageView>
+                  <Label fx:id="labelPlayerDeckSize" alignment="CENTER" layoutY="89.0" prefHeight="49.0" prefWidth="136.0" text="0">
+                     <font>
+                        <Font size="26.0" />
+                     </font>
+                  </Label>
+               </children>
+            </Pane>
+            <Pane layoutX="38.0" layoutY="412.0">
+               <children>
+                  <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../public/images/score_view_player1.png" />
+                     </image>
+                  </ImageView>
+                  <Label fx:id="labelPlayerHP" alignment="CENTER" layoutX="149.0" layoutY="38.0" prefHeight="17.0" prefWidth="26.0" text="0" textFill="WHITE" />
+                  <Label fx:id="labelPlayerName" layoutX="21.0" layoutY="6.0" text="Speler">
+                     <font>
+                        <Font size="15.0" />
+                     </font>
+                  </Label>
+               </children>
+            </Pane>
+            <Pane layoutX="263.0" layoutY="130.0">
+               <children>
+                  <ImageView fitHeight="42.0" fitWidth="41.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../public/images/cap_points_view.png" />
+                     </image>
+                  </ImageView>
+                  <Label fx:id="labelEnemyCAP" alignment="CENTER" contentDisplay="CENTER" layoutX="7.0" layoutY="2.0" prefHeight="31.0" prefWidth="28.0" text="0" />
+               </children>
+            </Pane>
+            <Pane layoutX="263.0" layoutY="603.0">
+               <children>
+                  <ImageView fitHeight="42.0" fitWidth="41.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../public/images/cap_points_view.png" />
+                     </image>
+                  </ImageView>
+                  <Label fx:id="labelPlayerCAP" alignment="CENTER" contentDisplay="CENTER" layoutX="7.0" layoutY="2.0" prefHeight="31.0" prefWidth="28.0" text="0" />
+               </children>
+            </Pane>
          </children>
       </Pane>
    </children>
