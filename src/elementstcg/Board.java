@@ -128,7 +128,7 @@ public class Board {
      * @param card The card that attacks.
      * @param point Location of the card that gets attacked.
      */
-    public void attackCard(Card card, int point){
+    public void attackCard(Card card, int point) throws EmptyFieldException{
         Card fieldCard = enemyField.get(point);
         double totalDamage = 0;
         if(fieldCard != null) {

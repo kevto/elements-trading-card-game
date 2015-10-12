@@ -9,7 +9,7 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
-<VBox id="main" prefHeight="782.0" prefWidth="1408.0" stylesheets="@../../../public/stylesheets/boardview.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<VBox id="main" prefHeight="782.0" prefWidth="1408.0" stylesheets="@../stylesheets/boardview.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="elementstcg.gui.GamefieldController">
    <children>
       <Pane prefHeight="785.0" prefWidth="1408.0">
          <children>
@@ -31,7 +31,7 @@
                   </GridPane>
                </bottom>
                <top>
-                  <GridPane fx:id="gridPaneEnemyField" gridLinesVisible="true" prefHeight="253.0" prefWidth="1018.0" stylesheets="@../../../public/stylesheets/boardview.css" BorderPane.alignment="CENTER">
+                  <GridPane fx:id="gridPaneEnemyField" gridLinesVisible="true" prefHeight="253.0" prefWidth="1018.0" stylesheets="@../stylesheets/boardview.css" BorderPane.alignment="CENTER">
                      <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="423.0" minWidth="10.0" prefWidth="382.0" />
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="475.0" minWidth="10.0" prefWidth="382.0" />
@@ -57,7 +57,7 @@
                <children>
                   <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../../../public/images/score_view_player2.png" />
+                        <Image url="@../images/score_view_player2.png" />
                      </image>
                   </ImageView>
                   <Label fx:id="labelEnemyHP" alignment="CENTER" layoutX="149.0" layoutY="14.0" prefHeight="17.0" prefWidth="26.0" text="0" textFill="WHITE" />
@@ -72,7 +72,7 @@
                <children>
                   <ImageView fitHeight="227.0" fitWidth="196.0" pickOnBounds="true" preserveRatio="true" styleClass="deck">
                      <image>
-                        <Image url="@../../../public/images/deck_view.png" />
+                        <Image url="@../images/deck_view.png" />
                      </image>
                   </ImageView>
                   <Label fx:id="labelEnemyDeckSize" alignment="CENTER" layoutY="89.0" prefHeight="49.0" prefWidth="136.0" text="0">
@@ -86,7 +86,7 @@
                <children>
                   <ImageView fitHeight="227.0" fitWidth="196.0" pickOnBounds="true" preserveRatio="true" styleClass="deck">
                      <image>
-                        <Image url="@../../../public/images/deck_view.png" />
+                        <Image url="@../images/deck_view.png" />
                      </image>
                   </ImageView>
                   <Label fx:id="labelPlayerDeckSize" alignment="CENTER" layoutY="89.0" prefHeight="49.0" prefWidth="136.0" text="0">
@@ -100,7 +100,7 @@
                <children>
                   <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../../../public/images/score_view_player1.png" />
+                        <Image url="@../images/score_view_player1.png" />
                      </image>
                   </ImageView>
                   <Label fx:id="labelPlayerHP" alignment="CENTER" layoutX="149.0" layoutY="38.0" prefHeight="17.0" prefWidth="26.0" text="0" textFill="WHITE" />
@@ -115,7 +115,7 @@
                <children>
                   <ImageView fitHeight="42.0" fitWidth="41.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../../../public/images/cap_points_view.png" />
+                        <Image url="@../images/cap_points_view.png" />
                      </image>
                   </ImageView>
                   <Label fx:id="labelEnemyCAP" alignment="CENTER" contentDisplay="CENTER" layoutX="7.0" layoutY="2.0" prefHeight="31.0" prefWidth="28.0" text="0" />
@@ -125,7 +125,7 @@
                <children>
                   <ImageView fitHeight="42.0" fitWidth="41.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../../../public/images/cap_points_view.png" />
+                        <Image url="@../images/cap_points_view.png" />
                      </image>
                   </ImageView>
                   <Label fx:id="labelPlayerCAP" alignment="CENTER" contentDisplay="CENTER" layoutX="7.0" layoutY="2.0" prefHeight="31.0" prefWidth="28.0" text="0" />

@@ -4,6 +4,7 @@
 
 package elementstcg;
 
+import elementstcg.util.CustomException.EmptyFieldException;
 import elementstcg.util.CustomException.ExceedCapacityException;
 import elementstcg.util.CustomException.OccupiedFieldException;
 import junit.framework.TestCase;
@@ -116,14 +117,13 @@ public class BoardTest extends TestCase {
     }
 
     @Test
-    public void testAttackCard(){
+    public void testAttackCard() throws EmptyFieldException {
         board.putCardEnemy(1, card);
         Card testCard = new Card(Element.Air, 4, 10, "alakazam", 3);
         board.attackCard(testCard, 1);
         List<Card> testcards = board.getEnemyField();
 
-        if (testcards == null)
-        {
+        if (testcards == null) {
             fail("No cards found");
         }
 
