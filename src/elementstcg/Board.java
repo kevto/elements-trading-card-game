@@ -165,4 +165,25 @@ public class Board {
         player = new Player(initialHp, "Account");
         setupPlayer("Enemy");
     }
+
+    public Player getEnemy()
+    {
+        return enemy;
+    }
+
+    public Player getPlayer()
+    {
+        return player;
+    }
+
+    public List<Card> getPlayerField()
+    {
+        return playerField;
+    }
+
+    public List<Card> getEnemyField()
+    {
+        return enemyField;
+    }
+
 }
