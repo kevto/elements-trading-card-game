@@ -1,6 +1,9 @@
 package elementstcg;
 
 import elementstcg.util.CalculateMultiplier;
+import elementstcg.util.CustomException.EmptyFieldException;
+import elementstcg.util.CustomException.ExceedCapacityException;
+import elementstcg.util.CustomException.OccupiedFieldException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,7 +81,7 @@ public class Board {
      * @param point Location of the card on the board where it gets placed.
      * @param card Which card gets placed.
      */
-    public void putCardPlayer(int point, Card card){
+    public void putCardPlayer(int point, Card card) throws OccupiedFieldException, ExceedCapacityException {
         int cap = 0;
 
         for (Card c : playerField) {
@@ -95,11 +98,11 @@ public class Board {
                 playerField.add(point, card);
             }
             else {
-                //TODO: Notify player point is used
+                throw new OccupiedFieldException("There is already a card on this field");
             }
         }
         else {
-            //TODO: Notify player that the cap points are exceeded
+            throw new ExceedCapacityException("Card cannot be played, total capacity points exceed the maximum (" + (cap + card.getCapacityPoints()) + "/" + MAX_CAP_POINTS + ")");
         }
     }
 
@@ -134,7 +137,7 @@ public class Board {
             }
         }
         else {
-            //TODO: Notify player no card was selected
+            throw new EmptyFieldException("The field you selected didn't contain a card");
         }
     }
 
