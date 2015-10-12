@@ -1,5 +1,6 @@
 package elementstcg;
 
+import elementstcg.util.CalculateMultiplier;
 import elementstcg.util.CustomException.EmptyFieldException;
 import elementstcg.util.CustomException.ExceedCapacityException;
 import elementstcg.util.CustomException.OccupiedFieldException;
@@ -119,12 +120,15 @@ public class Board {
      * @param card The card that attacks.
      * @param point Location of the card that gets attacked.
      */
-    public void attackEnemyCard(Card card, int point) throws EmptyFieldException {
+    public void attackCard(Card card, int point){
         Card fieldCard = enemyField.get(point);
-
+        double totalDamage = 0;
         if(fieldCard != null) {
-            fieldCard.modifyHP(card.getAttack());
-            fieldCard.setAttacked(true);
+
+            totalDamage = card.getAttack() * CalculateMultiplier.calculatedMultplier(fieldCard, card);
+
+            fieldCard.modifyHP((int) totalDamage);
+            card.setAttacked(true);
 
             if(fieldCard.getHP() <= 0) {
                 enemyField.remove(point);
