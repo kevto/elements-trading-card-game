@@ -8,5 +8,5 @@ public interface ControlledScreen {
     /**
      * This method enables classes to set the screen parent
      */
-    public void setScreenParent(ScreensController screenPage);
+    public void setScreenParent(ScreenHandler screenPage);
 }

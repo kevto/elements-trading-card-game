@@ -1,16 +1,11 @@
 package elementstcg.gui;
 
-import elementstcg.Account;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 
-import javax.swing.text.html.ImageView;
-import java.awt.*;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -25,7 +20,7 @@ public class LobbyController implements Initializable, ControlledScreen {
     @FXML Button
             ButtonNormalGame;
     @FXML Label lblSearchText;
-    ScreensController myController;
+    ScreenHandler myController;
 
 
     @Override
@@ -34,7 +29,7 @@ public class LobbyController implements Initializable, ControlledScreen {
     }
 
 
-    public void setScreenParent(ScreensController screenParent) {
+    public void setScreenParent(ScreenHandler screenParent) {
         myController = screenParent;
     }
 
