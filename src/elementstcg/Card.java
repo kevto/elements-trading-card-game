@@ -85,7 +85,7 @@ public class Card {
      * @return
      */
     public int modifyHP(int change){
-        if ((hp - change) < 0){ hp = 0; }
+        if ((hp + change) < 0){ hp = 0; }
         else { hp += change; }
         return hp;
     }
