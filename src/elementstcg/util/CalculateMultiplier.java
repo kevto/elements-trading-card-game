@@ -17,47 +17,49 @@ public class CalculateMultiplier {
     public static double calculatedMultplier(Card Enemy_c, Card Player_c) {
 
         double multiplier = 0;
-
+        double extraDamageValue = 2;
+        double normalDamageValue = 1;
+        double lowDamageValue;
 
         switch (Enemy_c.getElement()){
             case Fire:
                 if (Player_c.getElement() == Element.Air){
-                    multiplier = 2;
+                    multiplier = extraDamageValue;
                 }
                 else {
-                    multiplier = 1;
+                    multiplier = normalDamageValue;
                 }
                 break;
             case Earth:
                 if (Player_c.getElement() == Element.Water){
-                    multiplier = 2;
+                    multiplier = extraDamageValue;
                 }
                 else {
-                    multiplier = 1;
+                    multiplier = normalDamageValue;
                 }
                 break;
             case Water:
                 if (Player_c.getElement() == Element.Fire){
-                    multiplier = 2;
+                    multiplier = extraDamageValue;
                 }
                 else {
-                    multiplier = 1;
+                    multiplier = normalDamageValue;
                 }
                 break;
             case Air:
                 if (Player_c.getElement() == Element.Thunder){
-                    multiplier = 2;
+                    multiplier = extraDamageValue;
                 }
                 else {
-                    multiplier = 1;
+                    multiplier = normalDamageValue;
                 }
                 break;
             case Thunder:
                 if (Player_c.getElement() == Element.Earth){
-                    multiplier = 2;
+                    multiplier = extraDamageValue;
                 }
                 else {
-                    multiplier = 1;
+                    multiplier = normalDamageValue;
                 }
                 break;
         }
