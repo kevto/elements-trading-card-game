@@ -98,6 +98,8 @@ public class InlogRegisterScreenController implements Initializable, ControlledS
 
         }
 
+        myController.setScreen(ScreensFramework.screen3ID);
+
     }
 
     /**

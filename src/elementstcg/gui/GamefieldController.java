@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -15,11 +16,9 @@ import java.util.ResourceBundle;
  */
 public class GamefieldController implements Initializable, ControlledScreen {
 
-    @FXML Button
-            ButtonPlayVsAi;
-    @FXML Button
-            ButtonNormalGame;
-    @FXML Label lblSearchText;
+    @FXML
+    HBox hboxPlayerHand;
+
     ScreensController myController;
 
 
@@ -33,26 +32,9 @@ public class GamefieldController implements Initializable, ControlledScreen {
         myController = screenParent;
     }
 
-    /**
-     * Button event occurs when the user clicks "PLAY VS AI"
-     * Starts a game with the computer as opponent.
-     * @param event
-     */
-    public void ClickedVsAi(Event event) {
-        //TODO implementation
+
+    public void clickedHandSelf(Event event) {
+        System.out.println(event.getSource().toString());
+
     }
-
-    /**
-     * Button event occurs when the user clicks "NORMAL GAME"
-     * Queues the user for searching match against other players.
-     * @param event
-     */
-    public void ClickedNormalGame(Event event) {
-        //TODO implementation
-        lblSearchText.setVisible(true);
-        lblSearchText.setText("SEARCHING FOR GAME.... XX SECONDS");
-        
-    }
-
-
 }

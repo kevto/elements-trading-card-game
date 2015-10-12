@@ -15,7 +15,7 @@ public class GamefieldView extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("Lobby.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("Gamefield.fxml"));
 
         stage = primaryStage;
         Scene scene = new Scene(root);
