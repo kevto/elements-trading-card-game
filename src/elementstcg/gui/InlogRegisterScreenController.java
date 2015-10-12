@@ -1,6 +1,7 @@
 package elementstcg.gui;
 
 import elementstcg.Account;
+import javafx.application.Application;
 import javafx.fxml.FXML;
 
 import java.awt.event.ActionEvent;
@@ -31,8 +32,10 @@ public class InlogRegisterScreenController implements Initializable, ControlledS
     @FXML TextField tbEmail;
     @FXML Label lblMessage;
 
+    Stage stage;
     ScreensController myController;
     boolean isRegistering = false;
+
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -51,7 +54,7 @@ public class InlogRegisterScreenController implements Initializable, ControlledS
      * Password must be at least 8 characters.
      * Username must be at least 6 characters.
      */
-    public void ClickedLogin(Event event) {
+    public void clickedLogin(Event event) {
         //TODO
         if (!isRegistering) {
             //User is logging in.
@@ -105,7 +108,7 @@ public class InlogRegisterScreenController implements Initializable, ControlledS
     /**
      * Opens the registration form.
      */
-    public void ClickedRegister(Event event) {
+    public void clickedRegister(Event event) {
         //myController.setScreen(ScreensFramework.screen2ID);
         if (!isRegistering) {
             tbEmail.setVisible(true);

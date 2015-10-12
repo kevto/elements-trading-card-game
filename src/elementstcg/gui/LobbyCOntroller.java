@@ -43,7 +43,7 @@ public class LobbyController implements Initializable, ControlledScreen {
      * Starts a game with the computer as opponent.
      * @param event
      */
-    public void ClickedVsAi(Event event) {
+    public void clickedVsAi(Event event) {
         //TODO implementation
     }
 
@@ -52,11 +52,25 @@ public class LobbyController implements Initializable, ControlledScreen {
      * Queues the user for searching match against other players.
      * @param event
      */
-    public void ClickedNormalGame(Event event) {
+    public void clickedNormalGame(Event event) {
         //TODO implementation
         lblSearchText.setVisible(true);
         lblSearchText.setText("SEARCHING FOR GAME.... XX SECONDS");
     }
 
+    /**
+     * This method is called when the player presses the logout button.
+     */
+    public void logoutButtonAction()
+    {
 
+    }
+
+    /**
+     * this method is called when the player presses the button to search for a match.
+     */
+    public void playMatchButtonAction()
+    {
+
+    }
 }
