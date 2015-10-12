@@ -12,7 +12,9 @@ import elementstcg.Element;
 public class CalculateMultiplier {
 
 
-    public double calculatedMultplier(Card Enemy_c, Card Player_c) {
+
+
+    public static double calculatedMultplier(Card Enemy_c, Card Player_c) {
 
         double multiplier = 0;
 
