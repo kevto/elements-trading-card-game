@@ -1,21 +1,13 @@
 package elementstcg.gui;
 
 import elementstcg.Account;
-import javafx.application.Application;
 import javafx.fxml.FXML;
 
-import java.awt.event.ActionEvent;
-import java.io.IOException;
 import java.net.URL;
-import java.util.Calendar;
 import java.util.ResourceBundle;
-import javafx.collections.FXCollections;
+
 import javafx.event.Event;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 
@@ -33,7 +25,7 @@ public class InlogRegisterScreenController implements Initializable, ControlledS
     @FXML Label lblMessage;
 
     Stage stage;
-    ScreensController myController;
+    ScreenHandler myController;
     boolean isRegistering = false;
 
 
@@ -43,7 +35,7 @@ public class InlogRegisterScreenController implements Initializable, ControlledS
     }
 
 
-    public void setScreenParent(ScreensController screenParent) {
+    public void setScreenParent(ScreenHandler screenParent) {
         myController = screenParent;
     }
 
@@ -64,7 +56,7 @@ public class InlogRegisterScreenController implements Initializable, ControlledS
             else{
                 if (Account.login(tbUsername.getText(), tbPassword.getText())){
                     lblMessage.setText("Succesfully logged in.");
-                    myController.setScreen(ScreensFramework.screen2ID);
+                    myController.setScreen(ScreensFramework.screenLobbyID);
                 }
                 else{
                     lblMessage.setText("Invalid username or password.");
@@ -101,7 +93,7 @@ public class InlogRegisterScreenController implements Initializable, ControlledS
 
         }
 
-        myController.setScreen(ScreensFramework.screen3ID);
+        myController.setScreen(ScreensFramework.screenBoardID);
 
     }
 

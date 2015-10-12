@@ -1,15 +1,10 @@
 package elementstcg.gui;
 
-import javafx.application.Application;
 import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 import java.net.URL;
@@ -19,23 +14,24 @@ import java.util.ResourceBundle;
 /**
  * Created by Mick on 5-10-2015.
  */
-public class GamefieldController implements Initializable, ControlledScreen {
+public class BoardController implements Initializable, ControlledScreen {
 
     // Class variables
-    ScreensController myController;
-    Stage stage;
+    ScreenHandler myController;
 
     // UI Components
-    @FXML HBox hboxPlayerHand;
+    @FXML
+    Pane hboxPlayerHand;
 
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-
+        hboxPlayerHand.getParent().prefWidth(hboxPlayerHand.getPrefWidth());
+        hboxPlayerHand.getParent().prefHeight(hboxPlayerHand.getPrefHeight());
     }
 
 
-    public void setScreenParent(ScreensController screenParent) {
+    public void setScreenParent(ScreenHandler screenParent) {
         myController = screenParent;
     }
 

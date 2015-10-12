@@ -51,26 +51,28 @@ import javafx.stage.Stage;
  */
 public class ScreensFramework extends Application {
     
-    public static String screen1ID = "loginregisterscreen";
-    public static String screen1File = "fxml/Login_Register_Screen.fxml";
-    public static String screen2ID = "lobbyscreen";
-    public static String screen2File = "fxml/Lobby.fxml";
-    public static String screen3ID = "ingame";
-    public static String screen3File = "fxml/Gamefield.fxml";
+    public static String screenLoginRegisterID = "loginregister";
+    public static String screenLoginRegisterPath = "fxml/LoginRegister.fxml";
+    public static String screenLobbyID = "lobby";
+    public static String screenLobbyPath = "fxml/Lobby.fxml";
+    public static String screenBoardID = "board";
+    public static String screenBoardPath = "fxml/Board.fxml";
+
+    Scene scene;
     
     
     @Override
     public void start(Stage primaryStage) {
-        ScreensController mainContainer = new ScreensController();
-        mainContainer.loadScreen(ScreensFramework.screen1ID, ScreensFramework.screen1File);
-        mainContainer.loadScreen(ScreensFramework.screen2ID, ScreensFramework.screen2File);
-        mainContainer.loadScreen(ScreensFramework.screen3ID, ScreensFramework.screen3File);
+        ScreenHandler mainContainer = new ScreenHandler(primaryStage);
+        mainContainer.loadScreen(ScreensFramework.screenLoginRegisterID, ScreensFramework.screenLoginRegisterPath);
+        mainContainer.loadScreen(ScreensFramework.screenLobbyID, ScreensFramework.screenLobbyPath);
+        mainContainer.loadScreen(ScreensFramework.screenBoardID, ScreensFramework.screenBoardPath);
         
-        mainContainer.setScreen(ScreensFramework.screen1ID);
+        mainContainer.setScreen(ScreensFramework.screenLoginRegisterID);
         
         Group root = new Group();
         root.getChildren().addAll(mainContainer);
-        Scene scene = new Scene(root);
+        scene = new Scene(root);
         primaryStage.setScene(scene);
         primaryStage.show();
     }

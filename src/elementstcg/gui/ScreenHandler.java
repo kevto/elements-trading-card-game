@@ -50,20 +50,24 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
 /**
  *
  * @author Mick
  */
-public class ScreensController  extends StackPane {
+public class ScreenHandler extends StackPane {
     //Holds the screens to be displayed
-
+    private Stage stage;
     private HashMap<String, Node> screens = new HashMap<String, Node>();
     
-    public ScreensController() {
+    public ScreenHandler(Stage stage) {
         super();
+        this.stage = stage;
     }
 
     //Add the screen to the collection
@@ -108,6 +112,13 @@ public class ScreensController  extends StackPane {
                     public void handle(ActionEvent t) {
                         getChildren().remove(0);                    //remove the displayed screen
                         getChildren().add(0, screens.get(name));     //add the screen
+                        
+                        if(screens.get(name) instanceof Pane) {
+                            stage.setHeight(((Pane) screens.get(name)).getPrefHeight());
+                            stage.setWidth(((Pane) screens.get(name)).getPrefWidth());
+                            stage.setResizable(false);
+                        }
+
                         Timeline fadeIn = new Timeline(
                                 new KeyFrame(Duration.ZERO, new KeyValue(opacity, 0.0)),
                                 new KeyFrame(new Duration(800), new KeyValue(opacity, 1.0)));
