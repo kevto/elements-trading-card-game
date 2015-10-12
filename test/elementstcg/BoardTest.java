@@ -4,6 +4,8 @@
 
 package elementstcg;
 
+import elementstcg.util.CustomException.ExceedCapacityException;
+import elementstcg.util.CustomException.OccupiedFieldException;
 import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
@@ -75,7 +77,13 @@ public class BoardTest extends TestCase {
 
     @Test
     public void testPutCardPlayer(){
-        board.putCardPlayer(1, card);
+        try {
+            board.putCardPlayer(1, card);
+        } catch (OccupiedFieldException e) {
+            System.out.println(e.toString());
+        } catch (ExceedCapacityException e) {
+            System.out.println(e.toString());
+        }
         List<Card> testCards = board.getPlayerField();
         if (testCards.isEmpty())
         {
@@ -108,10 +116,10 @@ public class BoardTest extends TestCase {
     }
 
     @Test
-    public void testAttackEnemyCard(){
+    public void testAttackCard(){
         board.putCardEnemy(1, card);
         Card testCard = new Card(Element.Air, 4, 10, "alakazam", 3);
-        board.attackEnemyCard(testCard, 1);
+        board.attackCard(testCard, 1);
         List<Card> testcards = board.getEnemyField();
 
         if (testcards == null)
