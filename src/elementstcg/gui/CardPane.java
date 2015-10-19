@@ -47,7 +47,7 @@ public class CardPane extends Pane {
 
         //Set the scale for the hand card (DEBUG)
         this.setScaleX(0.5);
-        this.setScaleY(0.5);S
+        this.setScaleY(0.5);
 
         //Add the cardObject to the CardPane so it is displayed on the stage
         this.getChildren().add(cardObject);
