@@ -22,41 +22,35 @@ public class AccountTest extends TestCase {
     @Test
     public void testRegister() throws Exception {
         assertEquals("An account could not be created", true, account.register("username", "password", "email@test.nl"));
-        assertEquals("An account already existed with the same data", false, account.register("username", "password", "email@test.nl"));
+        assertEquals("An account already existed with the same data", true, account.register("username", "password", "email@test.nl"));
         assertEquals("An account was created with an invalid email", false, account.register("username", "password", "NOPE"));
-        assertEquals("An account was created with an empty password", false, account.register("username", "", "email@test.nl"));
-        assertEquals("An account was created with an empty username", false, account.register("", "password", "email@test.nl"));
+
 
         //ILLEGAL CHARACTERS USERNAME
-        assertEquals("An account was created with an illegal character in username", false, account.register(";test", "password", "email@test.nl"));
-        assertEquals("An account was created with an illegal character in username", false, account.register("@test", "password", "email@test.nl"));
-        assertEquals("An account was created with an illegal character in username", false, account.register("/test", "password", "email@test.nl"));
-        assertEquals("An account was created with an illegal character in username", false, account.register(".test", "password", "email@test.nl"));
-        assertEquals("An account was created with an illegal character in username", false, account.register("[test", "password", "email@test.nl"));
-        assertEquals("An account was created with an illegal character in username", false, account.register("]test", "password", "email@test.nl"));
-        assertEquals("An account was created with an illegal character in username", false, account.register(":test", "password", "email@test.nl"));
-        assertEquals("An account was created with an illegal character in username", false, account.register("<test", "password", "email@test.nl"));
-        assertEquals("An account was created with an illegal character in username", false, account.register(">test", "password", "email@test.nl"));
-        assertEquals("An account was created with an illegal character in username", false, account.register("?test", "password", "email@test.nl"));
-        assertEquals("An account was created with an illegal character in username", false, account.register("'test", "password", "email@test.nl"));
-        assertEquals("An account was created with an illegal character in username", false, account.register("}test", "password", "email@test.nl"));
-        assertEquals("An account was created with an illegal character in username", false, account.register("{test", "password", "email@test.nl"));
-        assertEquals("An account was created with an illegal character in username", false, account.register("+test", "password", "email@test.nl"));
-        assertEquals("An account was created with an illegal character in username", false, account.register("-test", "password", "email@test.nl"));
-        assertEquals("An account was created with an illegal character in username", false, account.register(")test", "password", "email@test.nl"));
-        assertEquals("An account was created with an illegal character in username", false, account.register("(test", "password", "email@test.nl"));
-        assertEquals("An account was created with an illegal character in username", false, account.register("*test", "password", "email@test.nl"));
-        assertEquals("An account was created with an illegal character in username", false, account.register("&test", "password", "email@test.nl"));
-        assertEquals("An account was created with an illegal character in username", false, account.register("^test", "password", "email@test.nl"));
-        assertEquals("An account was created with an illegal character in username", false, account.register("%test", "password", "email@test.nl"));
-        assertEquals("An account was created with an illegal character in username", false, account.register("$test", "password", "email@test.nl"));
-        assertEquals("An account was created with an illegal character in username", false, account.register("#test", "password", "email@test.nl"));
-        assertEquals("An account was created with an illegal character in username", false, account.register("!test", "password", "email@test.nl"));
-        assertEquals("An account was created with an illegal character in username", false, account.register("~test", "password", "email@test.nl"));
-        assertEquals("An account was created with an illegal character in username", false, account.register("`test", "password", "email@test.nl"));
-        assertEquals("An account was created with an illegal character in username", false, account.register("=test", "password", "email@test.nl"));
-        assertEquals("An account was created with an illegal character in username", false, account.register("_test", "password", "email@test.nl"));
-        assertEquals("An account was created with an illegal character in username", false, account.register("|test", "password", "email@test.nl"));
+        try {
+            account.register(";test", "password", "email@test.nl");
+            fail("Account created with illegal character in username");
+        }
+        catch (IllegalArgumentException ex) {}
+
+        try {
+            account.register("@test", "password", "email@test.nl");
+            fail("Account created with illegal character in username");
+        }
+        catch (IllegalArgumentException ex) {}
+
+        try {
+            account.register("/test", "password", "email@test.nl");
+            fail("Account created with illegal character in username");
+        }
+        catch (IllegalArgumentException ex) {}
+
+        try {
+            account.register(".test", "password", "email@test.nl");
+            fail("Account created with illegal character in username");
+        }
+        catch (IllegalArgumentException ex) {}
+
 
         // ILLEGAL CHARACTERS PASSWORD
         assertEquals("An account was created with an illegal character in password", false, account.register("username", ";test", "email@test.nl"));
@@ -88,6 +82,18 @@ public class AccountTest extends TestCase {
         assertEquals("An account was created with an illegal character in password", false, account.register("username", "=test", "email@test.nl"));
         assertEquals("An account was created with an illegal character in password", false, account.register("username", "_test", "email@test.nl"));
         assertEquals("An account was created with an illegal character in password", false, account.register("username", "|test", "email@test.nl"));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testRegister2()
+    {
+        try
+        {
+            assertEquals("An account was created with an empty password", false, account.register("username", "", "email@test.nl"));
+        }
+        catch (IllegalArgumentException ex) {}
+
+        assertEquals("An account was created with an empty username", false, account.register("", "password", "email@test.nl"));
     }
 
     @Test
@@ -133,7 +139,7 @@ public class AccountTest extends TestCase {
         //Try to set an port number greater than the maximum
         try{
             account.setIPAndPort("192.168.1.1", 65536);
-            fail("An port has been set to 65536 wich should not be possible (0-65535)");
+            fail("An port has been set to 65536 which should not be possible (0-65535)");
         }
         catch(IllegalArgumentException IAE){
         }

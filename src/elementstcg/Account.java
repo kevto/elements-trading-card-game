@@ -1,11 +1,15 @@
 package elementstcg;
 
+/**
+ * Created by Mick on 28-9-2015.
+ * @Author Mick
+ * @Author Rick
+ */
+
 import java.io.*;
 import java.nio.file.Files;
 
-/**
- * Created by Mick on 28-9-2015.
- */
+
 public class Account implements Serializable {
 
     private static Account instance;
@@ -67,7 +71,18 @@ public class Account implements Serializable {
      */
     public static boolean register(String username, String password, String email){
         //TODO : implement register()
-        instance = new Account(username, password, "127.0.0.1", 22);
+
+        String pattern = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+                + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+        java.util.regex.Pattern p = java.util.regex.Pattern.compile(pattern);
+        java.util.regex.Matcher m = p.matcher(email);
+
+        if (!m.matches())
+        {
+            return false;
+        }
+
+        instance = new Account(username, password, "192.168.1.1", 80);
         instance.setEmail(email);
 
         //Serialization
@@ -106,11 +121,18 @@ public class Account implements Serializable {
     private Account(String username, String password, String ip, int port){
 
         if (!username.isEmpty() && !password.isEmpty()) {
-            this.username = username;
-            this.password = password;
+            String pattern = "[$&+,:;=?@#|'<>.-^*()%!]";
+            java.util.regex.Pattern p = java.util.regex.Pattern.compile(pattern);
+            java.util.regex.Matcher m = p.matcher(username);
+
+            if (m.find())
+            {
+                throw new IllegalArgumentException("Illegal character found in username.");
+            }
+
         }
         else{
-            throw new IllegalArgumentException("username and password can't be empty.");
+            throw new IllegalArgumentException("username/password/email can't be empty.");
         }
         this.ip = ip;
         this.port = port;
@@ -123,7 +145,15 @@ public class Account implements Serializable {
      * @return
      */
     public static Account getInstance(){
-        return instance;
+        if (instance == null)
+        {
+            register("username", "password", "test@email.nl");
+            return instance;
+        }
+        else
+        {
+            return instance;
+        }
     }
 
     /**
