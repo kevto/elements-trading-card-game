@@ -13,13 +13,17 @@ public class AccountTest extends TestCase {
     private Account account;
 
     @Before
-    public void init()
+    public void setUp()
     {
         Account.login("username", "password");
         account = Account.getInstance();
         account.setEmail("test@email.nl");
     }
 
+    /**
+     * Tests the Login method.
+     * @throws Exception
+     */
     @Test
     public void testLogin() throws Exception {
         assertEquals("Account was not logged in", true, Account.login("username", "password"));
@@ -28,6 +32,10 @@ public class AccountTest extends TestCase {
         assertEquals("Logged in to an invalid account", false, Account.login("INVALIDUSERNAME", "INVALIDPASSWORD"));
     }
 
+    /**
+     * Tests the Register method.
+     * @throws Exception
+     */
     @Test
     public void testRegister() throws Exception {
         assertEquals("An account could not be created", true, Account.register("username", "password", "email@test.nl"));
@@ -47,6 +55,9 @@ public class AccountTest extends TestCase {
         assertEquals("An illegal character was allowed in a password.", false, Account.register("username", "'test", "email@test.nl"));
     }
 
+    /**
+     * Tests to make sure you can't use an empty Constructor.
+     */
     @Test
     public void testEmptyConstructor()
     {
@@ -54,6 +65,9 @@ public class AccountTest extends TestCase {
         assertEquals("Account was created with empty username", false, Account.register("", "ddd", "info@example.nl"));
     }
 
+    /**
+     * Tests the getInstance method.
+     */
     @Test
     public void testGetInstance() {
         Account.login("username", "password");
@@ -62,6 +76,9 @@ public class AccountTest extends TestCase {
         assertEquals("Wrong object was returned", Account.getInstance(), account);
     }
 
+    /**
+     * Tests the getEmail method to see if it returns the right email.
+     */
     @Test
     public void testGetEmail() {
         Account.login("username", "password");
@@ -70,6 +87,9 @@ public class AccountTest extends TestCase {
         assertEquals("The email was not correct", "test@email.nl", account.getEmail());
     }
 
+    /**
+     * Tests if the right port is returned from getPort.
+     */
     @Test
     public void testGetPort() {
         Account.login("username", "password");
@@ -78,6 +98,9 @@ public class AccountTest extends TestCase {
         assertEquals("The port was not correct", 2048, account.getPort());
     }
 
+    /**
+     * Test to see if the right IP is returned with getIp.
+     */
     @Test
     public void testGetIp() {
         Account.login("username", "password");
@@ -86,6 +109,9 @@ public class AccountTest extends TestCase {
         assertEquals("The IP was not correct", "127.0.0.1", account.getIp());
     }
 
+    /**
+     * Test to see if getUserName functions properly.
+     */
     @Test
     public void testGetUserName() {
         Account.login("username", "password");
@@ -94,6 +120,9 @@ public class AccountTest extends TestCase {
         assertEquals("The username was not correct", "username", account.getUserName());
     }
 
+    /**
+     * Test to see if setIpAndPort works correctly.
+     */
     @Test
     public void testSetIPAndPort() {
         //Happy flow
