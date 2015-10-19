@@ -1,6 +1,7 @@
 package elementstcg;
 
 import junit.framework.TestCase;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -9,7 +10,14 @@ import static org.junit.Assert.*;
  * Created by Maarten on 28-9-2015.
  */
 public class AccountTest extends TestCase {
-    private Account account = Account.getInstance();
+    private Account account;
+
+    @Before
+    public void init()
+    {
+        account = new Account("username", "password", "192.168.1.1", 2048);
+        account.setEmail("test@email.nl");
+    }
 
     @Test
     public void testLogin() throws Exception {
@@ -73,21 +81,26 @@ public class AccountTest extends TestCase {
 
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testRegister2()
+    @Test
+    public void testEmptyConstructor()
     {
         try
         {
-            assertEquals("An account was created with an empty password", false, account.register("username", "", "email@test.nl"));
+            Account acc = new Account("asdf", "", "192.168.10.12", 2090);
+            fail("Account was created with empty password.");
         }
         catch (IllegalArgumentException ex) {}
 
-        assertEquals("An account was created with an empty username", false, account.register("", "password", "email@test.nl"));
+        try {
+            Account acc = new Account("", "asdf", "192.168.10.10", 2098);
+            fail("Account was created with empty username");
+        }
+        catch(IllegalArgumentException ex) {}
     }
 
     @Test
     public void testGetInstance() throws Exception {
-        assertEquals("Wrong object was returned", account, account.getInstance());
+        assertEquals("Wrong object was returned", account.getUserName(), account.getInstance().getUserName());
     }
 
     @Test

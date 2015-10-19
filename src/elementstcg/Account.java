@@ -118,7 +118,7 @@ public class Account implements Serializable {
      * @param ip
      * @param port
      */
-    private Account(String username, String password, String ip, int port){
+    public Account(String username, String password, String ip, int port){
 
         if (!username.isEmpty() && !password.isEmpty()) {
             String pattern = "[$&+,:;=?@#|'<>.-^*()%!]";
@@ -138,6 +138,8 @@ public class Account implements Serializable {
             {
                 throw new IllegalArgumentException("Illegal character found in password.");
             }
+            this.username = username;
+            this.password = password;
         }
         else{
             throw new IllegalArgumentException("username/password/email can't be empty.");
@@ -152,17 +154,7 @@ public class Account implements Serializable {
      * can return null.
      * @return
      */
-    public static Account getInstance(){
-        if (instance == null)
-        {
-            register("username", "password", "test@email.nl");
-            return instance;
-        }
-        else
-        {
-            return instance;
-        }
-    }
+    public static Account getInstance(){ return instance;}
 
     /**
      * Return the email field.
