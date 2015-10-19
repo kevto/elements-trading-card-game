@@ -28,8 +28,10 @@ public class Account implements Serializable {
      * @return
      */
     public static boolean login(String username, String password){
-        //TODO : implement login()
+        // TODO Enable below until we're done with registering an account
+        /*
         Account savedAccount = null;
+
         try
         {
             File filePath = new File("savedaccount.ser");
@@ -58,7 +60,16 @@ public class Account implements Serializable {
             }
 
         }
-        return false;
+        return false;*/
+        if(username.isEmpty() || password.isEmpty())
+            return false;
+
+        try {
+            instance = new Account(username, password, "127.0.0.1", 2048);
+            return true;
+        } catch (Exception ex) {
+            return false;
+        }
     }
 
     /**
@@ -70,8 +81,8 @@ public class Account implements Serializable {
      * @return
      */
     public static boolean register(String username, String password, String email){
-        //TODO : implement register()
-
+        //TODO Enable below until we're done with registering an account
+        /*
         String pattern = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
                 + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
         java.util.regex.Pattern p = java.util.regex.Pattern.compile(pattern);
@@ -104,8 +115,26 @@ public class Account implements Serializable {
         {
             i.printStackTrace();
         }
+        */
 
-        return false;
+        if(username.isEmpty() || password.isEmpty() || email.isEmpty())
+            return false;
+
+        String pattern = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+                + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+        java.util.regex.Pattern p = java.util.regex.Pattern.compile(pattern);
+        java.util.regex.Matcher m = p.matcher(email);
+
+        if (!m.matches())
+            return false;
+
+        try {
+            instance = new Account(username, password, "127.0.0.1", 2048);
+            instance.setEmail(email);
+            return true;
+        } catch (Exception ex) {
+            return false;
+        }
     }
 
     /**
@@ -118,7 +147,7 @@ public class Account implements Serializable {
      * @param ip
      * @param port
      */
-    public Account(String username, String password, String ip, int port){
+    private Account(String username, String password, String ip, int port){
 
         if (!username.isEmpty() && !password.isEmpty()) {
             String pattern = "[$&+,:;=?@#|'<>.-^*()%!]";
@@ -138,15 +167,15 @@ public class Account implements Serializable {
             {
                 throw new IllegalArgumentException("Illegal character found in password.");
             }
+
             this.username = username;
             this.password = password;
+            this.ip = ip;
+            this.port = port;
         }
         else{
             throw new IllegalArgumentException("username/password/email can't be empty.");
         }
-        this.ip = ip;
-        this.port = port;
-
     }
 
     /**
@@ -154,7 +183,9 @@ public class Account implements Serializable {
      * can return null.
      * @return
      */
-    public static Account getInstance(){ return instance;}
+    public static Account getInstance(){
+        return instance;
+    }
 
     /**
      * Return the email field.

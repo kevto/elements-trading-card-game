@@ -33,10 +33,10 @@ public class Deck {
      */
     public Card getRandomCard() {
         Random random = new Random();
-        int index =  (random.nextInt() * getAmountCards());
-        Card card = cards.get(index);
+        //int index =  (random.nextInt(cards.size()));
+        Card card = cards.get(1);
 
-        cards.remove(card);
+        //cards.remove(card);
 
         return card;
     }

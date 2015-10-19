@@ -14,8 +14,31 @@ public class Player {
      * @param name the name of the player object
      */
     public Player(int hp, String name){
+        this(hp, name, null);
+    }
+
+    /**
+    * Initilizes the Player class with the given hp and name
+    * @author Maarten Verboogen
+    * @param hp the amount of HP the player object starts with
+    * @param name the name of the player object
+    * @param deck the deck that the player will be playing with
+    */
+    public Player(int hp, String name, Deck deck){
         this.hp = hp;
         this.name = name;
+        this.deck = deck;
+
+        hand = new Hand();
+    }
+
+    /**
+     * Setting the deck of the player if the deck is null
+     * @param deck that the player will be playing with.
+     */
+    public void setDeck(Deck deck) {
+        if(deck == null)
+            this.deck = deck;
     }
 
     /**
@@ -38,7 +61,9 @@ public class Player {
      * @param hp the amount by wich the player hp should be changed
      */
     public void modifyHp(int hp){
-        hp -= hp;
+        this.hp -= hp;
+        if(this.hp <= 0)
+            this.hp = 0;
     }
 
     /**

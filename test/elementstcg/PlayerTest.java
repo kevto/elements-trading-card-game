@@ -1,7 +1,11 @@
 package elementstcg;
 
 import junit.framework.TestCase;
+import org.junit.Before;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -10,7 +14,19 @@ import static org.junit.Assert.*;
  */
 public class PlayerTest extends TestCase {
 
-    private Player player = new Player(20, "player");
+    private Player player = null;
+
+    @Before
+    public void setUp() {
+        ArrayList<Card> cards = new ArrayList<>();
+        cards.add(new Card(Element.Air, 1, 1,"AirCard" , 1));
+        cards.add(new Card(Element.Earth, 1, 1,"EarthCard" , 1));
+        cards.add(new Card(Element.Fire, 1, 1,"FireCard" , 1));
+        cards.add(new Card(Element.Thunder, 1, 1,"ThunderCard" , 1));
+        cards.add(new Card(Element.Water, 1, 1,"WaterCard" , 1));
+        Deck deck = new Deck(cards);
+        player = new Player(20, "player", deck);
+    }
 
     @Test
     public void testDrawCard() throws Exception {
@@ -25,7 +41,7 @@ public class PlayerTest extends TestCase {
 
         playerOne.modifyHp(5);
         playerTwo.modifyHp(-5);
-        playerThree.modifyHp(-20);
+        playerThree.modifyHp(21);
 
         assertEquals("Player did not receive damage", 15, playerOne.getHp());
         assertEquals("Player was not healed", 25, playerTwo.getHp());

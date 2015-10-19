@@ -50,7 +50,7 @@ public class BoardTest extends TestCase {
 
     @Test
     public void testUpdateEnemyHP(){
-        board.updateEnemyHP(10);
+        board.updateEnemyHP(-10);
         assertEquals("HP wasn't 10", board.getPlayer().getHp(), 10);
         board.updateEnemyHP(-20);
         assertEquals("HP should be 30 now.", board.getPlayer().getHp(), 30);
