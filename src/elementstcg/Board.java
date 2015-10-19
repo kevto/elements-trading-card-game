@@ -164,12 +164,6 @@ public class Board {
      */
     public void attackCard(Card card, int point, List<Card> defenderField, Runnable removeCard) throws EmptyFieldException{
         Card fieldCard = defenderField.get(point);
-        if (enemyTurn == false) {
-            fieldCard = defenderField.get(point);
-        }
-        else {
-            fieldCard = defenderField.get(point);
-        }
 
         double totalDamage = 0;
         if(fieldCard != null) {
@@ -218,6 +212,8 @@ public class Board {
 
     private void attackPlayer(){
         Card retrievedCard = AIEnemy.attackPlayer();
+        //to be fixed
+        Runnable r = null;
         Card fieldCard = null;
         int pointer = 0;
         while (fieldCard == null) {
@@ -226,7 +222,7 @@ public class Board {
             fieldCard = playerField.get(pointer);
         }
         try {
-            attackCard(retrievedCard, pointer);
+            attackCard(retrievedCard, pointer, this.playerField, r);
         } catch (EmptyFieldException e) {
             e.printStackTrace();
         }
