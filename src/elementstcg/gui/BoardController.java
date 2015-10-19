@@ -1,11 +1,13 @@
 package elementstcg.gui;
 
+import elementstcg.Card;
+import elementstcg.Element;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.stage.Stage;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -20,14 +22,34 @@ public class BoardController implements Initializable, ControlledScreen {
     ScreenHandler myController;
 
     // UI Components
-    @FXML
-    Pane hboxPlayerHand;
+    @FXML HBox hboxPlayerHand;
+    @FXML Pane ghostPane;
+
+    private CardPane selectedCard;
 
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         hboxPlayerHand.getParent().prefWidth(hboxPlayerHand.getPrefWidth());
         hboxPlayerHand.getParent().prefHeight(hboxPlayerHand.getPrefHeight());
+
+        //TODO: REMOVE DEBUG
+        Card fireCard = new Card(Element.Fire, 5, 5, "Fire", 3);
+        Card airCard = new Card(Element.Air, 5, 5, "Air", 2);
+        Card waterCard = new Card(Element.Water, 5, 5, "Water", 2);
+        Card earthCard = new Card(Element.Earth, 5, 5, "Earth", 1);
+        Card energyCard = new Card(Element.Thunder, 5, 5, "Energy", 3);
+
+        hboxPlayerHand.getChildren().add(new CardPane(fireCard, ghostPane, this));
+        hboxPlayerHand.getChildren().add(new CardPane(airCard, ghostPane, this));
+        hboxPlayerHand.getChildren().add(new CardPane(waterCard, ghostPane, this));
+        hboxPlayerHand.getChildren().add(new CardPane(airCard, ghostPane, this));
+        hboxPlayerHand.getChildren().add(new CardPane(energyCard, ghostPane, this));
+        hboxPlayerHand.getChildren().add(new CardPane(fireCard, ghostPane, this));
+        hboxPlayerHand.getChildren().add(new CardPane(earthCard, ghostPane, this));
+        hboxPlayerHand.getChildren().add(new CardPane(energyCard, ghostPane, this));
+
+        //END DEBUG
     }
 
 
@@ -36,9 +58,12 @@ public class BoardController implements Initializable, ControlledScreen {
     }
 
 
-    public void clickedHandSelf(Event event) {
-        System.out.println(event.getSource().toString());
-
+    public void onGridClick(Event event) {
+        if(event.getSource() instanceof GridPane) {
+            ((GridPane) event.getSource()).getChildren().add(selectedCard);
+            selectedCard.setSelected(false);
+            selectedCard.setState(CardState.PlayerField);
+        }
     }
 
     /**
@@ -52,7 +77,7 @@ public class BoardController implements Initializable, ControlledScreen {
     /**
      * This method is called when a player selects a card that is currently on the playing field.
      */
-    public void selectCardButtonAction()
+    public void selectCardButtonAction(CardPane cardPane)
     {
 
     }
@@ -60,15 +85,30 @@ public class BoardController implements Initializable, ControlledScreen {
     /**
      * This method is called when a player selects a card that is currently in his hand.
      */
-    public void selectCardInHandButtonAction()
+    public void selectCardInHandButtonAction(CardPane cardPane)
     {
+        if(selectedCard == null) {
+            selectedCard = cardPane;
+            cardPane.setSelected(true);
+        }
+        else {
+            if(cardPane != selectedCard) {
+                selectedCard.setSelected(false);
 
+                selectedCard = cardPane;
+                cardPane.setSelected(true);
+            }
+            else {
+                cardPane.setSelected(false);
+                selectedCard = null;
+            }
+        }
     }
 
     /**
      * This method is called when a player uses a selected card to attack a card of his opponent.
      */
-    public void attackEnemyCardButtonAction()
+    public void attackEnemyCardButtonAction(CardPane cardPane)
     {
 
     }
@@ -103,5 +143,9 @@ public class BoardController implements Initializable, ControlledScreen {
     public void cardBackInHandButtonAction()
     {
 
+    }
+
+    public void onMouseClickHbox(Event event) {
+        //System.out.println("Clicked");
     }
 }

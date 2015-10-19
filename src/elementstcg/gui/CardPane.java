@@ -3,11 +3,13 @@ package elementstcg.gui;
 import elementstcg.Card;
 import javafx.event.EventHandler;
 import javafx.scene.control.Label;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
 public class CardPane extends Pane {
@@ -25,34 +27,29 @@ public class CardPane extends Pane {
 
     private CardPane instance;
 
+    private CardState cardState;
+
     public CardPane(Card card, Pane ghostPane, BoardController controller) {
-        //Store the card info in the card field
+
         this.card = card;
-        //Store the ghostPane in the ghostPane field
-        //ghostPane is a Pane in the center of the playing field for displaying card the player is hovering over
         this.ghostPane = ghostPane;
 
-        //Store the controller in the controller field
-        //controller handles all logic
+        cardState = CardState.Hand;
+
         this.controller = controller;
 
-        //Create instance object so eventHandlers can return the cardPane
         instance = this;
 
-
-        //Create two card objects (JavaFX objects)
-        //There are two created so they can be scaled separately
         cardObject = CreateCard(card);
         ghostObject = CreateCard(card);
 
-        //Set the scale for the hand card (DEBUG)
         this.setScaleX(0.5);
         this.setScaleY(0.5);
 
-        //Add the cardObject to the CardPane so it is displayed on the stage
+        this.setTranslateY(-25);
+
         this.getChildren().add(cardObject);
 
-        //Method for creating all needed Event Handlers
         addEventListeners();
     }
 
@@ -63,9 +60,17 @@ public class CardPane extends Pane {
             public void handle(MouseEvent event) {
                 //LEFT CLICK
                 if(event.getButton()  == MouseButton.PRIMARY) {
-                    System.out.println(event.getTarget().toString());
-
                     //TODO: Add LEFT click event logic (EG. call method when a card is clicked)
+
+                    if(cardState == CardState.Hand) {
+                        controller.selectCardInHandButtonAction(instance);
+                    }
+                    else if(cardState == CardState.PlayerField) {
+                        controller.selectCardButtonAction(instance);
+                    }
+                    else if(cardState == CardState.EnemyField) {
+                        controller.attackEnemyCardButtonAction(instance);
+                    }
                 }
 
                 //RIGHT CLICK
@@ -79,8 +84,9 @@ public class CardPane extends Pane {
         instance.addEventHandler(MouseEvent.MOUSE_ENTERED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-
-                showCard(true);
+                if(cardState == CardState.Hand) {
+                    showCard(true);
+                }
             }
         });
 
@@ -88,29 +94,28 @@ public class CardPane extends Pane {
         instance.addEventHandler(MouseEvent.MOUSE_EXITED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-
-                showCard(false);
+                if(cardState == CardState.Hand) {
+                    showCard(false);
+                }
             }
         });
     }
 
-
-
     public void showCard(boolean hover) {
 
         if(hover) {
+            ghostPane.toFront();
             ghostPane.getChildren().add(ghostObject);
         }
 
         if(!hover) {
+            ghostPane.toBack();
             ghostPane.getChildren().remove(ghostObject);
         }
 
     }
 
     public Pane CreateCard(Card card) {
-
-        //TODO: RESOLVE HARDCODING OR CREATE FINAL ASSET SIZE
 
         //Setup container pane
         Pane cardContainer = new Pane();
@@ -136,14 +141,25 @@ public class CardPane extends Pane {
         nameLabel.setFont(nameFont);
 
         //Load all images
-        Image elementImage = new Image("images/icon_" + card.getElement().name() + ".png");
-        Image cardImage = new Image("images/card_template_lvl" + (card.getCapacityPoints()) + ".png");
+        Image elementImage = new Image("elementstcg/gui/images/icon_" + card.getElement().name() + ".png");
+        Image cardImage = new Image("elementstcg/gui/images/card_template_lvl" + (card.getCapacityPoints()) + ".png");
 
         //Create ImageView objects and fill them with the images
         ImageView cardImageView = new ImageView();
         ImageView elementImageView = new ImageView();
         cardImageView.setImage(cardImage);
         elementImageView.setImage(elementImage);
+
+        int depth = 45;
+
+        DropShadow borderGlow= new DropShadow();
+        borderGlow.setOffsetY(0f);
+        borderGlow.setOffsetX(0f);
+        borderGlow.setColor(Color.BLACK);
+        borderGlow.setWidth(depth);
+        borderGlow.setHeight(depth);
+
+        cardImageView.setEffect(borderGlow);
 
         //Add images to the container Pane
         cardContainer.getChildren().add(cardImageView);
@@ -188,10 +204,22 @@ public class CardPane extends Pane {
 
     public void setSelected(boolean selected) {
         if(selected) {
-            this.setTranslateY(-25);
+            this.setTranslateY(-50);
         }
         else {
-            this.setTranslateY(0);
+            this.setTranslateY(-25);
         }
     }
+
+    public CardState getState() {
+        return cardState;
+    }
+
+    public void setState(CardState cardState) {
+        this.cardState = cardState;
+    }
+}
+
+enum CardState {
+    Hand, PlayerField, EnemyField;
 }
