@@ -1,11 +1,15 @@
 package elementstcg;
 
+/**
+ * Created by Mick on 28-9-2015.
+ * @Author Mick
+ * @Author Rick
+ */
+
 import java.io.*;
 import java.nio.file.Files;
 
-/**
- * Created by Mick on 28-9-2015.
- */
+
 public class Account implements Serializable {
 
     private static Account instance;
@@ -24,8 +28,10 @@ public class Account implements Serializable {
      * @return
      */
     public static boolean login(String username, String password){
-        //TODO : implement login()
+        // TODO Enable below until we're done with registering an account
+        /*
         Account savedAccount = null;
+
         try
         {
             File filePath = new File("savedaccount.ser");
@@ -54,7 +60,16 @@ public class Account implements Serializable {
             }
 
         }
-        return false;
+        return false;*/
+        if(username.isEmpty() || password.isEmpty())
+            return false;
+
+        try {
+            instance = new Account(username, password, "127.0.0.1", 2048);
+            return true;
+        } catch (Exception ex) {
+            return false;
+        }
     }
 
     /**
@@ -66,8 +81,19 @@ public class Account implements Serializable {
      * @return
      */
     public static boolean register(String username, String password, String email){
-        //TODO : implement register()
-        instance = new Account(username, password, "127.0.0.1", 22);
+        //TODO Enable below until we're done with registering an account
+        /*
+        String pattern = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+                + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+        java.util.regex.Pattern p = java.util.regex.Pattern.compile(pattern);
+        java.util.regex.Matcher m = p.matcher(email);
+
+        if (!m.matches())
+        {
+            return false;
+        }
+
+        instance = new Account(username, password, "192.168.1.1", 2048);
         instance.setEmail(email);
 
         //Serialization
@@ -89,8 +115,26 @@ public class Account implements Serializable {
         {
             i.printStackTrace();
         }
+        */
 
-        return false;
+        if(username.isEmpty() || password.isEmpty() || email.isEmpty())
+            return false;
+
+        String pattern = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+                + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+        java.util.regex.Pattern p = java.util.regex.Pattern.compile(pattern);
+        java.util.regex.Matcher m = p.matcher(email);
+
+        if (!m.matches())
+            return false;
+
+        try {
+            instance = new Account(username, password, "127.0.0.1", 2048);
+            instance.setEmail(email);
+            return true;
+        } catch (Exception ex) {
+            return false;
+        }
     }
 
     /**
@@ -106,15 +150,32 @@ public class Account implements Serializable {
     private Account(String username, String password, String ip, int port){
 
         if (!username.isEmpty() && !password.isEmpty()) {
+            String pattern = "[$&+,:;=?@#|'<>.-^*()%!]";
+            java.util.regex.Pattern p = java.util.regex.Pattern.compile(pattern);
+            java.util.regex.Matcher m = p.matcher(username);
+
+            if (m.find())
+            {
+                throw new IllegalArgumentException("Illegal character found in username.");
+            }
+
+            pattern = "[\",:;#|'<>.-^*()%!]";
+            p = java.util.regex.Pattern.compile(pattern);
+            m = p.matcher(password);
+
+            if (m.find())
+            {
+                throw new IllegalArgumentException("Illegal character found in password.");
+            }
+
             this.username = username;
             this.password = password;
+            this.ip = ip;
+            this.port = port;
         }
         else{
-            throw new IllegalArgumentException("username and password can't be empty.");
+            throw new IllegalArgumentException("username/password/email can't be empty.");
         }
-        this.ip = ip;
-        this.port = port;
-
     }
 
     /**
@@ -192,11 +253,11 @@ public class Account implements Serializable {
         if (!ip.isEmpty()) {
             this.ip = ip;
         }
-        if (port <= 65535 && port >= 0) {
+        if (port >= 1024 && port <= 65535) {
             this.port = port;
         }
-        else if (ip.isEmpty()){
-            throw new IllegalArgumentException("port must be a number between 0 and 65535, ip can't be empty");
+        else {
+            throw new IllegalArgumentException("port must be > 1024, ip can't be empty");
         }
     }
 

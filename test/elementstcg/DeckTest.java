@@ -24,7 +24,7 @@ public class DeckTest extends TestCase {
     private Card cardFive = new Card(Element.Water, 1, 1,"WaterCard" , 1);
 
     @Before
-    public void setup() {
+    public void setUp() {
         cards = new ArrayList<Card>();
         cards.add(cardOne);
         cards.add(cardTwo);

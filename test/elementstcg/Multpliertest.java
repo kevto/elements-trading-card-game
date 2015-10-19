@@ -22,9 +22,9 @@ public class Multpliertest extends TestCase {
         Card playerCard3 = new Card(Element.Thunder, 100, 200, "Test Monster 1", 10);
 
 
-        assertEquals(2, CalculateMultiplier.calculatedMultplier(enemyCard1, playerCard1));
-        assertEquals(1, CalculateMultiplier.calculatedMultplier(enemyCard2, playerCard2));
-        assertEquals(1, CalculateMultiplier.calculatedMultplier(enemyCard3, playerCard3));
+        assertEquals(2.0, CalculateMultiplier.calculatedMultplier(enemyCard1, playerCard1));
+        assertEquals(1.0, CalculateMultiplier.calculatedMultplier(enemyCard2, playerCard2));
+        assertEquals(1.0, CalculateMultiplier.calculatedMultplier(enemyCard3, playerCard3));
 
     }
 }
