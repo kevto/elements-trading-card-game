@@ -97,7 +97,7 @@ public class AccountTest extends TestCase {
 
     @Test
     public void testGetPort() throws Exception {
-        assertEquals("The port was not correct", 80, account.getPort());
+        assertEquals("The port was not correct", 2048, account.getPort());
     }
 
     @Test
@@ -113,14 +113,14 @@ public class AccountTest extends TestCase {
     @Test
     public void testSetIPAndPort() throws Exception {
         //Happy flow
-        account.setIPAndPort("192.168.1.2", 100);
-        assertEquals("The new IP was not added", "192.168.1.2", account.getPort());
-        assertEquals("The new Port was not added", 100, account.getPort());
+        account.setIPAndPort("192.168.1.2", 2100);
+        assertEquals("The new IP was not added", "192.168.1.2", account.getIp());
+        assertEquals("The new Port was not added", 2100, account.getPort());
 
         //Try to set an negative port number
         try {
-            account.setIPAndPort("192.168.1.1", -1);
-            fail("An port has been set to -1 wich should not be possible (0-65535)");
+            account.setIPAndPort("192.168.1.1", -2);
+            fail("An port has been set to -2 which should not be possible (0-65535)");
         }
         catch (IllegalArgumentException IAE) {
         }

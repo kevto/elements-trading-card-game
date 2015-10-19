@@ -82,7 +82,7 @@ public class Account implements Serializable {
             return false;
         }
 
-        instance = new Account(username, password, "192.168.1.1", 80);
+        instance = new Account(username, password, "192.168.1.1", 2048);
         instance.setEmail(email);
 
         //Serialization
@@ -230,11 +230,11 @@ public class Account implements Serializable {
         if (!ip.isEmpty()) {
             this.ip = ip;
         }
-        if (port <= 65535 && port >= 0) {
+        if (port >= 1024 && port <= 65535) {
             this.port = port;
         }
-        else if (ip.isEmpty()){
-            throw new IllegalArgumentException("port must be a number between 0 and 65535, ip can't be empty");
+        else {
+            throw new IllegalArgumentException("port must be > 1024, ip can't be empty");
         }
     }
 
