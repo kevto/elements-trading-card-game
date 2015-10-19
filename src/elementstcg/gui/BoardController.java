@@ -3,8 +3,12 @@ package elementstcg.gui;
 import elementstcg.Card;
 import elementstcg.Element;
 import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -22,8 +26,10 @@ public class BoardController implements Initializable, ControlledScreen {
     ScreenHandler myController;
 
     // UI Components
-    @FXML HBox hboxPlayerHand;
-    @FXML Pane ghostPane;
+    @FXML HBox hboxPlayerHand;      //Player hand
+    @FXML Pane ghostPane;           //Card info pane
+    @FXML BorderPane bPaneField;
+    @FXML Pane mainPane;
 
     private CardPane selectedCard;
 
@@ -49,21 +55,22 @@ public class BoardController implements Initializable, ControlledScreen {
         hboxPlayerHand.getChildren().add(new CardPane(earthCard, ghostPane, this));
         hboxPlayerHand.getChildren().add(new CardPane(energyCard, ghostPane, this));
 
+        FieldGrid field = new FieldGrid(847, 253, 2, 6, this);
+
+        field.getStyleClass().add("field");
+
+        field.setTranslateY(253);
+
+        bPaneField.getChildren().add(field);
+
+        field.toFront();
+
         //END DEBUG
     }
 
 
     public void setScreenParent(ScreenHandler screenParent) {
         myController = screenParent;
-    }
-
-
-    public void onGridClick(Event event) {
-        if(event.getSource() instanceof GridPane) {
-            ((GridPane) event.getSource()).getChildren().add(selectedCard);
-            selectedCard.setSelected(false);
-            selectedCard.setState(CardState.PlayerField);
-        }
     }
 
     /**
@@ -75,11 +82,28 @@ public class BoardController implements Initializable, ControlledScreen {
     }
 
     /**
+     * This method is called when an FieldPane is selected
+     */
+    public void selectFieldPane(FieldPane field) {
+        if(field.getCard() != null) {
+            CardPane card = field.getCard();
+        }
+        else
+        {
+            if(selectedCard != null) {
+                //TODO: Move logic to board
+                field.setCard(selectedCard);
+                selectedCard = null;
+            }
+        }
+    }
+
+    /**
      * This method is called when a player selects a card that is currently on the playing field.
      */
     public void selectCardButtonAction(CardPane cardPane)
     {
-
+        System.out.println(cardPane.getCard().getName());
     }
 
     /**

@@ -150,9 +150,10 @@ public class CardPane extends Pane {
         cardImageView.setImage(cardImage);
         elementImageView.setImage(elementImage);
 
+        //Drop Shadow
         int depth = 45;
 
-        DropShadow borderGlow= new DropShadow();
+        DropShadow borderGlow = new DropShadow();
         borderGlow.setOffsetY(0f);
         borderGlow.setOffsetX(0f);
         borderGlow.setColor(Color.BLACK);
