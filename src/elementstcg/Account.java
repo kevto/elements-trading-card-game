@@ -130,6 +130,14 @@ public class Account implements Serializable {
                 throw new IllegalArgumentException("Illegal character found in username.");
             }
 
+            pattern = "[\",:;#|'<>.-^*()%!]";
+            p = java.util.regex.Pattern.compile(pattern);
+            m = p.matcher(password);
+
+            if (m.find())
+            {
+                throw new IllegalArgumentException("Illegal character found in password.");
+            }
         }
         else{
             throw new IllegalArgumentException("username/password/email can't be empty.");
