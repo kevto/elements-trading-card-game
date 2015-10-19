@@ -45,13 +45,9 @@ public class CardPane extends Pane {
         cardObject = CreateCard(card);
         ghostObject = CreateCard(card);
 
-        //Set the scale for the ghostCard (DEBUG)
-        ghostObject.setScaleX(0.8);
-        ghostObject.setScaleY(0.8);
-
         //Set the scale for the hand card (DEBUG)
-        this.setScaleX(0.25);
-        this.setScaleY(0.25);
+        this.setScaleX(0.5);
+        this.setScaleY(0.5);
 
         //Add the cardObject to the CardPane so it is displayed on the stage
         this.getChildren().add(cardObject);
@@ -69,15 +65,13 @@ public class CardPane extends Pane {
                 if(event.getButton()  == MouseButton.PRIMARY) {
                     System.out.println(event.getTarget().toString());
 
-                    //TODO: Add click event logic (EG. call method when a card is clicked)
+                    //TODO: Add LEFT click event logic (EG. call method when a card is clicked)
                 }
 
                 //RIGHT CLICK
                 if(event.getButton()  == MouseButton.SECONDARY) {
-
+                    //TODO: Add RIGHT click event logic (EG. call method when a card is clicked)
                 }
-
-
             }
         });
 
@@ -87,8 +81,6 @@ public class CardPane extends Pane {
             public void handle(MouseEvent event) {
 
                 showCard(true);
-
-                //System.out.println("Enter " + card.getName());
             }
         });
 
@@ -98,8 +90,6 @@ public class CardPane extends Pane {
             public void handle(MouseEvent event) {
 
                 showCard(false);
-
-                //System.out.println("Exit " + card.getName());
             }
         });
     }
@@ -137,8 +127,8 @@ public class CardPane extends Pane {
         healthLabel.setText(String.valueOf(card.getHP()));
         nameLabel.setText(card.getName());
 
-        Font infoFont = new Font(80);
-        Font nameFont = new Font(55);
+        Font infoFont = new Font(40);
+        Font nameFont = new Font(25);
 
         capacityLabel.setFont(infoFont);
         attackLabel.setFont(infoFont);
@@ -167,22 +157,23 @@ public class CardPane extends Pane {
 
         //Center element icon to card
         elementImageView.setX((cardImage.getWidth() / 2) - (elementImage.getWidth() / 2));
-        elementImageView.setY(140);
+        elementImageView.setY(50);
 
         //Set capacityLabel pos
-        capacityLabel.setTranslateX(15);
+        capacityLabel.setTranslateX(25);
+        capacityLabel.setTranslateY(5);
 
         //Set attackLabel pos
-        attackLabel.setTranslateX(115);
-        attackLabel.setTranslateY(690);
+        attackLabel.setTranslateX(30);
+        attackLabel.setTranslateY(440);
 
         //Set capacityLabel pos
-        healthLabel.setTranslateX(350);
-        healthLabel.setTranslateY(690);
+        healthLabel.setTranslateX(170);
+        healthLabel.setTranslateY(440);
 
         //Set nameLabel pos
-        nameLabel.setTranslateX(30);
-        nameLabel.setTranslateY(440);
+        nameLabel.setTranslateX(20);
+        nameLabel.setTranslateY(285);
 
         return cardContainer;
     }

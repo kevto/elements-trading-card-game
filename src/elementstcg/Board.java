@@ -1,6 +1,7 @@
 package elementstcg;
 
 import elementstcg.gui.BoardController;
+import elementstcg.util.AIEnemy;
 import elementstcg.util.CalculateMultiplier;
 import elementstcg.util.CustomException.EmptyFieldException;
 import elementstcg.util.CustomException.ExceedCapacityException;
@@ -11,13 +12,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
+import java.util.Random;
 
 public class Board {
 
     private int initialHp = 20;
     private boolean playerTurn;
     public static int MAX_CAP_POINTS;
-
+    private boolean enemyTurn;
     private Player player;
     private Player enemy;
 
@@ -162,6 +164,13 @@ public class Board {
      */
     public void attackCard(Card card, int point, List<Card> defenderField, Runnable removeCard) throws EmptyFieldException{
         Card fieldCard = defenderField.get(point);
+        if (enemyTurn == false) {
+            fieldCard = defenderField.get(point);
+        }
+        else {
+            fieldCard = defenderField.get(point);
+        }
+
         double totalDamage = 0;
         if(fieldCard != null) {
 
@@ -183,11 +192,52 @@ public class Board {
     }
 
 
+
+    /*
+    Deze methode zal toch echt eerst getest moeten worden of het werkt.
+    */
+    private int generateAttackPointForAI(Boolean attackingAttackCards){
+        int generatedPoint = 0;
+        Random rand = new Random();
+        Card fieldCard = null;
+
+        while (fieldCard == null){
+            //Bron: http://www.mkyong.com/java/java-generate-random-integers-in-a-range/
+            if (attackingAttackCards == true) {
+                generatedPoint = rand.nextInt((10 - 16) + 1) + 16;
+            }
+            else {
+                generatedPoint = rand.nextInt((0 - 6) + 1) + 6;
+            }
+            fieldCard = enemyField.get(generatedPoint);
+
+
+        }
+        return generatedPoint;
+    }
+
+    private void attackPlayer(){
+        Card retrievedCard = AIEnemy.attackPlayer();
+        Card fieldCard = null;
+        int pointer = 0;
+        while (fieldCard == null) {
+            Random random = new Random();
+            pointer = generateAttackPointForAI(random.nextBoolean());
+            fieldCard = playerField.get(pointer);
+        }
+        try {
+            attackCard(retrievedCard, pointer);
+        } catch (EmptyFieldException e) {
+            e.printStackTrace();
+        }
+
+    }
     /**
      * Gets the enemy Player instance
      * @return enemy player instance.
      */
-    public Player getEnemy() {
+    public Player getEnemy()
+    {
         return enemy;
     }
 
