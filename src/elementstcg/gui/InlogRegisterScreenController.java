@@ -24,7 +24,6 @@ public class InlogRegisterScreenController implements Initializable, ControlledS
     @FXML TextField tbEmail;
     @FXML Label lblMessage;
 
-    Stage stage;
     ScreenHandler myController;
     boolean isRegistering = false;
 
@@ -47,7 +46,6 @@ public class InlogRegisterScreenController implements Initializable, ControlledS
      * Username must be at least 6 characters.
      */
     public void clickedLogin(Event event) {
-        //TODO
         if (!isRegistering) {
             //User is logging in.
             if (tbUsername.getText().isEmpty() || tbPassword.getText().isEmpty()) {
@@ -56,7 +54,7 @@ public class InlogRegisterScreenController implements Initializable, ControlledS
             else{
                 if (Account.login(tbUsername.getText(), tbPassword.getText())){
                     lblMessage.setText("Succesfully logged in.");
-                    myController.setScreen(ScreensFramework.screenLobbyID);
+                    myController.setScreen(ScreensFramework.screenBoardID);
                 }
                 else{
                     lblMessage.setText("Invalid username or password.");
@@ -85,15 +83,15 @@ public class InlogRegisterScreenController implements Initializable, ControlledS
             }
             else{
                 //All fields are valid.
-                if (Account.register(tbUsername.getText(), tbPassword.getText(), tbEmail.getText())){
+                if (Account.register(tbUsername.getText(), tbPassword.getText(), tbEmail.getText())) {
                     lblMessage.setText("Succesfully registered.");
+                    //TODO Go back to the login screen.
+                    //myController.setScreen(ScreensFramework.screenBoardID);
                 }
             }
 
 
         }
-
-        myController.setScreen(ScreensFramework.screenBoardID);
 
     }
 
