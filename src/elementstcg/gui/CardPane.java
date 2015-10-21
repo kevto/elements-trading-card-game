@@ -2,6 +2,7 @@ package elementstcg.gui;
 
 import elementstcg.Card;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
@@ -9,10 +10,13 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
-public class CardPane extends Pane {
+import static elementstcg.gui.CardState.*;
+
+public class CardPane extends StackPane {
 
     private Card card;
 
@@ -29,53 +33,68 @@ public class CardPane extends Pane {
 
     private CardState cardState;
 
+    /**
+     * Create a CardPane with the provided data. The CardPane object contains the Card object
+     * All assets will be loaded and two Pane Objects will be created.
+     * CardObject - The card object itself. Used to display the card on the field and in the hand.
+     * GhostObject - An independent copy of the CardObject. Used to display info of the card, the
+     * ghostObject is not a child of the CardPane object. This means that the size and position of
+     * CardPane will not influence the ghostObject.
+     * @param card The card that needs to be created and contained within CardPane
+     * @param ghostPane The ghostPane in the scene, where the ghostObject needs to be displayed
+     * @param controller The controller of the board
+     */
     public CardPane(Card card, Pane ghostPane, BoardController controller) {
 
+        instance = this;
         this.card = card;
         this.ghostPane = ghostPane;
-
-        cardState = CardState.Hand;
-
         this.controller = controller;
 
-        instance = this;
+        cardState = PlayerHand;
 
         cardObject = CreateCard(card);
         ghostObject = CreateCard(card);
 
-        this.setScaleX(0.5);
-        this.setScaleY(0.5);
+        getChildren().add(cardObject);
 
-        this.setTranslateY(-25);
+        setTranslateY(-25);
 
-        this.getChildren().add(cardObject);
-
+        resizeCard();
         addEventListeners();
     }
 
+    /**
+     * Create all the event listeners for the CardPane object and children.
+     */
     private void addEventListeners() {
         //MOUSE CLICK
         instance.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
                 //LEFT CLICK
-                if(event.getButton()  == MouseButton.PRIMARY) {
+                if (event.getButton() == MouseButton.PRIMARY) {
                     //TODO: Add LEFT click event logic (EG. call method when a card is clicked)
 
-                    if(cardState == CardState.Hand) {
+                    if (cardState == PlayerHand) {
                         controller.selectCardInHandButtonAction(instance);
-                    }
-                    else if(cardState == CardState.PlayerField) {
+                    } else if (cardState == PlayerField) {
                         controller.selectCardButtonAction(instance);
-                    }
-                    else if(cardState == CardState.EnemyField) {
+                    } else if (cardState == EnemyField) {
                         controller.attackEnemyCardButtonAction(instance);
                     }
                 }
 
                 //RIGHT CLICK
-                if(event.getButton()  == MouseButton.SECONDARY) {
+                if (event.getButton() == MouseButton.SECONDARY) {
                     //TODO: Add RIGHT click event logic (EG. call method when a card is clicked)
+
+                    System.out.println("RIGHT");
+                    System.out.println(cardState);
+
+                    if(cardState == PlayerField) {
+                        controller.showCardButtonAction(instance);
+                    }
                 }
             }
         });
@@ -84,7 +103,7 @@ public class CardPane extends Pane {
         instance.addEventHandler(MouseEvent.MOUSE_ENTERED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                if(cardState == CardState.Hand) {
+                if (cardState == PlayerHand) {
                     showCard(true);
                 }
             }
@@ -94,27 +113,36 @@ public class CardPane extends Pane {
         instance.addEventHandler(MouseEvent.MOUSE_EXITED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                if(cardState == CardState.Hand) {
+                if (cardState == PlayerHand) {
                     showCard(false);
                 }
             }
         });
     }
 
+    /**
+     * Called to display or hide the ghostObject on the field. The ghostPane is moved from and too the back
+     * to make sure it doesn't interfere with any mouse events on the field.
+     * @param hover is the mouse hovering over the cardObject
+     */
     public void showCard(boolean hover) {
 
         if(hover) {
-            ghostPane.toFront();
-            ghostPane.getChildren().add(ghostObject);
+            controller.showGhostPane(ghostObject);
         }
 
         if(!hover) {
-            ghostPane.toBack();
-            ghostPane.getChildren().remove(ghostObject);
+            controller.hideGhostPane();
         }
 
     }
 
+    /**
+     * Create an visual card object with the provided card info
+     * All assets needed will be loaded here
+     * @param card The card needed to be created
+     * @return The finished card object
+     */
     public Pane CreateCard(Card card) {
 
         //Setup container pane
@@ -195,14 +223,47 @@ public class CardPane extends Pane {
         return cardContainer;
     }
 
+    /**
+     * Get the card object
+     * @return Card
+     */
     public Card getCard() {
         return card;
     }
 
+    public Pane getGhostObject(){
+        return ghostObject;
+    }
+
+    /**
+     * Get the instance of the CardPane
+     * @return CardPane
+     */
     public CardPane getInstance() {
         return instance;
     }
 
+    /**
+     * Return the current state of the CardPane object
+     * @return CardState
+     */
+    public CardState getCardState() {
+        return cardState;
+    }
+
+    /**
+     * Set the state of the CardPane object
+     * @param cardState
+     */
+    public void setCardState(CardState cardState) {
+        this.cardState = cardState;
+    }
+
+    /**
+     * Called to visually display if the card is selected. If the card is selected, the card will move its
+     * translate by X amount.
+     * @param selected true/false if the card should be selected/deselected
+     */
     public void setSelected(boolean selected) {
         if(selected) {
             this.setTranslateY(-50);
@@ -212,15 +273,47 @@ public class CardPane extends Pane {
         }
     }
 
-    public CardState getState() {
-        return cardState;
+    /**
+     * Resize the card based on the state of the card
+     */
+    public void resizeCard() {
+        switch(cardState) {
+            case PlayerHand:
+                cardObject.setScaleX(0.5);
+                cardObject.setScaleY(0.5);
+                break;
+            case EnemyHand:
+                cardObject.setScaleX(0.5);
+                cardObject.setScaleY(0.5);
+                break;
+            case PlayerField:
+                cardObject.setScaleX(0.2);
+                cardObject.setScaleY(0.2);
+                break;
+            case EnemyField:
+                cardObject.setScaleX(0.2);
+                cardObject.setScaleY(0.2);
+                break;
+        }
     }
 
-    public void setState(CardState cardState) {
-        this.cardState = cardState;
+    /**
+     * Resets all the X and Y values of both
+     * Translate and Layout
+     */
+    public void resetCardPos() {
+        setTranslateX(0);
+        setTranslateY(0);
+
+        layoutXProperty().set(0);
+        layoutYProperty().set(0);
     }
 }
 
+/**
+ * The different states a card can have
+ * Hand: The card is currently i
+ */
 enum CardState {
-    Hand, PlayerField, EnemyField;
+    PlayerHand, EnemyHand, PlayerField, EnemyField;
 }

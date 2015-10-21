@@ -37,7 +37,7 @@
                </top>
             </BorderPane>
             <HBox fx:id="hboxEnemyHand" layoutX="304.0" prefHeight="121.0" prefWidth="847.0" />
-            <HBox id="hboxPlayerHand" fx:id="hboxPlayerHand" fillHeight="false" layoutX="304.0" layoutY="637.0" onMouseClicked="#onMouseClickHbox" prefHeight="143.0" prefWidth="847.0" />
+            <HBox id="hboxPlayerHand" fx:id="hboxPlayerHand" fillHeight="false" layoutX="304.0" layoutY="637.0" prefHeight="143.0" prefWidth="847.0" />
             <Pane layoutX="38.0" layoutY="270.0">
                <children>
                   <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">

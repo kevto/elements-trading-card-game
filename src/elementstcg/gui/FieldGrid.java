@@ -14,6 +14,16 @@ public class FieldGrid extends Pane {
     private ArrayList<FieldPane> fields = new ArrayList<FieldPane>();
     private BoardController controller;
 
+    /**
+     * Create a FieldGrid object with the provided width, height. The FieldGrid objects will
+     * create new panes based on the provided amount of columns and rows.
+     * All panes will be the width of width / columns and height of height / rows.
+     * @param width The width the FieldGrid needs to be
+     * @param height The height the FieldGrid needs to be
+     * @param rows The amount of rows (if 0 no panes will be created)
+     * @param columns The amount columns (if 0 no panes will be created)
+     * @param controller The controller where all actions should be reported
+     */
     public FieldGrid(int width, int height, int rows, int columns, BoardController controller) {
         this.controller = controller;
 
@@ -65,8 +75,6 @@ public class FieldGrid extends Pane {
                 pane.getChildren().add(rec);
                 this.getChildren().add(pane);
                 fields.add(pane);
-
-                System.out.println(rec.getWidth());
             }
         }
     }

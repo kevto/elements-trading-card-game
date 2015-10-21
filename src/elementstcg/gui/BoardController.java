@@ -6,6 +6,7 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -39,6 +40,14 @@ public class BoardController implements Initializable, ControlledScreen {
         hboxPlayerHand.getParent().prefWidth(hboxPlayerHand.getPrefWidth());
         hboxPlayerHand.getParent().prefHeight(hboxPlayerHand.getPrefHeight());
 
+        FieldGrid field = new FieldGrid(847, 253, 2, 6, this);
+
+        field.getStyleClass().add("field");
+
+        field.setTranslateY(253);
+
+        bPaneField.getChildren().add(field);
+
         //TODO: REMOVE DEBUG
         Card fireCard = new Card(Element.Fire, 5, 5, "Fire", 3);
         Card airCard = new Card(Element.Air, 5, 5, "Air", 2);
@@ -55,17 +64,16 @@ public class BoardController implements Initializable, ControlledScreen {
         hboxPlayerHand.getChildren().add(new CardPane(earthCard, ghostPane, this));
         hboxPlayerHand.getChildren().add(new CardPane(energyCard, ghostPane, this));
 
-        FieldGrid field = new FieldGrid(847, 253, 2, 6, this);
-
-        field.getStyleClass().add("field");
-
-        field.setTranslateY(253);
-
-        bPaneField.getChildren().add(field);
-
-        field.toFront();
-
         //END DEBUG
+
+        ghostPane.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if (event.getButton() == MouseButton.PRIMARY) {
+                    hideGhostPane();
+                }
+            }
+        });
     }
 
 
@@ -103,7 +111,11 @@ public class BoardController implements Initializable, ControlledScreen {
      */
     public void selectCardButtonAction(CardPane cardPane)
     {
-        System.out.println(cardPane.getCard().getName());
+
+    }
+
+    public void showCardButtonAction(CardPane cardPane) {
+        showGhostPane(cardPane.getGhostObject());
     }
 
     /**
@@ -169,7 +181,25 @@ public class BoardController implements Initializable, ControlledScreen {
 
     }
 
-    public void onMouseClickHbox(Event event) {
-        //System.out.println("Clicked");
+    /**
+     * This method is called to move the ghostPane to the front and display the provided node
+     */
+    public void showGhostPane(Node node) {
+        if(ghostPane.getChildren().size() > 0) {
+            ghostPane.getChildren().removeAll(ghostPane.getChildren());
+        }
+
+        ghostPane.getChildren().add(node);
+
+        ghostPane.toFront();
+    }
+
+    /**
+     * This method is called to move the ghostPane to the back and remove all nodes from the children.
+     */
+    public void hideGhostPane() {
+        ghostPane.getChildren().removeAll(ghostPane.getChildren());
+
+        ghostPane.toBack();
     }
 }
