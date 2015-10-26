@@ -9,8 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Created by Maarten on 28-9-2015.
@@ -45,7 +43,8 @@ public class DeckTest extends TestCase {
     }
 
     @Test
-    public void testGetRandomCard() throws Exception {
+    public void testGetRandomCard() throws Exception
+    {
         assertTrue("No card was returned", deck.getRandomCard() instanceof Card);
         assertEquals("Draw card was not removed", 4, deck.getAmountCards());
 
@@ -59,20 +58,43 @@ public class DeckTest extends TestCase {
     }
 
     @Test
-    public void testGetAmountCards() throws Exception {
+    public void testGetAmountCards() throws Exception
+    {
         assertEquals("Wrong amount of cards returned", 5, deck.getAmountCards());
     }
 
     @Test
-    public void testGetCards() throws Exception {
+    public void testGetCards() throws Exception
+    {
         assertEquals("Wrong card object returned", cards, deck.getCards());
     }
 
     @Test
-    public void testAddCard() throws Exception {
+    public void testAddCard() throws Exception
+    {
         int i = deck2.getAmountCards();
         Card c = new Card(Element.Air, 1, 1, "test Card please ignore", 1);
         deck2.addCard(c);
         assertTrue("Card did not get added to deck", deck2.getAmountCards() > i);
+        assertFalse("Successfully added null as card", deck2.addCard(null));
+    }
+    @Test(expected = IllegalArgumentException.class)
+    public void testConstructor() throws Exception
+    {
+        ArrayList<Card> tooManyCards = new ArrayList<>();
+
+        for (int i = 0; i < 70; i++)
+        {
+            Card c = new Card(Element.Air, 2, 2, "testName", 1);
+            tooManyCards.add(c);
+        }
+
+        Deck shouldNotFail = new Deck();
+
+        try
+        {
+            Deck tooBig = new Deck(tooManyCards);
+        }
+        catch (IllegalArgumentException ex) {}
     }
 }

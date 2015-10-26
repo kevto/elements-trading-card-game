@@ -9,7 +9,7 @@ import org.junit.Test;
  *
  * Element element, int attack, int hp, String name, int cPoints
  */
-public class Multpliertest extends TestCase {
+public class Multipliertest extends TestCase {
 
     @Test
     public void testMultiplier() throws Exception {

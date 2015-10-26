@@ -18,7 +18,7 @@ public class Player {
     }
 
     /**
-    * Initilizes the Player class with the given hp and name
+    * Initializes the Player class with the given hp and name
     * @author Maarten Verboogen
     * @param hp the amount of HP the player object starts with
     * @param name the name of the player object
@@ -37,7 +37,7 @@ public class Player {
      * @param deck that the player will be playing with.
      */
     public void setDeck(Deck deck) {
-        if(deck == null)
+        if(this.deck == null)
             this.deck = deck;
     }
 
@@ -92,4 +92,10 @@ public class Player {
     public String getName(){
         return name;
     }
+
+    /**
+     * Get the current deck.
+     * @return The current deck object.
+     */
+    public Deck getDeck() { return deck; }
 }
