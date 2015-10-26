@@ -8,31 +8,28 @@ import elementstcg.util.CustomException.ExceedCapacityException;
 import elementstcg.util.CustomException.OccupiedFieldException;
 
 import javax.lang.model.type.NullType;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
-import java.util.Random;
 
 public class Board {
 
     private int initialHp = 20;
     private boolean playerTurn;
     public static int MAX_CAP_POINTS;
-    private boolean enemyTurn;
     private Player player;
     private Player enemy;
 
-    private List<Card> playerField;
-    private List<Card> enemyField;
+    private HashMap<Integer, Card> playerField;
+    private HashMap<Integer, Card> enemyField;
 
     /**
      * Constructor with the enemy player.
-     * @param enemyName
+     * @param enemyName name of the enemy player.
      */
     public Board(String enemyName){
-        playerField = new ArrayList<Card>();
-        enemyField = new ArrayList<Card>();
+        playerField = new HashMap<>();
+        enemyField = new HashMap<>();
 
         if (enemyName == null || enemyName == "")
         {
@@ -47,8 +44,8 @@ public class Board {
      * Constructor without the enemy player.
      */
     public Board(){
-        playerField = new ArrayList<Card>();
-        enemyField = new ArrayList<Card>();
+        playerField = new HashMap<>();
+        enemyField = new HashMap<>();
 
         player = new Player(initialHp, (Account.getInstance() != null ? Account.getInstance().getUserName() : "Player"));
         setupPlayer("Enemy");
@@ -87,16 +84,12 @@ public class Board {
      * @return if the game is over.
      */
     public boolean isGameOver(){
-
         if(player.getHp() <= 0) {
             return true;
-        }
-
-        if(enemy.getHp() <= 0) {
+        } else if(enemy.getHp() <= 0) {
             return true;
-        }
-
-        return false;
+        } else
+            return false;
     }
 
     /**
@@ -122,24 +115,21 @@ public class Board {
     public void putCardPlayer(int point, Card card) throws OccupiedFieldException, ExceedCapacityException {
         int cap = 0;
 
-        for (Card c : playerField) {
+        for (Card c : playerField.values()) {
             if(c != null) {
-                cap = c.getCapacityPoints();
+                cap += c.getCapacityPoints();
             }
         }
 
-        if(cap + card.getCapacityPoints() <= MAX_CAP_POINTS){
-
+        if(cap + card.getCapacityPoints() <= MAX_CAP_POINTS) {
             Card fieldCard = playerField.get(point);
 
             if(fieldCard == null){
-                playerField.add(point, card);
-            }
-            else {
+                playerField.put(point, card);
+            } else {
                 throw new OccupiedFieldException("There is already a card on this field");
             }
-        }
-        else {
+        } else {
             throw new ExceedCapacityException("Card cannot be played, total capacity points exceed the maximum (" + (cap + card.getCapacityPoints()) + "/" + MAX_CAP_POINTS + ")");
         }
     }
@@ -150,34 +140,51 @@ public class Board {
      * @param card Which card gets placed.
      */
     public void putCardEnemy(int point, Card card){
-        enemyField.add(point, card);
+        enemyField.put(point, card);
     }
 
     /**
      * * Method that gets called when the player or enemy attacks an opponent's card.
      * @param card The card that attacks.
      * @param point Location of the card that gets attacked.
-     * @param defenderField List of cards that are on the player field will be the defender.
+     * @param defenderField Dictionary of cards that are on the player field will be the defender.
      * @param removeCard Runnable that will run on the JavaFX thread to remove the card.
      * @throws EmptyFieldException happens when the selected enemy playerfield doesn't contain
      * a card in it.
      */
-    public void attackCard(Card card, int point, List<Card> defenderField, Runnable removeCard) throws EmptyFieldException{
+    public void attackCard(Card card, int point, HashMap<Integer, Card> defenderField, Runnable removeCard) throws EmptyFieldException{
         Card fieldCard = defenderField.get(point);
 
         double totalDamage = 0;
         if(fieldCard != null) {
-
             totalDamage = card.getAttack() * CalculateMultiplier.calculatedMultplier(fieldCard, card);
 
-            fieldCard.modifyHP((int) totalDamage);
+            // Checking if there's a defender card infront of the card that
+            // the persons whishes to attack. Attack that one if true.
+            if(point < 10) {
+                if (defenderField.containsKey(point + 10) != false) {
+                    totalDamage = card.getAttack() * CalculateMultiplier.calculatedMultplier(defenderField.get(point + 10), card);
+                    defenderField.get(point + 10).modifyHP((int) totalDamage);
+                    fieldCard = defenderField.get(point + 10);
+                } else {
+                    fieldCard.modifyHP((int) totalDamage);
+                }
+            } else {
+                fieldCard.modifyHP((int) totalDamage);
+            }
+
+            // TODO Need to find a way to set all the cards to -> setAttacked(false)
             card.setAttacked(true);
 
             if(fieldCard.getHP() <= 0) {
-                enemyField.remove(point);
+                // TODO Not sure whether this works or not. Requires some testing to be done.
+                for(Map.Entry<Integer, Card> entry : defenderField.entrySet())
+                    if(entry.getValue().equals(fieldCard))
+                        defenderField.remove(entry.getKey());
 
                 //TODO: Implement notifying enemy to remove card from field (MEANT FOR BoardController)
-                removeCard.run();
+                if(removeCard != null)
+                    removeCard.run();
             }
         }
         else {
@@ -185,11 +192,11 @@ public class Board {
         }
     }
 
-
-
-    /*
-    Deze methode zal toch echt eerst getest moeten worden of het werkt.
-    */
+    /**
+     * Generates attack points for the enemy.
+     * @param attackingAttackCards boolean whether the AI attacks a player card or the player self.
+     * @return generated attack points.
+     */
     private int generateAttackPointForAI(Boolean attackingAttackCards){
         int generatedPoint = 0;
         Random rand = new Random();
@@ -199,26 +206,21 @@ public class Board {
             //Bron: http://www.mkyong.com/java/java-generate-random-integers-in-a-range/
             if (attackingAttackCards == true) {
                 generatedPoint = rand.nextInt((10 - 16) + 1) + 16;
-            }
-            else {
+            } else {
                 generatedPoint = rand.nextInt((0 - 6) + 1) + 6;
             }
+
             fieldCard = enemyField.get(generatedPoint);
-
-
         }
         return generatedPoint;
     }
 
-    private void attackPlayer(){
+    /**
+     * Attacks the player. Action done from the AI.
+     */
+    public void attackPlayer(){
         Card retrievedCard = AIEnemy.attackPlayer();
-        //to be fixed
-        Runnable r = new Runnable() {
-            @Override
-            public void run() {
 
-            }
-        };
         Card fieldCard = null;
         int pointer = 0;
         while (fieldCard == null) {
@@ -227,7 +229,7 @@ public class Board {
             fieldCard = playerField.get(pointer);
         }
         try {
-            attackCard(retrievedCard, pointer, this.playerField, r);
+            attackCard(retrievedCard, pointer, this.playerField, null);
         } catch (EmptyFieldException e) {
             e.printStackTrace();
         }
@@ -237,8 +239,7 @@ public class Board {
      * Gets the enemy Player instance
      * @return enemy player instance.
      */
-    public Player getEnemy()
-    {
+    public Player getEnemy() {
         return enemy;
     }
 
@@ -254,7 +255,7 @@ public class Board {
      * Getter to get all the cards on the play field of the player.
      * @return List of cards of the player field
      */
-    public List<Card> getPlayerField() {
+    public HashMap<Integer, Card> getPlayerField() {
         return playerField;
     }
 
@@ -262,7 +263,7 @@ public class Board {
      * Getter to get all the cards on the play field of the enemy.
      * @return List of cards of the enemy field
      */
-    public List<Card> getEnemyField() {
+    public HashMap<Integer, Card> getEnemyField() {
         return enemyField;
     }
 }

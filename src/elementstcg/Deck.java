@@ -8,7 +8,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Deck {
 
     private List<Card> cards;
-    public static int MAX_CARDS = 5;
+    public static int MAX_CARDS = 50;
 
     /**
      * Initialize an Deck object with an empty ArrayList<Card>()
@@ -25,8 +25,7 @@ public class Deck {
      */
     public Deck(ArrayList<Card> cardList) {
 
-        if (cardList.size() > MAX_CARDS)
-        {
+        if (cardList.size() > MAX_CARDS) {
             throw new IllegalArgumentException("You're trying to add too many cards.");
         }
 
@@ -39,16 +38,12 @@ public class Deck {
      * @return the randomly selected Card from the deck
      */
     public Card getRandomCard() {
-        int i = ThreadLocalRandom.current().nextInt(0, MAX_CARDS);
-        Card c = null;
+        Random random = new Random();
+        int index =  (random.nextInt(cards.size()));
+        Card card = cards.get(index);
+        cards.remove(card);
 
-        if (i <= cards.size() - 1)
-        {
-            c = cards.get(i);
-            cards.remove(i);
-        }
-
-        return c;
+        return card;
     }
 
     /**
@@ -74,16 +69,11 @@ public class Deck {
      * @param c the given card.
      * @return true or false, depending on if it succeeded or not.
      */
-    public boolean addCard(Card c)
-    {
-        if (cards.size() < MAX_CARDS && c != null)
-        {
+    public boolean addCard(Card c) {
+        if (cards.size() < MAX_CARDS && c != null) {
             cards.add(c);
             return true;
-        }
-
-        else
-        {
+        } else {
             return false;
         }
     }
