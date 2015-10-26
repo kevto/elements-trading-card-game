@@ -16,7 +16,7 @@ public class Board {
 
     private int initialHp = 20;
     private boolean playerTurn;
-    public static int MAX_CAP_POINTS;
+    public static final int MAX_CAP_POINTS = 20;
     private Player player;
     private Player enemy;
 

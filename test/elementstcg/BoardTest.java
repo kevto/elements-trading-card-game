@@ -12,6 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -50,11 +51,10 @@ public class BoardTest extends TestCase {
 
     @Test
     public void testUpdateEnemyHP(){
-        board.updateEnemyHP(-10);
-        assertEquals("HP wasn't 10", board.getPlayer().getHp(), 10);
+        board.updateEnemyHP(10);
+        assertEquals("HP wasn't 10", board.getEnemy().getHp(), 10);
         board.updateEnemyHP(-20);
-        assertEquals("HP should be 30 now.", board.getPlayer().getHp(), 30);
-
+        assertEquals("HP should be 30 now.", board.getEnemy().getHp(), 30);
     }
 
     @Test
@@ -85,14 +85,16 @@ public class BoardTest extends TestCase {
         } catch (ExceedCapacityException e) {
             System.out.println(e.toString());
         }
-        List<Card> testCards = board.getPlayerField();
-        if (testCards.isEmpty())
-        {
+
+        HashMap<Integer, Card> testCards = board.getPlayerField();
+
+        if (testCards.isEmpty()) {
             fail("Card was not entered into player field");
         }
+
         Card testCard = testCards.get(1);
-        if (testCard == null)
-        {
+
+        if (testCard == null) {
             fail("No card returned");
         }
 
@@ -102,14 +104,15 @@ public class BoardTest extends TestCase {
     @Test
     public void testPutCardEnemy() throws Exception {
         board.putCardEnemy(1, card);
-        List<Card> testCards = board.getEnemyField();
-        if (testCards.isEmpty())
-        {
+        HashMap<Integer, Card> testCards = board.getEnemyField();
+
+        if (testCards.isEmpty()) {
             fail("Card was not entered into player field");
         }
+
         Card testCard = testCards.get(1);
-        if (testCard == null)
-        {
+
+        if (testCard == null) {
             fail("No card returned");
         }
 
@@ -120,8 +123,8 @@ public class BoardTest extends TestCase {
     public void testAttackCard() throws EmptyFieldException {
         board.putCardEnemy(1, card);
         Card testCard = new Card(Element.Air, 4, 10, "alakazam", 3);
-        board.attackCard(testCard, 1);
-        List<Card> testcards = board.getEnemyField();
+        board.attackCard(testCard, 1, board.getEnemyField(), null);
+        HashMap<Integer, Card> testcards = board.getEnemyField();
 
         if (testcards == null) {
             fail("No cards found");
@@ -129,20 +132,22 @@ public class BoardTest extends TestCase {
 
         Card c = testcards.get(1);
 
-        if (c == null)
-        {
+        if (c == null) {
             fail("No card found");
         }
 
         assertEquals("Attack didn't go through.", c.getHP(), 6);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testConstructor()
     {
         Board b = new Board("testName");
         assertEquals("Board failed to create", b.getEnemy().getName(), "testName");
 
-        Board failBoard = new Board("");
+        try {
+            Board failBoard = new Board("");
+            fail("EnemyName in the board constructor can NOT be empty!");
+        } catch(IllegalArgumentException ex) {}
     }
 }
