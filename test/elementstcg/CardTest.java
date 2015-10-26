@@ -91,10 +91,7 @@ public class CardTest extends TestCase {
     public void testModifyHP() throws Exception {
         Card healthCard = new Card(Element.Fire, 10, 15, "testcard", 4);
 
-        healthCard.modifyHP(-5);
-        assertEquals("HP hasn't been modified", 10, healthCard.getHP());
-        healthCard.modifyHP(10);
-        assertEquals("HP didn't go up", 20, healthCard.getHP());
+        assertEquals("HP was not modified", 10, healthCard.modifyHP(5));
     }
 
     /**

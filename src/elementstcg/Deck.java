@@ -38,6 +38,10 @@ public class Deck {
      * @return the randomly selected Card from the deck
      */
     public Card getRandomCard() {
+        if (cards.size() <= 0)
+        {
+            return null;
+        }
         Random random = new Random();
         int index =  (random.nextInt(cards.size()));
         Card card = cards.get(index);

@@ -16,7 +16,7 @@ public class AccountTest extends TestCase {
     @Before
     public void setUp()
     {
-        //Account.register("testuser", "testpassword", "test@email.nl");
+        Account.register("testuser", "testpassword", "test@email.nl");
         Account.login("testuser", "testpassword");
         Account.getInstance().setIPAndPort("192.168.7.10", 2100);
     }

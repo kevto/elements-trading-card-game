@@ -83,6 +83,11 @@ public class Account implements Serializable {
     public static boolean register(String username, String password, String email) {
         //TODO Enable below until we're done with registering an account
 
+        if (username == "" || password == "" || email == "")
+        {
+            return false;
+        }
+
         String pattern = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
                 + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
         java.util.regex.Pattern p = java.util.regex.Pattern.compile(pattern);
