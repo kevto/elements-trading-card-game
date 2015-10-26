@@ -37,7 +37,8 @@ public class Player {
      * @param deck that the player will be playing with.
      */
     public void setDeck(Deck deck) {
-        if(deck == null)
+        //TODO Check if failing even if null.
+        //if(deck == null)
             this.deck = deck;
     }
 
@@ -48,7 +49,6 @@ public class Player {
      */
     public Card drawCard(){
         Card card = deck.getRandomCard();
-
         hand.addCard(card);
 
         return card;
@@ -91,5 +91,13 @@ public class Player {
      */
     public String getName(){
         return name;
+    }
+
+    /**
+     * Retrieves the amount of cards remaining the player's deck.
+     * @return Amount of the cards remaining the player's deck in int.
+     */
+    public int getAmountCardsInDeck() {
+        return deck.getAmountCards();
     }
 }

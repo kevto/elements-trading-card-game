@@ -96,7 +96,7 @@ public class CardPane extends StackPane {
                     System.out.println("RIGHT");
                     System.out.println(cardState);
 
-                    if(cardState == PlayerField) {
+                    if (cardState == PlayerField) {
                         controller.showCardButtonAction(instance);
                     }
                 }
@@ -273,6 +273,24 @@ public class CardPane extends StackPane {
                 cardObject.setEffect(shadow);
             }
         }
+    }
+
+    /**
+     * Gives you insight on whether the current card on field is selected or not.
+     * @return true if the card is selected and false when it's not.
+     */
+    public boolean isSelected() {
+        if(cardObject.getEffect().equals(selectShadow))
+            return true;
+        return false;
+    }
+
+    /**
+     * Gives you insight on whether the current card is on field.
+     * @return true if the card is on the field and false when it's not.
+     */
+    public boolean onField() {
+        return (cardState == PlayerField || cardState == EnemyField ? true : false);
     }
 
     /**

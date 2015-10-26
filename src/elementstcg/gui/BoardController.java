@@ -1,12 +1,16 @@
 package elementstcg.gui;
 
+import elementstcg.Board;
 import elementstcg.Card;
+import elementstcg.Deck;
 import elementstcg.Element;
+import elementstcg.util.DefaultDeck;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -29,17 +33,38 @@ public class BoardController implements Initializable, ControlledScreen {
     @FXML BorderPane bPaneField;
     @FXML Pane mainPane;
 
+    @FXML Button nextTurnButton;
+
     @FXML Label labelEnemyCAP;
     @FXML Label labelPlayerCAP;
+
+    @FXML Label labelEnemyDeckSize;
+    @FXML Label labelPlayerDeckSize;
+
+    @FXML Label labelEnemyHP;
+    @FXML Label labelPlayerHP;
+
+    @FXML Label labelEnemyName;
+    @FXML Label labelPlayerName;
 
     FieldGrid playerField;
     FieldGrid enemyField;
 
     private CardPane selectedCard;
 
+    // Board object.
+    private Board board;
+
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        board = new Board();
+
+        // Setting the card decks for each player.
+        board.getEnemy().setDeck(new Deck(DefaultDeck.getDeckOne()));
+        board.getPlayer().setDeck(new Deck(DefaultDeck.getDeckOne()));
+
+        // Initializing the UI.
         hboxPlayerHand.getParent().prefWidth(hboxPlayerHand.getPrefWidth());
         hboxPlayerHand.getParent().prefHeight(hboxPlayerHand.getPrefHeight());
 
@@ -54,23 +79,15 @@ public class BoardController implements Initializable, ControlledScreen {
         bPaneField.getChildren().add(playerField);
         bPaneField.getChildren().add(enemyField);
 
-        //TODO: REMOVE DEBUG
-        Card fireCard = new Card(Element.Fire, 5, 5, "Fire", 3);
-        Card airCard = new Card(Element.Air, 5, 5, "Air", 2);
-        Card waterCard = new Card(Element.Water, 5, 5, "Water", 2);
-        Card earthCard = new Card(Element.Earth, 5, 5, "Earth", 1);
-        Card energyCard = new Card(Element.Thunder, 5, 5, "Energy", 3);
+        // Drawing 5 random cards for the player.
+        for(int i = 0; i < 5; i++) {
+            hboxPlayerHand.getChildren().add(new CardPane(board.getPlayer().drawCard(), ghostPane, this));
+        }
 
-        hboxPlayerHand.getChildren().add(new CardPane(fireCard, ghostPane, this));
-        hboxPlayerHand.getChildren().add(new CardPane(airCard, ghostPane, this));
-        hboxPlayerHand.getChildren().add(new CardPane(waterCard, ghostPane, this));
-        hboxPlayerHand.getChildren().add(new CardPane(airCard, ghostPane, this));
-        hboxPlayerHand.getChildren().add(new CardPane(energyCard, ghostPane, this));
-        hboxPlayerHand.getChildren().add(new CardPane(fireCard, ghostPane, this));
-        hboxPlayerHand.getChildren().add(new CardPane(earthCard, ghostPane, this));
-        hboxPlayerHand.getChildren().add(new CardPane(energyCard, ghostPane, this));
+        // Setting the names of both the players/
+        labelEnemyName.setText(board.getEnemy().getName());
+        labelPlayerName.setText(board.getPlayer().getName());
 
-        //END DEBUG
 
         /**
          * Hide the ghostPane object when an player selects it
@@ -83,6 +100,9 @@ public class BoardController implements Initializable, ControlledScreen {
                 }
             }
         });
+
+        // Update the UI
+        updateUi();
     }
 
     /**
@@ -96,10 +116,15 @@ public class BoardController implements Initializable, ControlledScreen {
     /**
      * This method is used to update the GUI.
      */
-    public void updateUi()
-    {
+    public void updateUi() {
         labelEnemyCAP.setText(String.valueOf(enemyField.getCapPoints()));
         labelPlayerCAP.setText(String.valueOf(playerField.getCapPoints()));
+
+        labelEnemyDeckSize.setText(String.valueOf(board.getEnemy().getAmountCardsInDeck()));
+        labelPlayerDeckSize.setText(String.valueOf(board.getPlayer().getAmountCardsInDeck()));
+
+        labelEnemyHP.setText(String.valueOf(board.getEnemy().getHp()));
+        labelPlayerHP.setText(String.valueOf(board.getPlayer().getHp()));
     }
 
     /**
@@ -138,7 +163,7 @@ public class BoardController implements Initializable, ControlledScreen {
         FieldGrid grid = (FieldGrid)cardPane.getParent().getParent();
 
         if(grid.getFieldType() == FieldType.Player) {
-            if(selectedCard != null && selectedCard != cardPane) {
+            if(selectedCard != null && selectedCard != cardPane && selectedCard.onField() == false) {
                 CardPane fieldCard = cardPane;
                 CardPane handCard  = selectedCard;
 
@@ -161,6 +186,7 @@ public class BoardController implements Initializable, ControlledScreen {
             }
             selectCard(cardPane);
         }
+
         if(grid.getFieldType() == FieldType.Enemy) {
             if(selectedCard != null) {
                 //TODO: Attack Card
@@ -170,7 +196,7 @@ public class BoardController implements Initializable, ControlledScreen {
 
     /**
      * This methode is called when a player right clicks on an card on the field
-     * @param cardPane
+     * @param cardPane that's been selected.
      */
     public void showCardButtonAction(CardPane cardPane) {
         showGhostPane(cardPane.getGhostObject());
@@ -179,44 +205,55 @@ public class BoardController implements Initializable, ControlledScreen {
     /**
      * This method is called when a player selects a card that is currently in his hand.
      */
-    public void selectCardInHandButtonAction(CardPane cardPane)
-    {
+    public void selectCardInHandButtonAction(CardPane cardPane) {
         selectCard(cardPane);
     }
 
     /**
      * This method is called when a player uses a selected card to attack a card of his opponent.
+     * @deprecated Is this being used in a different action method?
      */
+    @Deprecated
     public void attackEnemyCardButtonAction(CardPane cardPane) {
-
+        if(selectedCard != null && selectedCard.isSelected() && selectedCard.onField()) {
+            // TODO implement so that the card of the enemy will be attacked.
+            System.out.println("[kevto]: Enemy CardPane selected " + cardPane.getId());
+        } else
+            System.out.println("[kevto]: Select a card first..");
     }
 
     /**
      * This method is called when a player uses a selected card to attack the enemy directly.
      */
     public void attackEnemyDirectButtonAction() {
-
+        //TODO check if a card is selected.
+        //TODO check whether there are no cards on defense cards on the enemy field.
     }
 
     /**
      * This method is called when a player presses the forfeit button.
      */
     public void forfeitButtonAction() {
-
+        //TODO end the game and lose!
     }
 
     /**
      * This method is called when a player presses the next turn button.
      */
     public void nextTurnButtonAction() {
+        //TODO add a confirmation dialog.
+        board.nextTurn();
 
+        //TODO let the AI do his actions here. Nasty but it will work.
     }
 
     /**
      * This method is called when a player returns one of his played cards to his hand.
+     * @deprecated Remove or implement this one??
      */
+    @Deprecated
     public void cardBackInHandButtonAction() {
-
+        //TODO Check deprecated message.
     }
 
     /**
@@ -237,10 +274,13 @@ public class BoardController implements Initializable, ControlledScreen {
      */
     public void hideGhostPane() {
         ghostPane.getChildren().removeAll(ghostPane.getChildren());
-
         ghostPane.toBack();
     }
 
+    /**
+     * Gives the selected card a selected state.
+     * @param card to give the selected state to.
+     */
     private void selectCard(CardPane card) {
         if(selectedCard == null) {
             selectedCard = card;
