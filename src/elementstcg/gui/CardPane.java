@@ -13,6 +13,8 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
+import java.io.IOException;
+
 import static elementstcg.gui.CardState.*;
 
 public class CardPane extends StackPane {
@@ -34,6 +36,12 @@ public class CardPane extends StackPane {
     private CardPane instance;
 
     private CardState cardState;
+
+    // Labels of the CardPane.
+    Label capacityLabel;
+    Label attackLabel;
+    Label healthLabel;
+    Label nameLabel;
 
     /**
      * Create a CardPane with the provided data. The CardPane object contains the Card object
@@ -85,7 +93,11 @@ public class CardPane extends StackPane {
                     } else if (cardState == PlayerField) {
                         controller.selectCardButtonAction(instance);
                     } else if (cardState == EnemyField) {
-                        controller.attackEnemyCardButtonAction(instance);
+                        try {
+                            controller.attackEnemyCardButtonAction(instance);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
 
@@ -96,7 +108,7 @@ public class CardPane extends StackPane {
                     System.out.println("RIGHT");
                     System.out.println(cardState);
 
-                    if(cardState == PlayerField) {
+                    if (cardState == PlayerField || cardState == EnemyField) {
                         controller.showCardButtonAction(instance);
                     }
                 }
@@ -152,11 +164,13 @@ public class CardPane extends StackPane {
         cardContainer.setPrefWidth(cardWidth);
         cardContainer.setPrefHeight(cardHeight);
 
+        // Initiate the labels;
+        capacityLabel = new Label();
+        attackLabel = new Label();
+        healthLabel = new Label();
+        nameLabel = new Label();
+
         //Create an label
-        Label capacityLabel = new Label();
-        Label attackLabel = new Label();
-        Label healthLabel = new Label();
-        Label nameLabel = new Label();
         capacityLabel.setText(String.valueOf(card.getCapacityPoints()));
         attackLabel.setText(String.valueOf(card.getAttack()));
         healthLabel.setText(String.valueOf(card.getHP()));
@@ -276,6 +290,24 @@ public class CardPane extends StackPane {
     }
 
     /**
+     * Gives you insight on whether the current card on field is selected or not.
+     * @return true if the card is selected and false when it's not.
+     */
+    public boolean isSelected() {
+        if(cardObject.getEffect().equals(selectShadow))
+            return true;
+        return false;
+    }
+
+    /**
+     * Gives you insight on whether the current card is on field.
+     * @return true if the card is on the field and false when it's not.
+     */
+    public boolean onField() {
+        return (cardState == PlayerField || cardState == EnemyField ? true : false);
+    }
+
+    /**
      * Resize the card based on the state of the card
      */
     public void resizeCard() {
@@ -330,6 +362,14 @@ public class CardPane extends StackPane {
 
         layoutXProperty().set(0);
         layoutYProperty().set(0);
+    }
+
+    /**
+     * Updates the UI of the particular CardPane.
+     * UI means the text of the labels and such.
+     */
+    public void updateUi() {
+        healthLabel.setText(String.valueOf(card.getHP()));
     }
 }
 

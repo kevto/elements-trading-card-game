@@ -17,7 +17,7 @@
             <BorderPane fx:id="bPaneField" layoutX="304.0" layoutY="124.0" prefHeight="472.0" prefWidth="847.0" />
             <HBox fx:id="hboxEnemyHand" layoutX="304.0" prefHeight="121.0" prefWidth="847.0" />
             <HBox id="hboxPlayerHand" fx:id="hboxPlayerHand" fillHeight="false" layoutX="304.0" layoutY="637.0" prefHeight="143.0" prefWidth="847.0" />
-            <Pane layoutX="38.0" layoutY="270.0">
+            <Pane fx:id="enemyInfo" layoutX="38.0" layoutY="270.0">
                <children>
                   <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
                      <image>
@@ -95,6 +95,7 @@
                   <Label fx:id="labelPlayerCAP" alignment="CENTER" contentDisplay="CENTER" layoutX="7.0" layoutY="2.0" prefHeight="31.0" prefWidth="28.0" text="0" />
                </children>
             </Pane>
+            <Button fx:id="nextTurnButton" layoutX="48.0" layoutY="360.0" mnemonicParsing="false" onAction="#nextTurnButtonAction" prefHeight="25.0" prefWidth="175.0" text="Next Turn" />
          </children>
       </Pane>
    </children>

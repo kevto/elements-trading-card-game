@@ -76,4 +76,12 @@ public class Hand {
             return null;
         }
     }
+
+    /**
+     * Gets a list of cards of this hand object.
+     * @return list of cards.
+     */
+    public List<Card> getCards() {
+        return cards;
+    }
 }

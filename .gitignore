@@ -12,3 +12,4 @@ bin/
 
 *.class
 target/
+savedaccount.ser
