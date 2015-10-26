@@ -14,15 +14,20 @@ import static org.junit.Assert.assertNull;
 public class HandTest extends TestCase {
 
     private Hand hand;
-    private Card cardOne = new Card(Element.Air, 1, 1,"AirCard" , 1);
-    private Card cardTwo = new Card(Element.Earth, 1, 1,"EarthCard" , 1);
-    private Card cardThree = new Card(Element.Fire, 1, 1,"FireCard" , 1);
-    private Card cardFour = new Card(Element.Thunder, 1, 1,"ThunderCard" , 1);
-    private Card cardFive = new Card(Element.Water, 1, 1,"WaterCard" , 1);
+    private Card cardOne;
+    private Card cardTwo;
+    private Card cardThree;
+    private Card cardFour;
+    private Card cardFive;
 
     @Before
-    public void setup() {
+    public void setUp() {
         hand = new Hand();
+        cardOne = new Card(Element.Air, 1, 1,"AirCard" , 1);
+        cardTwo = new Card(Element.Earth, 1, 1,"EarthCard" , 1);
+        cardThree = new Card(Element.Fire, 1, 1,"FireCard" , 1);
+        cardFour = new Card(Element.Thunder, 1, 1,"ThunderCard" , 1);
+        cardFive = new Card(Element.Water, 1, 1,"WaterCard" , 1);
         hand.addCard(cardOne);
         hand.addCard(cardTwo);
         hand.addCard(cardThree);
@@ -40,7 +45,7 @@ public class HandTest extends TestCase {
 
         try{
             hand.addCard(null);
-            fail("An card that was null has been added");
+            fail("A card that was null has been added");
         }
         catch(IllegalArgumentException IAE){
         }
@@ -77,11 +82,14 @@ public class HandTest extends TestCase {
 
     @Test
     public void testPlayCard() throws Exception {
+        int i = hand.getAmountCards();
+        System.out.println(i);
+
         assertEquals("The wrong Card has been played", cardOne, hand.playCard(0));
         assertEquals("The card was not removed", 4, hand.getAmountCards());
         assertNotEquals("The card was not removed", cardOne, hand.getCard(0));
 
-        assertNull("An non existing card has been played", hand.playCard(100));
-        assertNull("An non existing card has been played", hand.playCard(-1));
+        assertNull("A non existing card has been played", hand.playCard(100));
+        assertNull("A non existing card has been played", hand.playCard(-1));
     }
 }

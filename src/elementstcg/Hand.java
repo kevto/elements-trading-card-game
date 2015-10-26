@@ -24,7 +24,16 @@ public class Hand {
      * @author Maarten Verboogen
      * @param card
      */
-    public void addCard(Card card) { cards.add(card); }
+    public void addCard(Card card) {
+        if (card != null && !cards.contains(card))
+        {
+            cards.add(card);
+        }
+        else
+        {
+            throw new IllegalArgumentException("Card cannot be null");
+        }
+    }
 
     /**
      * Get the card at the specified index of the cards
