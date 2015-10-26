@@ -140,6 +140,11 @@ public class BoardController implements Initializable, ControlledScreen {
         if(grid.getFieldType() == FieldType.Player) {
             selectCard(cardPane);
         }
+        if(grid.getFieldType() == FieldType.Enemy) {
+            if(selectedCard != null) {
+                //TODO: Attack Card
+            }
+        }
     }
 
     /**
@@ -161,40 +166,35 @@ public class BoardController implements Initializable, ControlledScreen {
     /**
      * This method is called when a player uses a selected card to attack a card of his opponent.
      */
-    public void attackEnemyCardButtonAction(CardPane cardPane)
-    {
+    public void attackEnemyCardButtonAction(CardPane cardPane) {
 
     }
 
     /**
      * This method is called when a player uses a selected card to attack the enemy directly.
      */
-    public void attackEnemyDirectButtonAction()
-    {
+    public void attackEnemyDirectButtonAction() {
 
     }
 
     /**
      * This method is called when a player presses the forfeit button.
      */
-    public void forfeitButtonAction()
-    {
+    public void forfeitButtonAction() {
 
     }
 
     /**
      * This method is called when a player presses the next turn button.
      */
-    public void nextTurnButtonAction()
-    {
+    public void nextTurnButtonAction() {
 
     }
 
     /**
      * This method is called when a player returns one of his played cards to his hand.
      */
-    public void cardBackInHandButtonAction()
-    {
+    public void cardBackInHandButtonAction() {
 
     }
 
