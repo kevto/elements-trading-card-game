@@ -138,6 +138,27 @@ public class BoardController implements Initializable, ControlledScreen {
         FieldGrid grid = (FieldGrid)cardPane.getParent().getParent();
 
         if(grid.getFieldType() == FieldType.Player) {
+            if(selectedCard != null && selectedCard != cardPane) {
+                CardPane fieldCard = cardPane;
+                CardPane handCard  = selectedCard;
+
+                fieldCard.resetCardPos();
+                handCard.resetCardPos();
+
+                FieldPane field = (FieldPane)fieldCard.getParent();
+
+                field.setCard(handCard);
+                handCard.setCardState(CardState.PlayerField);
+                handCard.resizeCard();
+
+                field.getChildren().remove(fieldCard);
+                hboxPlayerHand.getChildren().add(fieldCard);
+                fieldCard.setCardState(CardState.PlayerHand);
+                fieldCard.resizeCard();
+
+                selectCard(fieldCard);
+                updateUi();
+            }
             selectCard(cardPane);
         }
         if(grid.getFieldType() == FieldType.Enemy) {
