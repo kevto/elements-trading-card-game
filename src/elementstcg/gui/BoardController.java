@@ -7,6 +7,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -17,20 +18,22 @@ import javafx.scene.layout.Pane;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-
-/**
- * Created by Mick on 5-10-2015.
- */
 public class BoardController implements Initializable, ControlledScreen {
 
     // Class variables
     ScreenHandler myController;
 
     // UI Components
-    @FXML HBox hboxPlayerHand;      //Player hand
-    @FXML Pane ghostPane;           //Card info pane
+    @FXML HBox hboxPlayerHand;
+    @FXML Pane ghostPane;
     @FXML BorderPane bPaneField;
     @FXML Pane mainPane;
+
+    @FXML Label labelEnemyCAP;
+    @FXML Label labelPlayerCAP;
+
+    FieldGrid playerField;
+    FieldGrid enemyField;
 
     private CardPane selectedCard;
 
@@ -40,13 +43,16 @@ public class BoardController implements Initializable, ControlledScreen {
         hboxPlayerHand.getParent().prefWidth(hboxPlayerHand.getPrefWidth());
         hboxPlayerHand.getParent().prefHeight(hboxPlayerHand.getPrefHeight());
 
-        FieldGrid field = new FieldGrid(847, 253, 2, 6, this);
+        playerField = new FieldGrid(847, 253, 2, 6, this, FieldType.Player);
+        enemyField = new FieldGrid(847, 253, 2, 6, this, FieldType.Enemy);
 
-        field.getStyleClass().add("field");
+        playerField.getStyleClass().add("field");
+        enemyField.getStyleClass().add("field-enemy");
 
-        field.setTranslateY(253);
+        playerField.setTranslateY(253);
 
-        bPaneField.getChildren().add(field);
+        bPaneField.getChildren().add(playerField);
+        bPaneField.getChildren().add(enemyField);
 
         //TODO: REMOVE DEBUG
         Card fireCard = new Card(Element.Fire, 5, 5, "Fire", 3);
@@ -66,6 +72,9 @@ public class BoardController implements Initializable, ControlledScreen {
 
         //END DEBUG
 
+        /**
+         * Hide the ghostPane object when an player selects it
+         */
         ghostPane.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -76,7 +85,10 @@ public class BoardController implements Initializable, ControlledScreen {
         });
     }
 
-
+    /**
+     * Set the screenParent
+     * @param screenParent screenParent
+     */
     public void setScreenParent(ScreenHandler screenParent) {
         myController = screenParent;
     }
@@ -86,22 +98,34 @@ public class BoardController implements Initializable, ControlledScreen {
      */
     public void updateUi()
     {
-
+        labelEnemyCAP.setText(String.valueOf(enemyField.getCapPoints()));
+        labelPlayerCAP.setText(String.valueOf(playerField.getCapPoints()));
     }
 
     /**
      * This method is called when an FieldPane is selected
      */
     public void selectFieldPane(FieldPane field) {
-        if(field.getCard() != null) {
-            CardPane card = field.getCard();
-        }
-        else
-        {
+        FieldGrid grid = (FieldGrid)field.getParent();
+
+        if(grid.getFieldType() == FieldType.Player) {
             if(selectedCard != null) {
-                //TODO: Move logic to board
-                field.setCard(selectedCard);
-                selectedCard = null;
+                if(selectedCard.getCardState() == CardState.PlayerHand) {
+                    //TODO: Notify Board object that an card has been placed on the playing field
+                    field.setCard(selectedCard);
+                    selectCard(selectedCard);
+                    updateUi();
+                }
+            }
+            else {
+                if(field.getCard() != null) {
+                    selectCard(field.getCard());
+                }
+            }
+        }
+        if(grid.getFieldType() == FieldType.Enemy) {
+            if(selectedCard != null) {
+                //TODO: Attack Card
             }
         }
     }
@@ -111,9 +135,17 @@ public class BoardController implements Initializable, ControlledScreen {
      */
     public void selectCardButtonAction(CardPane cardPane)
     {
+        FieldGrid grid = (FieldGrid)cardPane.getParent().getParent();
 
+        if(grid.getFieldType() == FieldType.Player) {
+            selectCard(cardPane);
+        }
     }
 
+    /**
+     * This methode is called when a player right clicks on an card on the field
+     * @param cardPane
+     */
     public void showCardButtonAction(CardPane cardPane) {
         showGhostPane(cardPane.getGhostObject());
     }
@@ -123,22 +155,7 @@ public class BoardController implements Initializable, ControlledScreen {
      */
     public void selectCardInHandButtonAction(CardPane cardPane)
     {
-        if(selectedCard == null) {
-            selectedCard = cardPane;
-            cardPane.setSelected(true);
-        }
-        else {
-            if(cardPane != selectedCard) {
-                selectedCard.setSelected(false);
-
-                selectedCard = cardPane;
-                cardPane.setSelected(true);
-            }
-            else {
-                cardPane.setSelected(false);
-                selectedCard = null;
-            }
-        }
+        selectCard(cardPane);
     }
 
     /**
@@ -201,5 +218,24 @@ public class BoardController implements Initializable, ControlledScreen {
         ghostPane.getChildren().removeAll(ghostPane.getChildren());
 
         ghostPane.toBack();
+    }
+
+    private void selectCard(CardPane card) {
+        if(selectedCard == null) {
+            selectedCard = card;
+            card.setSelected(true);
+        }
+        else {
+            if(card != selectedCard) {
+                selectedCard.setSelected(false);
+
+                selectedCard = card;
+                card.setSelected(true);
+            }
+            else {
+                card.setSelected(false);
+                selectedCard = null;
+            }
+        }
     }
 }

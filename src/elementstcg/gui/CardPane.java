@@ -2,7 +2,6 @@ package elementstcg.gui;
 
 import elementstcg.Card;
 import javafx.event.EventHandler;
-import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
@@ -29,6 +28,9 @@ public class CardPane extends StackPane {
     private int cardWidth = 125;
     private int cardHeight = 200;
 
+    private DropShadow shadow;
+    private DropShadow selectShadow;
+
     private CardPane instance;
 
     private CardState cardState;
@@ -50,6 +52,8 @@ public class CardPane extends StackPane {
         this.card = card;
         this.ghostPane = ghostPane;
         this.controller = controller;
+
+        CreateShadow();
 
         cardState = PlayerHand;
 
@@ -126,7 +130,6 @@ public class CardPane extends StackPane {
      * @param hover is the mouse hovering over the cardObject
      */
     public void showCard(boolean hover) {
-
         if(hover) {
             controller.showGhostPane(ghostObject);
         }
@@ -134,7 +137,6 @@ public class CardPane extends StackPane {
         if(!hover) {
             controller.hideGhostPane();
         }
-
     }
 
     /**
@@ -178,17 +180,7 @@ public class CardPane extends StackPane {
         cardImageView.setImage(cardImage);
         elementImageView.setImage(elementImage);
 
-        //Drop Shadow
-        int depth = 45;
-
-        DropShadow borderGlow = new DropShadow();
-        borderGlow.setOffsetY(0f);
-        borderGlow.setOffsetX(0f);
-        borderGlow.setColor(Color.BLACK);
-        borderGlow.setWidth(depth);
-        borderGlow.setHeight(depth);
-
-        cardImageView.setEffect(borderGlow);
+        //cardContainer.setEffect(shadow);
 
         //Add images to the container Pane
         cardContainer.getChildren().add(cardImageView);
@@ -253,7 +245,7 @@ public class CardPane extends StackPane {
 
     /**
      * Set the state of the CardPane object
-     * @param cardState
+     * @param cardState the cardState you want to set this object to
      */
     public void setCardState(CardState cardState) {
         this.cardState = cardState;
@@ -266,10 +258,20 @@ public class CardPane extends StackPane {
      */
     public void setSelected(boolean selected) {
         if(selected) {
-            this.setTranslateY(-50);
+            if(cardState == PlayerHand) {
+                this.setTranslateY(-50);
+            }
+            if(cardState == PlayerField || cardState == EnemyField){
+                cardObject.setEffect(selectShadow);
+            }
         }
         else {
-            this.setTranslateY(-25);
+            if(cardState == PlayerHand) {
+                this.setTranslateY(-25);
+            }
+            if(cardState == PlayerField || cardState == EnemyField){
+                cardObject.setEffect(shadow);
+            }
         }
     }
 
@@ -298,6 +300,27 @@ public class CardPane extends StackPane {
     }
 
     /**
+     * Create all shadow objects needed for displaying the cards.
+     */
+    private void CreateShadow() {
+        int depth = 30;
+
+        shadow = new DropShadow();
+        shadow.setOffsetY(0f);
+        shadow.setOffsetX(0f);
+        shadow.setColor(Color.BLACK);
+        shadow.setWidth(depth);
+        shadow.setHeight(depth);
+
+        selectShadow = new DropShadow();
+        selectShadow.setOffsetY(0f);
+        selectShadow.setOffsetX(0f);
+        selectShadow.setColor(Color.GREEN);
+        selectShadow.setWidth(depth);
+        selectShadow.setHeight(depth);
+    }
+
+    /**
      * Resets all the X and Y values of both
      * Translate and Layout
      */
@@ -312,7 +335,10 @@ public class CardPane extends StackPane {
 
 /**
  * The different states a card can have
- * Hand: The card is currently i
+ * PlayerHand: This object is currently in the hand of the player
+ * EnemyHand: This object is currently in the hand of the enemy
+ * PlayerField: This object is currently on the playing field on the player side
+ * EnemyField: This ob ject is currently on the playing field on the enemy side
  */
 enum CardState {
     PlayerHand, EnemyHand, PlayerField, EnemyField;

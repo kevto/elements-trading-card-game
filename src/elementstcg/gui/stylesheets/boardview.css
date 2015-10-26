@@ -6,6 +6,8 @@
 
 .field-enemy {
 	-fx-background-image: url("../images/field_enemy.png");
+	-fx-background-repeat: none;
+    -fx-background-size: 847px 253px;
 }
 
 #main {

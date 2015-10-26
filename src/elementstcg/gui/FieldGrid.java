@@ -13,6 +13,7 @@ public class FieldGrid extends Pane {
 
     private ArrayList<FieldPane> fields = new ArrayList<FieldPane>();
     private BoardController controller;
+    private FieldType fieldType;
 
     /**
      * Create a FieldGrid object with the provided width, height. The FieldGrid objects will
@@ -24,11 +25,13 @@ public class FieldGrid extends Pane {
      * @param columns The amount columns (if 0 no panes will be created)
      * @param controller The controller where all actions should be reported
      */
-    public FieldGrid(int width, int height, int rows, int columns, BoardController controller) {
+    public FieldGrid(int width, int height, int rows, int columns, BoardController controller, FieldType fieldType) {
         this.controller = controller;
 
         this.setWidth(width);
         this.setHeight(height);
+
+        this.fieldType = fieldType;
 
         for (int i = 0; i < rows; i++)
         {
@@ -78,4 +81,31 @@ public class FieldGrid extends Pane {
             }
         }
     }
+
+    /**
+     * Return the type of FieldGrid object this is (Player/Enemy)
+     * @return the fieldType object
+     */
+    public FieldType getFieldType() {
+        return fieldType;
+    }
+
+    /**
+     * Goes through the list of FieldPane objects and gets the capacity points of the cards
+     * currently inside the fieldPane object.
+     * @return the current amount of Capacity Points on the field
+     */
+    public int getCapPoints() {
+        int capPoints = 0;
+
+        for(FieldPane pane : fields) {
+            capPoints += pane.getCapPoints();
+        }
+
+        return capPoints;
+    }
+}
+
+enum FieldType {
+    Player, Enemy
 }

@@ -1,18 +1,17 @@
 package elementstcg.gui;
 
-import javafx.geometry.Pos;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 
 public class FieldPane extends StackPane {
 
-    public FieldPane instance;
+    private FieldPane instance;
+    private FieldGrid fieldGrid;
+    private CardPane card;
 
     public FieldPane() {
         instance = this;
+        fieldGrid = (FieldGrid)getParent();
     }
-
-    private CardPane card;
 
     /**
      * Get the card currently in the field
@@ -42,9 +41,38 @@ public class FieldPane extends StackPane {
         positionCard();
     }
 
+    /**
+     * Center the card on the fieldPane object
+     */
     private void positionCard() {
         card.translateYProperty().set(-(card.getHeight() / 2) + 5);
         card.translateXProperty().set(-20);
+    }
+
+    /**
+     * Get the capacity points from the card object contained with this object.
+     * If the card object is NULL return 0
+     * @return the value of the card Object
+     */
+    public int getCapPoints() {
+        if(card != null) {
+            return card.getCard().getCapacityPoints();
+        }
+        else {
+            return 0;
+        }
+    }
+
+    /**
+     * Return the instance of the current object
+     * @return FieldPane
+     */
+    public FieldPane getInstance() {
+        return instance;
+    }
+
+    public FieldGrid getFieldGrid() {
+        return fieldGrid;
     }
 
     /**
