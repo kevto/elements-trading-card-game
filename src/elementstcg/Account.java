@@ -29,7 +29,7 @@ public class Account implements Serializable {
      */
     public static boolean login(String username, String password){
         // TODO Enable below until we're done with registering an account
-        /*
+
         Account savedAccount = null;
 
         try
@@ -55,21 +55,21 @@ public class Account implements Serializable {
         }
         if (savedAccount != null){
             instance = savedAccount;
-            if (savedAccount.getUserName() == username && savedAccount.getPassword() == password) {
+            if (savedAccount.getUserName().equals(username) && savedAccount.getPassword().equals(password)) {
                 return true;
             }
 
         }
-        return false;*/
-        if(username.isEmpty() || password.isEmpty())
-            return false;
-
-        try {
-            instance = new Account(username, password, "127.0.0.1", 2048);
-            return true;
-        } catch (Exception ex) {
-            return false;
-        }
+        return false;
+//        if(username.isEmpty() || password.isEmpty())
+//            return false;
+//
+//        try {
+//            instance = new Account(username, password, "127.0.0.1", 2048);
+//            return true;
+//        } catch (Exception ex) {
+//            return false;
+//        }
     }
 
     /**
@@ -80,25 +80,23 @@ public class Account implements Serializable {
      * @param email
      * @return
      */
-    public static boolean register(String username, String password, String email){
+    public static boolean register(String username, String password, String email) {
         //TODO Enable below until we're done with registering an account
-        /*
+
         String pattern = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
                 + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
         java.util.regex.Pattern p = java.util.regex.Pattern.compile(pattern);
         java.util.regex.Matcher m = p.matcher(email);
 
-        if (!m.matches())
-        {
+        if (!m.matches()) {
             return false;
         }
 
-        instance = new Account(username, password, "192.168.1.1", 2048);
+        instance = new Account(username, password, "12.0.0.1", 2048);
         instance.setEmail(email);
 
         //Serialization
-        try
-        {
+        try {
             File filepath = new File("savedaccount.ser");
             if (filepath.exists()) {
                 Files.delete(filepath.toPath());
@@ -111,31 +109,31 @@ public class Account implements Serializable {
             fileOut.close();
             System.out.printf("Serialized account is saved in savedaccount.ser");
             return true;
-        }catch(IOException i)
-        {
+        } catch (IOException i) {
             i.printStackTrace();
         }
-        */
-
-        if(username.isEmpty() || password.isEmpty() || email.isEmpty())
-            return false;
-
-        String pattern = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
-                + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-        java.util.regex.Pattern p = java.util.regex.Pattern.compile(pattern);
-        java.util.regex.Matcher m = p.matcher(email);
-
-        if (!m.matches())
-            return false;
-
-        try {
-            instance = new Account(username, password, "127.0.0.1", 2048);
-            instance.setEmail(email);
-            return true;
-        } catch (Exception ex) {
-            return false;
-        }
+        return false;
     }
+
+//        if(username.isEmpty() || password.isEmpty() || email.isEmpty())
+//            return false;
+//
+//        String pattern = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+//                + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+//        java.util.regex.Pattern p = java.util.regex.Pattern.compile(pattern);
+//        java.util.regex.Matcher m = p.matcher(email);
+//
+//        if (!m.matches())
+//            return false;
+//
+//        try {
+//            instance = new Account(username, password, "127.0.0.1", 2048);
+//            instance.setEmail(email);
+//            return true;
+//        } catch (Exception ex) {
+//            return false;
+//        }
+
 
     /**
      * Constructor of Account, creates an instance of Account.
