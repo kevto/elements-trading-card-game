@@ -15,7 +15,7 @@ import java.util.function.Function;
 public class Board {
 
     private int initialHp = 20;
-    private boolean playerTurn;
+    private boolean playerTurn = true;
     public static final int MAX_CAP_POINTS = 20;
     private Player player;
     private Player enemy;
@@ -141,6 +141,46 @@ public class Board {
      */
     public void putCardEnemy(int point, Card card){
         enemyField.put(point, card);
+    }
+
+    /**
+     * Search for the point of the card in the player field.
+     * @param card to search on.
+     * @return point of the card that was being searched for.
+     */
+    public int getPlayerCardPoint(Card card) {
+        for(Map.Entry<Integer, Card> entry : playerField.entrySet())
+            if(entry.getValue().equals(card))
+                return entry.getKey();
+        return -1;
+    }
+
+    /**
+     * Search for the point of the card in the enemy field.
+     * @param card to search on.
+     * @return point of the card that was being searched for.
+     */
+    public int getEnemyCardPoint(Card card) {
+        for(Map.Entry<Integer, Card> entry : enemyField.entrySet())
+            if(entry.getValue().equals(card))
+                return entry.getKey();
+        return -1;
+    }
+
+    /**
+     * Removes a player card from the field.
+     * @param point key of the card to remove.
+     */
+    public void removePlayerCard(int point) {
+        playerField.remove(point);
+    }
+
+    /**
+     * Removes an enemy card from the field.
+     * @param point key of the card to remove.
+     */
+    public void removeEnemyCard(int point) {
+        enemyField.remove(point);
     }
 
     /**

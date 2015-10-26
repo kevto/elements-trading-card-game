@@ -95,7 +95,7 @@
                   <Label fx:id="labelPlayerCAP" alignment="CENTER" contentDisplay="CENTER" layoutX="7.0" layoutY="2.0" prefHeight="31.0" prefWidth="28.0" text="0" />
                </children>
             </Pane>
-            <Button fx:id="nextTurnButton" layoutX="38.0" layoutY="360.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="200.0" text="Next Turn" />
+            <Button fx:id="nextTurnButton" layoutX="48.0" layoutY="360.0" mnemonicParsing="false" onAction="#nextTurnButtonAction" prefHeight="25.0" prefWidth="175.0" text="Next Turn" />
          </children>
       </Pane>
    </children>
