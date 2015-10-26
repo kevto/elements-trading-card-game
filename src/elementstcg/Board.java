@@ -265,6 +265,35 @@ public class Board {
             e.printStackTrace();
         }
     }
+
+    public void PlaceAICardOnField(){
+        Card card = AIEnemy.GetCardFromHand();
+        Random rand = new Random();
+        int cap = 0;
+        boolean canPlaceCard = false;
+        int point = 0;
+        point = rand.nextInt((20 - 0) + 1) + 1;
+
+        for (Card c : enemyField.values()) {
+            if(c != null) {
+                cap += c.getCapacityPoints();
+            }
+        }
+
+        if(cap + card.getCapacityPoints() <= MAX_CAP_POINTS) {
+
+            Card fieldCard = enemyField.get(point);
+            while (canPlaceCard == false) {
+                if (fieldCard == null) {
+                    enemyField.put(point, card);
+                    canPlaceCard = true;
+                }
+                else{
+                    point = rand.nextInt((20 - 0) + 1) + 1;
+                }
+            }
+        }
+    }
     /**
      * Gets the enemy Player instance
      * @return enemy player instance.

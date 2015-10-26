@@ -47,5 +47,13 @@ public class AIEnemy {
 
     }
 
+    public static Card GetCardFromHand(){
+        Card card;
+        Random rand = new Random();
+        int cardIndex = rand.nextInt((enemyPlayer.getHand().getAmountCards() - 0) + 1) + 0;
+        card = enemyPlayer.getHand().getCard(cardIndex);
+        return card;
+    }
+
 
 }
