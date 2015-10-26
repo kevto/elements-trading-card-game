@@ -248,7 +248,22 @@ public class Account implements Serializable {
      * @param port
      */
     public void setIPAndPort(String ip, int port){
-        if (!ip.isEmpty()) {
+        String testIp = ip.replace(".", "");
+        int count = ip.length() - testIp.length();
+
+        String[] ipArray = ip.split("\\.");
+        boolean tooBig = false;
+
+        for (String x : ipArray)
+        {
+            int y = Integer.parseInt(x);
+            if (y > 256 || y < 0 || ipArray.length < 4 || y == 255)
+            {
+                tooBig = true;
+            }
+        }
+
+        if (!ip.isEmpty() && count == 3 && tooBig == false) {
             this.ip = ip;
         }
         if (port >= 1024 && port <= 65535) {
