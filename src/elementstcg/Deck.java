@@ -3,11 +3,12 @@ package elementstcg;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Deck {
 
     private List<Card> cards;
-    public static int MAX_CARDS = 0;
+    public static int MAX_CARDS = 5;
 
     /**
      * Initialize an Deck object with an empty ArrayList<Card>()
@@ -23,6 +24,12 @@ public class Deck {
      * @param cardList the list of cards Deck should be initialized with
      */
     public Deck(ArrayList<Card> cardList) {
+
+        if (cardList.size() > MAX_CARDS)
+        {
+            throw new IllegalArgumentException("You're trying to add too many cards.");
+        }
+
         cards = cardList;
     }
 
@@ -32,13 +39,16 @@ public class Deck {
      * @return the randomly selected Card from the deck
      */
     public Card getRandomCard() {
-        Random random = new Random();
-        //int index =  (random.nextInt(cards.size()));
-        Card card = cards.get(1);
+        int i = ThreadLocalRandom.current().nextInt(0, MAX_CARDS);
+        Card c = null;
 
-        //cards.remove(card);
+        if (i <= cards.size() - 1)
+        {
+            c = cards.get(i);
+            cards.remove(i);
+        }
 
-        return card;
+        return c;
     }
 
     /**
@@ -57,5 +67,24 @@ public class Deck {
      */
     public List<Card> getCards() {
         return cards;
+    }
+
+    /**
+     * Adds the given card to the cardlist of the deck.
+     * @param c the given card.
+     * @return true or false, depending on if it succeeded or not.
+     */
+    public boolean addCard(Card c)
+    {
+        if (cards.size() < MAX_CARDS && c != null)
+        {
+            cards.add(c);
+            return true;
+        }
+
+        else
+        {
+            return false;
+        }
     }
 }
