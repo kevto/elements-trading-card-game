@@ -213,7 +213,12 @@ public class Board {
     private void attackPlayer(){
         Card retrievedCard = AIEnemy.attackPlayer();
         //to be fixed
-        Runnable r = null;
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        };
         Card fieldCard = null;
         int pointer = 0;
         while (fieldCard == null) {
