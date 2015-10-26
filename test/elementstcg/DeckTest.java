@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -65,8 +66,6 @@ public class DeckTest extends TestCase {
     @Test
     public void testGetCards() throws Exception {
         assertEquals("Wrong card object returned", cards, deck.getCards());
-
-        assertEquals("A card was illegally added", false, deck.addCard(new Card(Element.Air, 1, 1, "ILLEGAL_CARD", 1)));
     }
 
     @Test
