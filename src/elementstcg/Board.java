@@ -28,7 +28,7 @@ public class Board {
 
     /**
      * Constructor with the enemy player.
-     * @param enemyName
+     * @param enemyName name of the enemy player.
      */
     public Board(String enemyName){
         playerField = new ArrayList<Card>();
@@ -177,7 +177,8 @@ public class Board {
                 enemyField.remove(point);
 
                 //TODO: Implement notifying enemy to remove card from field (MEANT FOR BoardController)
-                removeCard.run();
+                if(removeCard != null)
+                    removeCard.run();
             }
         }
         else {
@@ -185,11 +186,11 @@ public class Board {
         }
     }
 
-
-
-    /*
-    Deze methode zal toch echt eerst getest moeten worden of het werkt.
-    */
+    /**
+     * Generates attack points for the enemy.
+     * @param attackingAttackCards boolean whether the AI attacks a player card or the player self.
+     * @return generated attack points.
+     */
     private int generateAttackPointForAI(Boolean attackingAttackCards){
         int generatedPoint = 0;
         Random rand = new Random();
@@ -199,26 +200,21 @@ public class Board {
             //Bron: http://www.mkyong.com/java/java-generate-random-integers-in-a-range/
             if (attackingAttackCards == true) {
                 generatedPoint = rand.nextInt((10 - 16) + 1) + 16;
-            }
-            else {
+            } else {
                 generatedPoint = rand.nextInt((0 - 6) + 1) + 6;
             }
+
             fieldCard = enemyField.get(generatedPoint);
-
-
         }
         return generatedPoint;
     }
 
-    private void attackPlayer(){
+    /**
+     * Attacks the player. Action done from the AI.
+     */
+    public void attackPlayer(){
         Card retrievedCard = AIEnemy.attackPlayer();
-        //to be fixed
-        Runnable r = new Runnable() {
-            @Override
-            public void run() {
 
-            }
-        };
         Card fieldCard = null;
         int pointer = 0;
         while (fieldCard == null) {
@@ -227,7 +223,7 @@ public class Board {
             fieldCard = playerField.get(pointer);
         }
         try {
-            attackCard(retrievedCard, pointer, this.playerField, r);
+            attackCard(retrievedCard, pointer, this.playerField, null);
         } catch (EmptyFieldException e) {
             e.printStackTrace();
         }
@@ -237,8 +233,7 @@ public class Board {
      * Gets the enemy Player instance
      * @return enemy player instance.
      */
-    public Player getEnemy()
-    {
+    public Player getEnemy() {
         return enemy;
     }
 
