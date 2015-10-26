@@ -216,15 +216,46 @@ public class Board {
     }
 
     /**
-     * Attacks the player. Action done from the AI.
+     * This either will redraw a card from the field, or attack an enemy player
+     * There is 35% percent chance the enemy will withdraw a card.
+     * If the enemy player cannot find a card to withdraw the AI will
+     * attack an enemy player instead.
      */
-    public void attackPlayer(){
-        Card retrievedCard = AIEnemy.attackPlayer();
+    public void doMove(){
+        Random random = new Random();
+        int withdrawOrAttack;
+        withdrawOrAttack = random.nextInt((100 - 0) + 1) + 0;
+        if (withdrawOrAttack <= 35){
+            Collection<Card> possibleCards = enemyField.values();
+            int randomCardInt = random.nextInt((possibleCards.size() - 0) + 1) + 0;
+            Card chosenCard = (Card) possibleCards.toArray()[randomCardInt];
+            int attempts = 0;
+            while (chosenCard.getAttacked() == true || attempts <= 10){
+                if (chosenCard.getAttacked() != true){
+                    enemyField.remove(chosenCard);
+                    enemy.getHand().addCard(chosenCard);
+                }
+                attempts++;
+            }
+            if (attempts <= 10){
+                AttackPlayerCard();
+            }
+        } else {
+            AttackPlayerCard();
+        }
 
+    }
+
+    /**
+     * This will randomly choose a player card to attack with a randomly chosen card
+     */
+    public void AttackPlayerCard(){
+        Random random = new Random();
+        Card retrievedCard = AIEnemy.attackPlayer();
         Card fieldCard = null;
         int pointer = 0;
         while (fieldCard == null) {
-            Random random = new Random();
+
             pointer = generateAttackPointForAI(random.nextBoolean());
             fieldCard = playerField.get(pointer);
         }
@@ -233,7 +264,6 @@ public class Board {
         } catch (EmptyFieldException e) {
             e.printStackTrace();
         }
-
     }
     /**
      * Gets the enemy Player instance
