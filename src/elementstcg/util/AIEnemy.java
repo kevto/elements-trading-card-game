@@ -42,5 +42,10 @@ public class AIEnemy {
         return retrievedCard;
     }
 
+    public static void DrawCard(){
+        enemyPlayer.drawCard();
+
+    }
+
 
 }
