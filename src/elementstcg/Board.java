@@ -239,23 +239,7 @@ public class Board {
      * @param attackingAttackCards boolean whether the AI attacks a player card or the player self.
      * @return generated attack points.
      */
-    private int generateAttackPointForAI(Boolean attackingAttackCards){
-        int generatedPoint = 0;
-        Random rand = new Random();
-        Card fieldCard = null;
 
-        while (fieldCard == null){
-            //Bron: http://www.mkyong.com/java/java-generate-random-integers-in-a-range/
-            if (attackingAttackCards == true) {
-                generatedPoint = rand.nextInt((10 - 16) + 1) + 16;
-            } else {
-                generatedPoint = rand.nextInt((0 - 6) + 1) + 6;
-            }
-
-            fieldCard = enemyField.get(generatedPoint);
-        }
-        return generatedPoint;
-    }
 
     /**
      * This either will redraw a card from the field, or attack an enemy player
@@ -263,53 +247,15 @@ public class Board {
      * If the enemy player cannot find a card to withdraw the AI will
      * attack an enemy player instead.
      */
-    public void doMove(){
-        Random random = new Random();
-        int withdrawOrAttack;
-        withdrawOrAttack = random.nextInt((100 - 0) + 1) + 0;
-        if (withdrawOrAttack <= 35){
-            Collection<Card> possibleCards = enemyField.values();
-            int randomCardInt = random.nextInt((possibleCards.size() - 0) + 1) + 0;
-            Card chosenCard = (Card) possibleCards.toArray()[randomCardInt];
-            int attempts = 0;
-            while (chosenCard.getAttacked() == true || attempts <= 10){
-                if (chosenCard.getAttacked() != true){
-                    enemyField.remove(chosenCard);
-                    enemy.getHand().addCard(chosenCard);
-                }
-                attempts++;
-            }
-            if (attempts <= 10){
-                AttackPlayerCard();
-            }
-        } else {
-            AttackPlayerCard();
-        }
 
-    }
 
     /**
      * This will randomly choose a player card to attack with a randomly chosen card
      */
-    public void AttackPlayerCard(){
-        Random random = new Random();
-        Card retrievedCard = AIEnemy.attackPlayer();
-        Card fieldCard = null;
-        int pointer = 0;
-        while (fieldCard == null) {
 
-            pointer = generateAttackPointForAI(random.nextBoolean());
-            fieldCard = playerField.get(pointer);
-        }
-        try {
-            attackCard(retrievedCard, pointer, this.playerField, null);
-        } catch (EmptyFieldException e) {
-            e.printStackTrace();
-        }
-    }
 
     public void PlaceAICardOnField(){
-        Card card = AIEnemy.GetCardFromHand();
+        Card card = AIEnemy.GetCardFromHand(getEnemy());
         Random rand = new Random();
         int cap = 0;
         boolean canPlaceCard = false;

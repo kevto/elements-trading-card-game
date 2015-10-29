@@ -10,11 +10,10 @@ import java.util.Random;
  */
 public class AIEnemy {
 
-    private static Player enemyPlayer;
 
-    public static Card getEnemyCard(){
+    public static Card getEnemyCard(Player enemyP){
         Hand currentHand;
-        currentHand = enemyPlayer.getHand();
+        currentHand = enemyP.getHand();
         int cardsHolding = currentHand.getAmountCards();
         Random rand = new Random();
         int randomNum = rand.nextInt(cardsHolding);
@@ -25,14 +24,14 @@ public class AIEnemy {
 
     }
 
-    public static void setPlayer(Player p){
-        enemyPlayer = p;
+    public static void setPlayer(Player p, Player enemyP){
+        enemyP = p;
 
     }
 
-    public static Card attackPlayer(){
+    public static Card attackPlayer(Player enemyP){
         Hand currentHand;
-        currentHand = enemyPlayer.getHand();
+        currentHand = enemyP.getHand();
         int cardsHolding = currentHand.getAmountCards();
         Random rand = new Random();
         int randomNum = rand.nextInt(cardsHolding);
@@ -42,15 +41,15 @@ public class AIEnemy {
         return retrievedCard;
     }
 
-    public static void DrawCard(){
-        enemyPlayer.drawCard();
+    public static void DrawCard(Player enemyP){
+        enemyP.drawCard();
     }
 
-    public static Card GetCardFromHand(){
+    public static Card GetCardFromHand(Player enemyP){
         Card card;
         Random rand = new Random();
-        int cardIndex = rand.nextInt((enemyPlayer.getHand().getAmountCards() - 0) + 1) + 0;
-        card = enemyPlayer.getHand().getCard(cardIndex);
+        int cardIndex = rand.nextInt((enemyP.getHand().getAmountCards() - 0) + 1) + 0;
+        card = enemyP.getHand().getCard(cardIndex);
         return card;
     }
 
