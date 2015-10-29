@@ -381,7 +381,10 @@ public class BoardController implements Initializable, ControlledScreen {
 
             nextTurnButtonAction();
         } else {
-            hboxPlayerHand.getChildren().add(new CardPane(board.getPlayer().drawCard(), ghostPane, this));
+            Card card = board.getPlayer().drawCard();
+            if(card != null) {
+                hboxPlayerHand.getChildren().add(new CardPane(card, ghostPane, this));
+            }
         }
 
         updateUi();

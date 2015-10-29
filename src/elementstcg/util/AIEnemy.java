@@ -44,7 +44,6 @@ public class AIEnemy {
 
     public static void DrawCard(){
         enemyPlayer.drawCard();
-
     }
 
     public static Card GetCardFromHand(){
