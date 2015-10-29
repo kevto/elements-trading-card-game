@@ -6,6 +6,7 @@ import elementstcg.util.CalculateMultiplier;
 import elementstcg.util.CustomException.EmptyFieldException;
 import elementstcg.util.CustomException.ExceedCapacityException;
 import elementstcg.util.CustomException.OccupiedFieldException;
+import javafx.application.Platform;
 
 import javax.lang.model.type.NullType;
 import java.util.*;
@@ -212,19 +213,20 @@ public class Board {
             } else {
                 fieldCard.modifyHP((int) totalDamage);
             }
-
-            // TODO Need to find a way to set all the cards to -> setAttacked(false)
+            
             card.setAttacked(true);
 
             if(fieldCard.getHP() <= 0) {
-                // TODO Not sure whether this works or not. Requires some testing to be done.
+                int keyToRemove = -1;
+
                 for(Map.Entry<Integer, Card> entry : defenderField.entrySet())
                     if(entry.getValue().equals(fieldCard))
-                        defenderField.remove(entry.getKey());
+                        keyToRemove = entry.getKey();
 
-                //TODO: Implement notifying enemy to remove card from field (MEANT FOR BoardController)
-                if(removeCard != null)
-                    removeCard.run();
+                if(keyToRemove != -1)
+                    defenderField.remove(keyToRemove);
+
+                Platform.runLater(removeCard);
             }
         }
         else {
