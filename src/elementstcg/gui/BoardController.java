@@ -161,16 +161,17 @@ public class BoardController implements Initializable, ControlledScreen {
             if(selectedCard != null) {
                 if(selectedCard.getCardState() == CardState.PlayerHand) {
                     //TODO: Notify Board object that an card has been placed on the playing field
-                    field.setCard(selectedCard);
 
                     for(int i = 0; i < ((FieldGrid) field.getParent()).getChildren().size(); i++) {
                         if(field.equals(((FieldGrid) field.getParent()).getChildren().get(i))){
                             try {
                                 board.putCardPlayer((i < 6 ? i : i - 6 + 10), selectedCard.getCard());
+                                field.setCard(selectedCard);
                             } catch (OccupiedFieldException e) {
                                 e.printStackTrace();
                             } catch (ExceedCapacityException e) {
-                                e.printStackTrace();
+                                System.out.println(e.getMessage());
+                                return;
                             }
                         }
                     }
@@ -291,6 +292,7 @@ public class BoardController implements Initializable, ControlledScreen {
                         System.out.println("[kevto]: Enemy card is dead!");
                         FieldPane field = (FieldPane) cardPane.getParent();
                         field.removeCard();
+                        updateUi();
                     }
                 });
             } catch (EmptyFieldException e) {
