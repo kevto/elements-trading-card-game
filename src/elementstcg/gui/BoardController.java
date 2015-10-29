@@ -24,6 +24,8 @@ import javafx.scene.layout.Pane;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -383,7 +385,6 @@ public class BoardController implements Initializable, ControlledScreen {
         }
 
         updateUi();
-
         //TODO let the AI do his actions here. Nasty but it will work.
     }
 

@@ -2,6 +2,7 @@ package elementstcg.gui;
 
 import elementstcg.Card;
 import javafx.event.EventHandler;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
@@ -370,6 +371,9 @@ public class CardPane extends StackPane {
      */
     public void updateUi() {
         healthLabel.setText(String.valueOf(card.getHP()));
+        Node n = cardObject.getChildren().get(4);
+        ((Label) n).setText(String.valueOf(card.getHP()));
+
     }
 }
 
