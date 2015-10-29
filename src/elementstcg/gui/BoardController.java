@@ -206,7 +206,7 @@ public class BoardController implements Initializable, ControlledScreen {
                 handCard.setCardState(CardState.PlayerField);
                 handCard.resizeCard();
 
-                int point = board.getEnemyCardPoint(fieldCard.getCard());
+                int point = board.getPlayerCardPoint(fieldCard.getCard());
                 board.removePlayerCard(point);
                 try {
                     board.putCardPlayer(point, handCard.getCard());
