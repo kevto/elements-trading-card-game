@@ -19,7 +19,7 @@ public class InlogRegisterScreenController implements Initializable, ControlledS
 
     @FXML Button LoginButton;
     @FXML Hyperlink RegisterButton;
-    @FXML TextField tbPassword;
+    @FXML PasswordField tbPassword;
     @FXML TextField tbUsername;
     @FXML TextField tbEmail;
     @FXML Label lblMessage;

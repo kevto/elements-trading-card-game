@@ -8,7 +8,7 @@
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="561.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="elementstcg.gui.InlogRegisterScreenController">
    <children>
       <TextField fx:id="tbUsername" layoutX="205.0" layoutY="125.0" prefHeight="33.0" prefWidth="149.0" promptText="Username" />
-      <TextField fx:id="tbPassword" layoutX="205.0" layoutY="165.0" prefHeight="33.0" prefWidth="149.0" promptText="Password" />
+      <PasswordField fx:id="tbPassword" layoutX="205.0" layoutY="165.0" prefHeight="33.0" prefWidth="149.0" promptText="Password" />
       <Button fx:id="LoginButton" layoutX="206.0" layoutY="231.0" mnemonicParsing="false" onMouseClicked="#clickedLogin" prefHeight="44.0" prefWidth="149.0" text="LOGIN" textFill="#727272">
          <font>
             <Font size="18.0" />

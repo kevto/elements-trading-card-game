@@ -15,9 +15,9 @@ import java.util.function.Function;
 
 public class Board {
 
-    private int initialHp = 20;
+    private int initialHp = 45;
     private boolean playerTurn = true;
-    public static final int MAX_CAP_POINTS = 20;
+    public static final int MAX_CAP_POINTS = 15;
     private Player player;
     private Player enemy;
 
