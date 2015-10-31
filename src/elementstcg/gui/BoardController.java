@@ -385,7 +385,7 @@ public class BoardController implements Initializable, ControlledScreen {
             }
 
 
-            //doMove();
+            doMove();
 
             /*
             if(card != null) {
@@ -530,12 +530,18 @@ public class BoardController implements Initializable, ControlledScreen {
         Card retrievedCard = AIEnemy.attackPlayer(board.getEnemy());
         Card fieldCard = null;
         int pointer = 0;
+        int attempts = 0;
         while (fieldCard == null) {
-
             pointer = generateAttackPointForAI(random.nextBoolean());
             fieldCard = board.getPlayerField().get(pointer);
+            attempts++;
+            if (attempts > 50){
+                break;
+            }
+            System.out.print("Attack player loop: " + attempts);
         }
         try {
+
             board.attackCard(retrievedCard, pointer, board.getPlayerField(), null);
         } catch (EmptyFieldException e) {
             e.printStackTrace();
@@ -549,13 +555,13 @@ public class BoardController implements Initializable, ControlledScreen {
         while (fieldCard == null){
             //Bron: http://www.mkyong.com/java/java-generate-random-integers-in-a-range/
             if (attackingAttackCards == true) {
-                generatedPoint = rand.nextInt(16 - 0) + 0;
+                generatedPoint = rand.nextInt(15 - 10) + 10;
             } else {
 
-                generatedPoint = rand.nextInt(6 - 0) + 0;
+                generatedPoint = rand.nextInt(5 - 0) + 0;
             }
 
-            fieldCard =  board.getEnemyField().get(generatedPoint);
+            fieldCard =  board.getPlayerField().get(generatedPoint);
         }
         return generatedPoint;
     }
@@ -568,14 +574,15 @@ public class BoardController implements Initializable, ControlledScreen {
             int randomCardInt = random.nextInt((possibleCards.size() - 0) + 1) + 0;
             Card chosenCard = (Card) possibleCards.toArray()[randomCardInt];
             int attempts = 0;
-            while (chosenCard.getAttacked() == true || attempts <= 10){
+            while (chosenCard.getAttacked() == true || attempts <= 50){
                 if (chosenCard.getAttacked() != true){
                     board.getEnemyField().remove(chosenCard);
                     board.getPlayer().getHand().addCard(chosenCard);
                 }
+                System.out.print("Do move loop : " + attempts);
                 attempts++;
             }
-            if (attempts <= 10){
+            if (attempts <= 50){
                 AttackPlayerCard();
             }
         } else {
