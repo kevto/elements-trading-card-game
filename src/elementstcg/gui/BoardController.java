@@ -405,7 +405,7 @@ public class BoardController implements Initializable, ControlledScreen {
                     enemyCardToField(card, 5);
                 }
                 // Attack the player or player's cards.
-                // TODO Attack the player.
+
             }
             */
 
@@ -568,22 +568,15 @@ public class BoardController implements Initializable, ControlledScreen {
     public void doMove(){
         Random random = new Random();
         int withdrawOrAttack;
-        withdrawOrAttack = random.nextInt((100 - 0) + 1) + 0;
-        if (withdrawOrAttack <= 05){
+        withdrawOrAttack = random.nextInt(100 - 0) + 0;
+        if (withdrawOrAttack <= 25){
             Collection<Card> possibleCards =  board.getEnemyField().values();
-            int randomCardInt = random.nextInt((possibleCards.size() - 0) + 1) + 0;
+            int randomCardInt = random.nextInt(possibleCards.size() - 0) + 0;
             Card chosenCard = (Card) possibleCards.toArray()[randomCardInt];
             int attempts = 0;
-            while (chosenCard.getAttacked() == true || attempts <= 50){
-                if (chosenCard.getAttacked() != true){
-                    board.getEnemyField().remove(chosenCard);
-                    board.getPlayer().getHand().addCard(chosenCard);
-                }
-                System.out.print("Do move loop : " + attempts);
-                attempts++;
-            }
-            if (attempts <= 50){
-                AttackPlayerCard();
+            if (chosenCard != null) {
+                board.getEnemyField().remove(chosenCard);
+                board.getPlayer().getHand().addCard(chosenCard);
             }
         } else {
             AttackPlayerCard();
