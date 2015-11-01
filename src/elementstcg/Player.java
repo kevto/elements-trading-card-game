@@ -18,7 +18,7 @@ public class Player {
     }
 
     /**
-    * Initilizes the Player class with the given hp and name
+    * Initializes the Player class with the given hp and name
     * @author Maarten Verboogen
     * @param hp the amount of HP the player object starts with
     * @param name the name of the player object
@@ -39,6 +39,7 @@ public class Player {
     public void setDeck(Deck deck) {
         //TODO Check if failing even if null.
         //if(deck == null)
+        if(this.deck == null)
             this.deck = deck;
     }
 
@@ -97,10 +98,15 @@ public class Player {
     }
 
     /**
+<<<<<<< HEAD
      * Retrieves the amount of cards remaining the player's deck.
      * @return Amount of the cards remaining the player's deck in int.
      */
     public int getAmountCardsInDeck() {
         return deck.getAmountCards();
     }
+     * Get the current deck.
+     * @return The current deck object.
+     */
+    public Deck getDeck() { return deck; }
 }

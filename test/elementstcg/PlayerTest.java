@@ -63,4 +63,17 @@ public class PlayerTest extends TestCase {
     public void testGetName() throws Exception {
         assertEquals("The wrong username was returned", "player", player.getName());
     }
+
+    @Test
+    public void testSetDeck() throws Exception
+    {
+        ArrayList<Card> cards = new ArrayList<>();
+        cards.add(new Card(Element.Air, 1, 1, "asdf", 1));
+
+        Deck deck = new Deck(cards);
+        Player p = new Player(10, "asdf");
+        p.setDeck(deck);
+
+        assertEquals("Wrong deck returned", deck.getAmountCards(), p.getDeck().getAmountCards());
+    }
 }

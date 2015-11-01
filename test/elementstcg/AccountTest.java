@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
 /**
@@ -33,28 +34,36 @@ public class AccountTest extends TestCase {
         assertEquals("Logged in to an invalid account", false, Account.login("INVALIDUSERNAME", "INVALIDPASSWORD"));
     }
 
-//    /**
-//     * Tests the Register method.
-//     * @throws Exception
-//     */
-//    @Test
-//    public void testRegister() throws Exception {
-//        assertEquals("An account could not be created", true, Account.register("username", "password", "email@test.nl"));
-//        assertEquals("An account already existed with the same data", true, Account.register("username", "password", "email@test.nl"));
-//        assertEquals("An account was created with an invalid email", false, Account.register("username", "password", "NOPE"));
-//
-//
-//        //ILLEGAL CHARACTERS USERNAME
-//        assertEquals("Account created with illegal character in username", false, Account.register(";test", "password", "email@test.nl"));
-//        assertEquals("Account created with illegal character in username", false, Account.register("@test", "password", "email@test.nl"));
-//        assertEquals("Account created with illegal character in username", false, Account.register("/test", "password", "email@test.nl"));
-//        assertEquals("Account created with illegal character in username", false, Account.register(".test", "password", "email@test.nl"));
-//
-//        // ILLEGAL CHARACTERS PASSWORD
-//        assertEquals("An illegal character was allowed in a password.", false, Account.register("username", ";test", "email@test.nl"));
-//        assertEquals("An illegal character was allowed in a password.", false, Account.register("username", "\"test", "email@test.nl"));
-//        assertEquals("An illegal character was allowed in a password.", false, Account.register("username", "'test", "email@test.nl"));
-//    }
+    /**
+     * Tests the Register method.
+     * @throws Exception
+     */
+    @Test
+    public void testRegister() throws Exception {
+        assertTrue("An account could not be created", Account.register("username", "password", "email@test.nl"));
+        assertTrue("An account already existed with the same data",Account.register("username", "password", "email@test.nl"));
+        assertFalse("An account was created with an invalid email", Account.register("username", "password", "NOPE"));
+
+
+        //ILLEGAL CHARACTERS USERNAME
+        assertFalse("Account created with illegal character in username", Account.register(";test", "password", "email@test.nl"));
+        assertFalse("Account created with illegal character in username", Account.register("@test", "password", "email@test.nl"));
+        assertFalse("Account created with illegal character in username", Account.register("/test", "password", "email@test.nl"));
+        assertFalse("Account created with illegal character in username", Account.register(".test", "password", "email@test.nl"));
+
+        // ILLEGAL CHARACTERS PASSWORD
+        assertEquals("An illegal character was allowed in a password.", false, Account.register("username", ";test", "email@test.nl"));
+        assertEquals("An illegal character was allowed in a password.", false, Account.register("username", "\"test", "email@test.nl"));
+        assertEquals("An illegal character was allowed in a password.", false, Account.register("username", "'test", "email@test.nl"));
+        try
+        {
+            Account.register("username", ";password;", "bad@email.com");
+            fail("Registering was allowed with an illegal character in the password.");
+        }
+        catch (IllegalArgumentException ex) {}
+        //BAD EMAIL ADDRESS(ES)
+        assertFalse("A bad email got through!", Account.register("username", "password", "bademail"));
+    }
 
     /**
      * Tests to make sure you can't use an empty Constructor.
@@ -178,5 +187,11 @@ public class AccountTest extends TestCase {
         }
         catch(IllegalArgumentException IAE){
         }
+    }
+
+    @Test
+    public void testLogOut() throws Exception
+    {
+
     }
 }

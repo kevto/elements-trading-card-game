@@ -212,7 +212,7 @@ public class Board {
             totalDamage = card.getAttack() * CalculateMultiplier.calculatedMultplier(fieldCard, card);
 
             // Checking if there's a defender card infront of the card that
-            // the persons whishes to attack. Attack that one if true.
+            // the persons wishes to attack. Attack that one if true.
             if(point < 10) {
                 if (defenderField.containsKey(point + 10) != false) {
                     totalDamage = card.getAttack() * CalculateMultiplier.calculatedMultplier(defenderField.get(point + 10), card);

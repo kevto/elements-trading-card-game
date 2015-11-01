@@ -27,7 +27,8 @@ public class Account implements Serializable {
      * @param password
      * @return
      */
-    public static boolean login(String username, String password){
+    public static boolean login(String username, String password)
+    {
         // TODO Enable below until we're done with registering an account
 
         Account savedAccount = null;
@@ -80,7 +81,8 @@ public class Account implements Serializable {
      * @param email
      * @return
      */
-    public static boolean register(String username, String password, String email) {
+    public static boolean register(String username, String password, String email)
+    {
         //TODO Enable below until we're done with registering an account
 
         if (username == "" || password == "" || email == "")
@@ -252,7 +254,8 @@ public class Account implements Serializable {
      * @param ip
      * @param port
      */
-    public void setIPAndPort(String ip, int port){
+    public void setIPAndPort(String ip, int port)
+    {
         String testIp = ip.replace(".", "");
         int count = ip.length() - testIp.length();
 
@@ -282,7 +285,8 @@ public class Account implements Serializable {
     /**
      * Clears the Account instance.
      */
-    public void logout(){
+    public void logOut()
+    {
         //TODO : further implementation
         instance = null;
     }
