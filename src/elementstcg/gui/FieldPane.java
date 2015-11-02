@@ -33,6 +33,26 @@ public class FieldPane extends StackPane {
 
         card.setCardState(CardState.PlayerField);
 
+
+        card.resetCardPos();
+
+        card.resizeCard();
+        card.setSelected(false);
+
+        positionCard();
+    }
+    /**
+     * Place the provided card object on the field
+     * This includes resizing and translate
+     * @param card The CardPane object to be placed
+     */
+    public void setCardAI(CardPane card) {
+        this.card = card;
+        this.getChildren().add(card);
+
+        card.setCardState(CardState.EnemyField);
+
+
         card.resetCardPos();
 
         card.resizeCard();

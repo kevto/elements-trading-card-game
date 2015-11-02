@@ -98,13 +98,13 @@ public class Player {
     }
 
     /**
-<<<<<<< HEAD
      * Retrieves the amount of cards remaining the player's deck.
      * @return Amount of the cards remaining the player's deck in int.
-     */
+    */
     public int getAmountCardsInDeck() {
         return deck.getAmountCards();
     }
+    /**
      * Get the current deck.
      * @return The current deck object.
      */

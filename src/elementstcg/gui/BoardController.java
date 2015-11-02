@@ -4,6 +4,7 @@ import elementstcg.Board;
 import elementstcg.Card;
 import elementstcg.Deck;
 import elementstcg.Element;
+import elementstcg.util.AIEnemy;
 import elementstcg.util.CustomException.EmptyFieldException;
 import elementstcg.util.CustomException.ExceedCapacityException;
 import elementstcg.util.CustomException.OccupiedFieldException;
@@ -25,10 +26,7 @@ import javafx.scene.layout.Pane;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class BoardController implements Initializable, ControlledScreen {
 
@@ -376,33 +374,64 @@ public class BoardController implements Initializable, ControlledScreen {
      * This method is called when a player presses the next turn button.
      */
     public void nextTurnButtonAction() {
-        if(!board.isGameOver()) {
-            //TODO add a confirmation dialog.
-            board.nextTurn();
-            resetCardsAttacked();
-
-            if(!board.getTurn()) {
-                Card card = board.getEnemy().drawCard();
-
-                if(card != null) {
-                    // Put enemy card on the field.
-                    // TODO Clean this mess up.
-                    if(!board.getEnemyField().containsKey(0)) {
-                        enemyCardToField(card, 0);
-                    } else if(!board.getEnemyField().containsKey(1)) {
-                        enemyCardToField(card, 1);
-                    } else if(!board.getEnemyField().containsKey(2)) {
-                        enemyCardToField(card, 2);
-                    } else if(!board.getEnemyField().containsKey(3)) {
-                        enemyCardToField(card, 3);
-                    } else if(!board.getEnemyField().containsKey(4)) {
-                        enemyCardToField(card, 4);
-                    } else if(!board.getEnemyField().containsKey(5)) {
-                        enemyCardToField(card, 5);
+        //TODO add a confirmation dialog.
+        board.nextTurn();
+        resetCardsAttacked();
+        if(!board.isGameOver()){
+        if(!board.getTurn()) {
+            AIEnemy.DrawCard(board.getEnemy());
+            Card card = AIEnemy.getEnemyCard(board.getEnemy());
+            //Should ask about this bit, not sure if the enemy is allowed to attack immediatly
+            Random rand = new Random();
+            boolean wasAbleToPlaceCard = false;
+            boolean placeAttackOrDefense;
+            int generatedPoint;
+            while (wasAbleToPlaceCard != true) {
+                placeAttackOrDefense = rand.nextBoolean();
+                System.out.println(placeAttackOrDefense);
+                if (placeAttackOrDefense == true) {
+                    generatedPoint = rand.nextInt(12 - 7) + 7;
+                    if (!board.getEnemyField().containsKey(generatedPoint)) {
+                        System.out.println("Attack" + generatedPoint);
+                        enemyCardToField(card, generatedPoint);
+                        wasAbleToPlaceCard = true;
                     }
-                    // Attack the player or player's cards.
-                    // TODO Attack the player.
+                } else {
+                    generatedPoint = rand.nextInt(6 - 0) + 0;
+                    if (!board.getEnemyField().containsKey(generatedPoint)) {
+                        System.out.println("Defense" + generatedPoint);
+                        enemyCardToField(card, generatedPoint);
+                        wasAbleToPlaceCard = true;
+                    }
                 }
+            }
+
+
+            doMove();
+        }
+
+            /*
+            if(card != null) {
+                // Put enemy card on the field.
+                // TODO Clean this mess up.
+                if(!board.getEnemyField().containsKey(0)) {
+                    enemyCardToField(card, 0);
+                } else if(!board.getEnemyField().containsKey(1)) {
+                    enemyCardToField(card, 1);
+                } else if(!board.getEnemyField().containsKey(2)) {
+                    enemyCardToField(card, 2);
+                } else if(!board.getEnemyField().containsKey(3)) {
+                    enemyCardToField(card, 3);
+                } else if(!board.getEnemyField().containsKey(4)) {
+                    enemyCardToField(card, 4);
+                } else if(!board.getEnemyField().containsKey(5)) {
+                    enemyCardToField(card, 5);
+                }
+                // Attack the player or player's cards.
+
+            }
+            */
+
 
                 nextTurnButtonAction();
             } else {
@@ -412,9 +441,9 @@ public class BoardController implements Initializable, ControlledScreen {
                 }
             }
 
-            updateUi();
-            //TODO let the AI do his actions here. Nasty but it will work.
-        }
+        updateUi();
+        //TODO let the AI do his actions here. Nasty but it will work.
+
     }
 
     /**
@@ -477,13 +506,23 @@ public class BoardController implements Initializable, ControlledScreen {
      * @param card to add the board field.
      */
     private void enemyCardToField(Card card, int point) {
-        board.putCardEnemy(point, card);
-
+        //board.putCardEnemy(point, card);
         FieldPane pane = (FieldPane) enemyField.getChildren().get(point);
         CardPane cardPane = new CardPane(card, ghostPane, this);
-
         pane.setCard(cardPane);
         cardPane.setCardState(CardState.EnemyField);
+
+        for(int i = 0; i < ((FieldGrid) pane.getParent()).getChildren().size(); i++) {
+            if (pane.equals(((FieldGrid) pane.getParent()).getChildren().get(i))) {
+                try {
+                    board.putCardEnemy((i < 6 ? i : i - 6 + 10), card);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+
 
         // TODO Apparently I'd need this property to set the cards right. Find a better way to fix this.
         pane.translateYProperty().set(-70);
@@ -506,5 +545,68 @@ public class BoardController implements Initializable, ControlledScreen {
             card.setAttacked(false);
         for(Card card : board.getEnemy().getHand().getCards())
             card.setAttacked(false);
+    }
+
+
+    /**
+     * Some AI stuff
+     */
+    public void AttackPlayerCard(){
+        Random random = new Random();
+        Card retrievedCard = AIEnemy.attackPlayer(board.getEnemy());
+        Card fieldCard = null;
+        int pointer = 0;
+        int attempts = 0;
+        while (fieldCard == null) {
+            pointer = generateAttackPointForAI(random.nextBoolean());
+            fieldCard = board.getPlayerField().get(pointer);
+            attempts++;
+            if (attempts > 50){
+                break;
+            }
+            System.out.print("Attack player loop: " + attempts);
+        }
+        try {
+
+            board.attackCard(retrievedCard, pointer, board.getPlayerField(), null);
+        } catch (EmptyFieldException e) {
+            e.printStackTrace();
+        }
+    }
+    private int generateAttackPointForAI(Boolean attackingAttackCards){
+        int generatedPoint = 0;
+        Random rand = new Random();
+        Card fieldCard = null;
+
+        while (fieldCard == null){
+            //Bron: http://www.mkyong.com/java/java-generate-random-integers-in-a-range/
+            if (attackingAttackCards == true) {
+                generatedPoint = rand.nextInt(15 - 10) + 10;
+            } else {
+
+                generatedPoint = rand.nextInt(5 - 0) + 0;
+            }
+
+            fieldCard =  board.getPlayerField().get(generatedPoint);
+        }
+        return generatedPoint;
+    }
+    public void doMove(){
+        Random random = new Random();
+        int withdrawOrAttack;
+        withdrawOrAttack = random.nextInt(100 - 0) + 0;
+        if (withdrawOrAttack <= 25){
+            Collection<Card> possibleCards =  board.getEnemyField().values();
+            int randomCardInt = random.nextInt(possibleCards.size() - 0) + 0;
+            Card chosenCard = (Card) possibleCards.toArray()[randomCardInt];
+            int attempts = 0;
+            if (chosenCard != null) {
+                board.getEnemyField().remove(chosenCard);
+                board.getPlayer().getHand().addCard(chosenCard);
+            }
+        } else {
+            AttackPlayerCard();
+        }
+
     }
 }
