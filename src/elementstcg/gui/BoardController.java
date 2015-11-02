@@ -388,52 +388,25 @@ public class BoardController implements Initializable, ControlledScreen {
             int generatedPoint;
             while (wasAbleToPlaceCard != true) {
                 placeAttackOrDefense = rand.nextBoolean();
-                System.out.println(placeAttackOrDefense);
+                System.out.println("True if attack False if defense: " + placeAttackOrDefense);
                 if (placeAttackOrDefense == true) {
-                    generatedPoint = rand.nextInt(12 - 7) + 7;
+                    generatedPoint = rand.nextInt(15 - 10) + 10;
                     if (!board.getEnemyField().containsKey(generatedPoint)) {
-                        System.out.println("Attack" + generatedPoint);
+                        System.out.println("[AI] placed an attackc card at: " + generatedPoint);
                         enemyCardToField(card, generatedPoint);
                         wasAbleToPlaceCard = true;
                     }
                 } else {
                     generatedPoint = rand.nextInt(6 - 0) + 0;
                     if (!board.getEnemyField().containsKey(generatedPoint)) {
-                        System.out.println("Defense" + generatedPoint);
+                        System.out.println("[AI] placed a defense card at:" + generatedPoint);
                         enemyCardToField(card, generatedPoint);
                         wasAbleToPlaceCard = true;
                     }
                 }
             }
-
-
             doMove();
         }
-
-            /*
-            if(card != null) {
-                // Put enemy card on the field.
-                // TODO Clean this mess up.
-                if(!board.getEnemyField().containsKey(0)) {
-                    enemyCardToField(card, 0);
-                } else if(!board.getEnemyField().containsKey(1)) {
-                    enemyCardToField(card, 1);
-                } else if(!board.getEnemyField().containsKey(2)) {
-                    enemyCardToField(card, 2);
-                } else if(!board.getEnemyField().containsKey(3)) {
-                    enemyCardToField(card, 3);
-                } else if(!board.getEnemyField().containsKey(4)) {
-                    enemyCardToField(card, 4);
-                } else if(!board.getEnemyField().containsKey(5)) {
-                    enemyCardToField(card, 5);
-                }
-                // Attack the player or player's cards.
-
-            }
-            */
-
-
-                nextTurnButtonAction();
             } else {
                 Card card = board.getPlayer().drawCard();
                 if(card != null) {
@@ -507,7 +480,14 @@ public class BoardController implements Initializable, ControlledScreen {
      */
     private void enemyCardToField(Card card, int point) {
         //board.putCardEnemy(point, card);
-        FieldPane pane = (FieldPane) enemyField.getChildren().get(point);
+        int fieldpointer;
+        if (point >= 6) {
+            fieldpointer = (point - 4);
+        }
+        else{
+            fieldpointer = point;
+        }
+        FieldPane pane = (FieldPane) enemyField.getChildren().get(fieldpointer);
         CardPane cardPane = new CardPane(card, ghostPane, this);
         pane.setCard(cardPane);
         cardPane.setCardState(CardState.EnemyField);
@@ -525,7 +505,12 @@ public class BoardController implements Initializable, ControlledScreen {
 
 
         // TODO Apparently I'd need this property to set the cards right. Find a better way to fix this.
-        pane.translateYProperty().set(-70);
+        if (point < 9) {
+            pane.translateYProperty().set(-70);
+        }
+        else {
+            pane.translateYProperty().set(40);
+        }
     }
 
 
@@ -558,33 +543,37 @@ public class BoardController implements Initializable, ControlledScreen {
         int pointer = 0;
         int attempts = 0;
         while (fieldCard == null) {
-            pointer = generateAttackPointForAI(random.nextBoolean());
+            pointer = generateAttackPointForAI();
             fieldCard = board.getPlayerField().get(pointer);
             attempts++;
-            if (attempts > 50){
+            if (attempts > 5000){
                 break;
             }
+
             System.out.print("Attack player loop: " + attempts);
         }
         try {
-
+            if (doesPlayerHaveDefense() == false) {
+              int p_hp = board.getPlayer().getHp();
+                board.getPlayer().modifyHp(fieldCard.getAttack());
+            }
             board.attackCard(retrievedCard, pointer, board.getPlayerField(), null);
         } catch (EmptyFieldException e) {
             e.printStackTrace();
         }
     }
-    private int generateAttackPointForAI(Boolean attackingAttackCards){
+    private int generateAttackPointForAI(){
         int generatedPoint = 0;
         Random rand = new Random();
         Card fieldCard = null;
 
         while (fieldCard == null){
             //Bron: http://www.mkyong.com/java/java-generate-random-integers-in-a-range/
-            if (attackingAttackCards == true) {
-                generatedPoint = rand.nextInt(15 - 10) + 10;
+            if (doesPlayerHaveDefense() == false) {
+                generatedPoint = rand.nextInt(5 - 0) + 0;
             } else {
 
-                generatedPoint = rand.nextInt(5 - 0) + 0;
+                generatedPoint = rand.nextInt(15 - 10) + 10;
             }
 
             fieldCard =  board.getPlayerField().get(generatedPoint);
@@ -608,5 +597,15 @@ public class BoardController implements Initializable, ControlledScreen {
             AttackPlayerCard();
         }
 
+    }
+    private boolean doesPlayerHaveDefense(){
+        int i = 0;
+        while (i != 7) {
+            if (board.getPlayerField().containsValue(i)){
+                return true;
+            }
+            i++;
+        }
+        return false;
     }
 }
