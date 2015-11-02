@@ -9,6 +9,7 @@ import elementstcg.util.CustomException.EmptyFieldException;
 import elementstcg.util.CustomException.ExceedCapacityException;
 import elementstcg.util.CustomException.OccupiedFieldException;
 import elementstcg.util.DefaultDeck;
+import elementstcg.util.DialogUtility;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -153,34 +154,37 @@ public class BoardController implements Initializable, ControlledScreen {
      * This method is called when an FieldPane is selected
      */
     public void selectFieldPane(FieldPane field) {
-        FieldGrid grid = (FieldGrid)field.getParent();
+        if(!board.isGameOver()) {
+            FieldGrid grid = (FieldGrid)field.getParent();
 
-        if(grid.getFieldType() == FieldType.Player) {
-            if(selectedCard != null) {
-                if(selectedCard.getCardState() == CardState.PlayerHand) {
-                    //TODO: Notify Board object that an card has been placed on the playing field
+            if(grid.getFieldType() == FieldType.Player) {
+                if(selectedCard != null) {
+                    if(selectedCard.getCardState() == CardState.PlayerHand) {
+                        //TODO: Notify Board object that an card has been placed on the playing field
 
-                    for(int i = 0; i < ((FieldGrid) field.getParent()).getChildren().size(); i++) {
-                        if(field.equals(((FieldGrid) field.getParent()).getChildren().get(i))){
-                            try {
-                                board.putCardPlayer((i < 6 ? i : i - 6 + 10), selectedCard.getCard());
-                                field.setCard(selectedCard);
-                            } catch (OccupiedFieldException e) {
-                                e.printStackTrace();
-                            } catch (ExceedCapacityException e) {
-                                System.out.println(e.getMessage());
-                                return;
+                        for(int i = 0; i < ((FieldGrid) field.getParent()).getChildren().size(); i++) {
+                            if(field.equals(((FieldGrid) field.getParent()).getChildren().get(i))){
+                                try {
+                                    board.putCardPlayer((i < 6 ? i : i - 6 + 10), selectedCard.getCard());
+                                    field.setCard(selectedCard);
+                                } catch (OccupiedFieldException e) {
+                                    DialogUtility.newDialog(e.getMessage());
+                                    return;
+                                } catch (ExceedCapacityException e) {
+                                    DialogUtility.newDialog(e.getMessage());
+                                    return;
+                                }
                             }
                         }
-                    }
 
-                    selectCard(selectedCard);
-                    updateUi();
+                        selectCard(selectedCard);
+                        updateUi();
+                    }
                 }
-            }
-            else {
-                if(field.getCard() != null) {
-                    selectCard(field.getCard());
+                else {
+                    if(field.getCard() != null) {
+                        selectCard(field.getCard());
+                    }
                 }
             }
         }
@@ -189,48 +193,62 @@ public class BoardController implements Initializable, ControlledScreen {
     /**
      * This method is called when a player selects a card that is currently on the playing field.
      */
-    public void selectCardButtonAction(CardPane cardPane)
-    {
-        FieldGrid grid = (FieldGrid)cardPane.getParent().getParent();
+    public void selectCardButtonAction(CardPane cardPane) {
+        if(!board.isGameOver()) {
+            FieldGrid grid = (FieldGrid)cardPane.getParent().getParent();
 
-        if(grid.getFieldType() == FieldType.Player) {
-            if(selectedCard != null && selectedCard != cardPane && selectedCard.onField() == false) {
-                CardPane fieldCard = cardPane;
-                CardPane handCard  = selectedCard;
+            if(grid.getFieldType() == FieldType.Player) {
+                if(selectedCard != null && selectedCard != cardPane && selectedCard.onField() == false) {
+                    // Check if the card already attacked.
+                    if(cardPane.getCard().getAttacked()) {
+                        DialogUtility.newDialog("Card on the field already has attacked this turn and can not be swapped!");
+                        return;
+                    }
+    
+                    CardPane fieldCard = cardPane;
+                    CardPane handCard  = selectedCard;
 
-                fieldCard.resetCardPos();
-                handCard.resetCardPos();
+                    // Try to put the new card onto the field. Checking for limitations.
+                    int point = board.getPlayerCardPoint(fieldCard.getCard());
+                    Card cardRemoved = board.getPlayerField().get(point);
+                    board.removePlayerCard(point);
+                    try {
+                        board.putCardPlayer(point, handCard.getCard());
+                    } catch (OccupiedFieldException e) {
+                        DialogUtility.newDialog(e.getMessage());
+                        board.forcePutCardPlayer(point, cardRemoved);
+                        return;
+                    } catch (ExceedCapacityException e) {
+                        DialogUtility.newDialog(e.getMessage());
+                        board.forcePutCardPlayer(point, cardRemoved);
+                        return;
+                    }
 
-                FieldPane field = (FieldPane)fieldCard.getParent();
+                    // Go on with swapping cards.
+                    fieldCard.resetCardPos();
+                    handCard.resetCardPos();
 
-                field.setCard(handCard);
-                handCard.setCardState(CardState.PlayerField);
-                handCard.resizeCard();
+                    FieldPane field = (FieldPane)fieldCard.getParent();
 
-                int point = board.getPlayerCardPoint(fieldCard.getCard());
-                board.removePlayerCard(point);
-                try {
-                    board.putCardPlayer(point, handCard.getCard());
-                } catch (OccupiedFieldException e) {
-                    e.printStackTrace();
-                } catch (ExceedCapacityException e) {
-                    e.printStackTrace();
+                    field.setCard(handCard);
+                    handCard.setCardState(CardState.PlayerField);
+                    handCard.resizeCard();
+
+                    field.getChildren().remove(fieldCard);
+                    hboxPlayerHand.getChildren().add(fieldCard);
+                    fieldCard.setCardState(CardState.PlayerHand);
+                    fieldCard.resizeCard();
+
+                    selectCard(fieldCard);
+                    updateUi();
                 }
-
-                field.getChildren().remove(fieldCard);
-                hboxPlayerHand.getChildren().add(fieldCard);
-                fieldCard.setCardState(CardState.PlayerHand);
-                fieldCard.resizeCard();
-
-                selectCard(fieldCard);
-                updateUi();
+                selectCard(cardPane);
             }
-            selectCard(cardPane);
-        }
 
-        if(grid.getFieldType() == FieldType.Enemy) {
-            if(selectedCard != null) {
-                //TODO: Attack Card (look at attackEnemyCardButtonAction)
+            if(grid.getFieldType() == FieldType.Enemy) {
+                if(selectedCard != null) {
+                    //TODO: Attack Card (look at attackEnemyCardButtonAction)
+                }
             }
         }
     }
@@ -254,90 +272,94 @@ public class BoardController implements Initializable, ControlledScreen {
      * This method is called when a player uses a selected card to attack a card of his opponent.
      */
     public void attackEnemyCardButtonAction(CardPane cardPane) throws IOException {
-        if(selectedCard != null && selectedCard.isSelected() && selectedCard.onField()) {
-            // Check if the card is in a defend position.
-            for(Map.Entry<Integer, Card> entry : board.getPlayerField().entrySet()) {
-                if (entry.getKey() < 10 && entry.getValue().equals(selectedCard.getCard())) {
-                    System.out.println("[kevto]: Selected card is a defense and therefore can not attack an enemy card.");
+        if(!board.isGameOver()) {
+            if(selectedCard != null && selectedCard.isSelected() && selectedCard.onField()) {
+                // Check if the card is in a defend position.
+                for(Map.Entry<Integer, Card> entry : board.getPlayerField().entrySet()) {
+                    if (entry.getKey() < 10 && entry.getValue().equals(selectedCard.getCard())) {
+                        DialogUtility.newDialog("Selected card is a defense and therefore can not attack an enemy card.");
+                        return;
+                    }
+                }
+
+                // Check if the card already attacked.
+                if(selectedCard.getCard().getAttacked()) {
+                    DialogUtility.newDialog("Selected card already attacked this turn.");
                     return;
                 }
-            }
 
-            // Check if the card already attacked.
-            if(selectedCard.getCard().getAttacked()) {
-                System.out.println("[kevto]: Selected card already attacked this turn.");
-                return;
-            }
+                // TODO implement so that the card of the enemy will be attacked.
+                System.out.println("[kevto]: Enemy CardPane selected " + cardPane.getCard().getName());
 
-            // TODO implement so that the card of the enemy will be attacked.
-            System.out.println("[kevto]: Enemy CardPane selected " + cardPane.getCard().getName());
+                int point = -1;
 
-            int point = -1;
+                // Checking all the cards on the enemy field to get the correct point.
+                for(Map.Entry<Integer, Card> entry : board.getEnemyField().entrySet())
+                    if(entry.getValue().equals(cardPane.getCard()))
+                        point = entry.getKey();
 
-            // Checking all the cards on the enemy field to get the correct point.
-            for(Map.Entry<Integer, Card> entry : board.getEnemyField().entrySet())
-                if(entry.getValue().equals(cardPane.getCard()))
-                    point = entry.getKey();
+                if(point == -1) {
+                    throw new IOException("Position (point) not found of selected card");
+                }
 
-            if(point == -1) {
-                throw new IOException("Position (point) not found of selected card");
-            }
+                try {
+                    board.attackCard(selectedCard.getCard(), point, board.getEnemyField(), new Runnable() {
+                        @Override
+                        public void run() {
+                            DialogUtility.newDialog("Enemy card is dead!");
+                            FieldPane field = (FieldPane) cardPane.getParent();
+                            field.removeCard();
+                            updateUi();
+                        }
+                    });
+                } catch (EmptyFieldException e) {
+                    e.printStackTrace();
+                }
 
-            try {
-                board.attackCard(selectedCard.getCard(), point, board.getEnemyField(), new Runnable() {
-                    @Override
-                    public void run() {
-                        System.out.println("[kevto]: Enemy card is dead!");
-                        FieldPane field = (FieldPane) cardPane.getParent();
-                        field.removeCard();
-                        updateUi();
-                    }
-                });
-            } catch (EmptyFieldException e) {
-                e.printStackTrace();
-            }
-
-            updateUi();
-        } else
-            System.out.println("[kevto]: Select a card first..");
+                updateUi();
+            } else
+                DialogUtility.newDialog("Select a card first..");
+        }
     }
 
     /**
      * This method is called when a player uses a selected card to attack the enemy directly.
      */
     public void attackEnemyDirectButtonAction() {
-        if(selectedCard != null && selectedCard.isSelected() && selectedCard.onField()) {
-            // Check if there are any cards on the defence line.
-            for (Map.Entry<Integer, Card> entry : board.getEnemyField().entrySet()) {
-                if (entry.getKey() >= 10) {
-                    System.out.println("[kevto]: There's a card on the defense line on the enemy side. Can't attack directly.");
+        if(!board.isGameOver()) {
+            if(selectedCard != null && selectedCard.isSelected() && selectedCard.onField()) {
+                // Check if there are any cards on the defence line.
+                for (Map.Entry<Integer, Card> entry : board.getEnemyField().entrySet()) {
+                    if (entry.getKey() >= 10) {
+                        DialogUtility.newDialog("There's a card on the defense line on the enemy side. Can't attack directly.");
+                        return;
+                    }
+                }
+
+                // Check if the card is in a defend position.
+                for (Map.Entry<Integer, Card> entry : board.getPlayerField().entrySet()) {
+                    if (entry.getKey() < 10 && entry.getValue().equals(selectedCard.getCard())) {
+                        DialogUtility.newDialog("Selected card is a defense and therefore can not attack the enemy directly.");
+                        return;
+                    }
+                }
+
+                // Check if the card already attacked.
+                if (selectedCard.getCard().getAttacked()) {
+                    DialogUtility.newDialog("Selected card already attacked this turn.");
                     return;
                 }
+
+
+                // Feel free to attack the enemy!
+                board.updateEnemyHP(selectedCard.getCard().getAttack());
+                selectedCard.getCard().setAttacked(true);
+                updateUi();
+
+                //TODO Do something when the enemy is dead!
+                if(board.isGameOver())
+                    DialogUtility.newDialog("Game is over!");
             }
-
-            // Check if the card is in a defend position.
-            for (Map.Entry<Integer, Card> entry : board.getPlayerField().entrySet()) {
-                if (entry.getKey() < 10 && entry.getValue().equals(selectedCard.getCard())) {
-                    System.out.println("[kevto]: Selected card is a defense and therefore can not attack an enemy card.");
-                    return;
-                }
-            }
-
-            // Check if the card already attacked.
-            if (selectedCard.getCard().getAttacked()) {
-                System.out.println("[kevto]: Selected card already attacked this turn.");
-                return;
-            }
-
-
-            // Feel free to attack the enemy!
-            board.updateEnemyHP(selectedCard.getCard().getAttack());
-            selectedCard.getCard().setAttacked(true);
-            updateUi();
-
-            //TODO Do something when the enemy is dead!
-            if(board.isGameOver())
-                System.out.println("Game is over!");
         }
     }
 
@@ -355,7 +377,7 @@ public class BoardController implements Initializable, ControlledScreen {
         //TODO add a confirmation dialog.
         board.nextTurn();
         resetCardsAttacked();
-
+        if(!board.isGameOver()){
         if(!board.getTurn()) {
             AIEnemy.DrawCard(board.getEnemy());
             Card card = AIEnemy.getEnemyCard(board.getEnemy());
@@ -364,19 +386,19 @@ public class BoardController implements Initializable, ControlledScreen {
             boolean wasAbleToPlaceCard = false;
             boolean placeAttackOrDefense;
             int generatedPoint;
-            while (wasAbleToPlaceCard != true){
+            while (wasAbleToPlaceCard != true) {
                 placeAttackOrDefense = rand.nextBoolean();
                 System.out.println(placeAttackOrDefense);
                 if (placeAttackOrDefense == true) {
                     generatedPoint = rand.nextInt(12 - 7) + 7;
-                    if (!board.getEnemyField().containsKey(generatedPoint)){
+                    if (!board.getEnemyField().containsKey(generatedPoint)) {
                         System.out.println("Attack" + generatedPoint);
                         enemyCardToField(card, generatedPoint);
                         wasAbleToPlaceCard = true;
                     }
                 } else {
                     generatedPoint = rand.nextInt(6 - 0) + 0;
-                    if (!board.getEnemyField().containsKey(generatedPoint)){
+                    if (!board.getEnemyField().containsKey(generatedPoint)) {
                         System.out.println("Defense" + generatedPoint);
                         enemyCardToField(card, generatedPoint);
                         wasAbleToPlaceCard = true;
@@ -386,6 +408,7 @@ public class BoardController implements Initializable, ControlledScreen {
 
 
             doMove();
+        }
 
             /*
             if(card != null) {
@@ -409,13 +432,14 @@ public class BoardController implements Initializable, ControlledScreen {
             }
             */
 
-            nextTurnButtonAction();
-        } else {
-            Card card = board.getPlayer().drawCard();
-            if(card != null) {
-                hboxPlayerHand.getChildren().add(new CardPane(card, ghostPane, this));
+
+                nextTurnButtonAction();
+            } else {
+                Card card = board.getPlayer().drawCard();
+                if(card != null) {
+                    hboxPlayerHand.getChildren().add(new CardPane(card, ghostPane, this));
+                }
             }
-        }
 
         updateUi();
         //TODO let the AI do his actions here. Nasty but it will work.
@@ -457,20 +481,22 @@ public class BoardController implements Initializable, ControlledScreen {
      * @param card to give the selected state to.
      */
     private void selectCard(CardPane card) {
-        if(selectedCard == null) {
-            selectedCard = card;
-            card.setSelected(true);
-        }
-        else {
-            if(card != selectedCard) {
-                selectedCard.setSelected(false);
-
+        if(!board.isGameOver()) {
+            if(selectedCard == null) {
                 selectedCard = card;
                 card.setSelected(true);
             }
             else {
-                card.setSelected(false);
-                selectedCard = null;
+                if(card != selectedCard) {
+                    selectedCard.setSelected(false);
+
+                    selectedCard = card;
+                    card.setSelected(true);
+                }
+                else {
+                    card.setSelected(false);
+                    selectedCard = null;
+                }
             }
         }
     }

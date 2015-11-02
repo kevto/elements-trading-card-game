@@ -136,6 +136,17 @@ public class Board {
     }
 
     /**
+     * This method places a card from the players hand onto the board. Forcefully does that.
+     * @param point Location of the card on the board where it gets placed.
+     * @param card Which card gets placed.
+     */
+    public void forcePutCardPlayer(int point, Card card) {
+        if(playerField.containsKey(point))
+            playerField.remove(point);
+        playerField.put(point, card);
+    }
+
+    /**
      * This method places a card from the enemys hand onto the board.
      * @param point Location on the board where the card gets placed.
      * @param card Which card gets placed.
@@ -201,7 +212,7 @@ public class Board {
             totalDamage = card.getAttack() * CalculateMultiplier.calculatedMultplier(fieldCard, card);
 
             // Checking if there's a defender card infront of the card that
-            // the persons whishes to attack. Attack that one if true.
+            // the persons wishes to attack. Attack that one if true.
             if(point < 10) {
                 if (defenderField.containsKey(point + 10) != false) {
                     totalDamage = card.getAttack() * CalculateMultiplier.calculatedMultplier(defenderField.get(point + 10), card);
