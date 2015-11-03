@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="561.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="elementstcg.gui.InlogRegisterScreenController">
+   <children>
+      <TextField fx:id="tbUsername" layoutX="205.0" layoutY="125.0" prefHeight="33.0" prefWidth="149.0" promptText="Username" />
+      <PasswordField fx:id="tbPassword" layoutX="205.0" layoutY="165.0" prefHeight="33.0" prefWidth="149.0" promptText="Password" />
+      <Button fx:id="LoginButton" layoutX="206.0" layoutY="231.0" mnemonicParsing="false" onMouseClicked="#clickedLogin" prefHeight="44.0" prefWidth="149.0" text="LOGIN" textFill="#727272">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Button>
+      <TextField fx:id="tbEmail" layoutX="205.0" layoutY="85.0" prefHeight="33.0" prefWidth="149.0" promptText="Email" visible="false" />
+      <Hyperlink fx:id="RegisterButton" layoutX="255.0" layoutY="294.0" onMouseClicked="#clickedRegister" text="Register" />
+      <Label layoutX="276.0" layoutY="38.0" textAlignment="CENTER" textFill="#eb3939" />
+      <Label fx:id="lblMessage" alignment="CENTER" layoutX="-1.0" layoutY="38.0" prefHeight="17.0" prefWidth="561.0" text="Welcome" textAlignment="CENTER" />
+   </children>
+</Pane>

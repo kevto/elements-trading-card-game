@@ -1,0 +1,16 @@
+.field {
+	-fx-background-image: url("../images/field.png");
+	-fx-background-repeat: none;
+	-fx-background-size: 847px 253px;
+}
+
+.field-enemy {
+	-fx-background-image: url("../images/field_enemy.png");
+	-fx-background-repeat: none;
+    -fx-background-size: 847px 253px;
+}
+
+#main {
+	-fx-background-image: url("../images/background.png");
+	-fx-background-size: 100% 100%;
+}
