@@ -236,8 +236,9 @@ public class Board {
 
                 if(keyToRemove != -1)
                     defenderField.remove(keyToRemove);
-
-                Platform.runLater(removeCard);
+                if(removeCard != null) {
+                    Platform.runLater(removeCard);
+                }
             }
         }
         else {

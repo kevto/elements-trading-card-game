@@ -37,7 +37,6 @@ public class AIEnemy {
         int randomNum = rand.nextInt(cardsHolding);
         Card retrievedCard = currentHand.getCard(randomNum);
 
-
         return retrievedCard;
     }
 
