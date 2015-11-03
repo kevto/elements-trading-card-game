@@ -213,17 +213,17 @@ public class Board {
 
             // Checking if there's a defender card infront of the card that
             // the persons wishes to attack. Attack that one if true.
-            if(point < 10) {
-                if (defenderField.containsKey(point + 10) != false) {
-                    totalDamage = card.getAttack() * CalculateMultiplier.calculatedMultplier(defenderField.get(point + 10), card);
-                    defenderField.get(point + 10).modifyHP((int) totalDamage);
-                    fieldCard = defenderField.get(point + 10);
-                } else {
+            //if(point < 10) {
+            //    if (defenderField.containsKey(point + 10) != false) {
+            //        totalDamage = card.getAttack() * CalculateMultiplier.calculatedMultplier(defenderField.get(point + 10), card);
+            //        defenderField.get(point + 10).modifyHP((int) totalDamage);
+            //        fieldCard = defenderField.get(point + 10);
+            //    } else {
                     fieldCard.modifyHP((int) totalDamage);
-                }
-            } else {
-                fieldCard.modifyHP((int) totalDamage);
-            }
+            //    }
+            //} else {
+            //    fieldCard.modifyHP((int) totalDamage);
+            //}
             
             card.setAttacked(true);
 

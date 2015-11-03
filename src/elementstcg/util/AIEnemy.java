@@ -12,16 +12,7 @@ public class AIEnemy {
 
 
     public static Card getEnemyCard(Player enemyP){
-        Hand currentHand;
-        currentHand = enemyP.getHand();
-        int cardsHolding = currentHand.getAmountCards();
-        Random rand = new Random();
-        int randomNum = rand.nextInt(cardsHolding);
-        Card retrievedCard = currentHand.getCard(randomNum);
-
-
-        return retrievedCard;
-
+        return enemyP.drawCard();
     }
 
     public static void setPlayer(Player p, Player enemyP){
@@ -30,14 +21,7 @@ public class AIEnemy {
     }
 
     public static Card attackPlayer(Player enemyP){
-        Hand currentHand;
-        currentHand = enemyP.getHand();
-        int cardsHolding = currentHand.getAmountCards();
-        Random rand = new Random();
-        int randomNum = rand.nextInt(cardsHolding);
-        Card retrievedCard = currentHand.getCard(randomNum);
-
-        return retrievedCard;
+        return enemyP.drawCard();
     }
 
     public static void DrawCard(Player enemyP){

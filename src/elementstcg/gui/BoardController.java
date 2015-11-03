@@ -394,13 +394,14 @@ public class BoardController implements Initializable, ControlledScreen {
         resetCardsAttacked();
         if (!board.isGameOver()) {
             if (!board.getTurn()) {
-                AIEnemy.DrawCard(board.getEnemy());
                 Card card = AIEnemy.getEnemyCard(board.getEnemy());
                 //Should ask about this bit, not sure if the enemy is allowed to attack immediatly
                 Random rand = new Random();
                 boolean wasAbleToPlaceCard = false;
                 boolean placeAttackOrDefense;
                 int generatedPoint;
+
+                int attempts = 0;
                 while (wasAbleToPlaceCard != true) {
                     placeAttackOrDefense = rand.nextBoolean();
                     System.out.println("True if attack False if defense: " + placeAttackOrDefense);
@@ -408,17 +409,22 @@ public class BoardController implements Initializable, ControlledScreen {
                         generatedPoint = rand.nextInt(15 - 10) + 10;
                         if (!board.getEnemyField().containsKey(generatedPoint)) {
                             System.out.println("[AI] placed an attackc card at: " + generatedPoint);
-                            enemyCardToField(card, generatedPoint);
+                            if(card != null)
+                                enemyCardToField(card, generatedPoint);
                             wasAbleToPlaceCard = true;
                         }
                     } else {
                         generatedPoint = rand.nextInt(6 - 0) + 0;
                         if (!board.getEnemyField().containsKey(generatedPoint)) {
                             System.out.println("[AI] placed a defense card at:" + generatedPoint);
-                            enemyCardToField(card, generatedPoint);
+                            if(card != null)
+                                enemyCardToField(card, generatedPoint);
                             wasAbleToPlaceCard = true;
                         }
                     }
+                    attempts++;
+                    if(attempts > 25)
+                        break;
                 }
 
                 doMove();
@@ -561,16 +567,10 @@ public class BoardController implements Initializable, ControlledScreen {
         Card fieldCard = null;
 
         for (int i = 0; i < 6; i++) {
-
             if (doesPlayerHaveDefense() == true) {
                 fieldCard = board.getPlayerField().get(i);
                 if (fieldCard != null) {
                     return i;
-                }
-            } else {
-                fieldCard = board.getPlayerField().get((i + 10));
-                if (fieldCard != null) {
-                    return i + 10;
                 }
             }
         }
@@ -580,31 +580,35 @@ public class BoardController implements Initializable, ControlledScreen {
     }
 
     public void doMove() {
-        Random random = new Random();
-        Card retrievedCard = AIEnemy.attackPlayer(board.getEnemy());
-        Card fieldCard = null;
+        Card retrievedCard = null;
+        for (int i = 0; i < 5; i++){
+            retrievedCard = board.getEnemyField().get(i);
+            if(retrievedCard != null)
+                break;
+        }
+
+        if(retrievedCard == null)
+            return;
+
         int pointer = 0;
         int attempts = 0;
         pointer = generateAttackPointForAI();
-        if (pointer == -1){
-            return;
-        }
-        fieldCard = board.getPlayerField().get(pointer);
-        System.out.print("Attack player loop: " + attempts);
+
+        System.out.println("Attack player loop: " + attempts + " pointer: " + pointer);
         final int xpointer = pointer;
         try {
-            System.out.print("Does the player have defense: " + doesPlayerHaveDefense());
+            System.out.println("Does the player have defense: " + doesPlayerHaveDefense());
             if (doesPlayerHaveDefense() == false) {
                 board.getPlayer().modifyHp(retrievedCard.getAttack());
 
 
             }
-            else {
+            else if(pointer != -1) {
                 board.attackCard(retrievedCard, xpointer, board.getPlayerField(), new Runnable() {
                     @Override
                     public void run() {
                         DialogUtility.newDialog("Your card died.");
-                        System.out.print("Run pointer: " + xpointer);
+                        System.out.println("Run pointer: " + xpointer);
                         FieldPane field;
                         if (xpointer < 6) {
                             field = (FieldPane) playerField.getChildren().get(xpointer);
@@ -627,7 +631,7 @@ public class BoardController implements Initializable, ControlledScreen {
 
     private boolean doesPlayerHaveDefense() {
         int i = 0;
-        while (i != 7) {
+        while (i != 6) {
             if (board.getPlayerField().containsKey(i)) {
                 return true;
             }
