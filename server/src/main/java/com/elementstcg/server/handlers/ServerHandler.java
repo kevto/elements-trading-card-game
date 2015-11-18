@@ -5,6 +5,7 @@ import com.elementstcg.server.game.Account;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
@@ -27,6 +28,7 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
     private Condition databaseBusy;
     private List<Account> clients;
     private ExecutorService tPool;
+    private List<Player> players;
 
     /**
      * Public constructor for UnicastRemoteObject. Initializing the variables in this class.
@@ -52,5 +54,60 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
     public IResponse register(String username, String password, String email) throws RemoteException {
         //TODO Implement ServerHandler.register method.
         return new Response(false, 999, "Not implemented yet!");
+    }
+
+    public List<Player> findMatch(List<Player> players, Player p)
+    {
+        /*
+        TODO IMPLEMENT method to find closest match
+        Returns a list of two players whom are the closest match.
+        Should be done.
+        Need to fix some variable names here.
+        */
+        Collections.sort(players);
+        this.players = players;
+
+        List<Player> match = new ArrayList<>();
+        int score = 100;
+        int tempScore;
+
+        for (Player p1 : Players)
+        {
+            if (p1.getElo() == p.getElo())
+            {
+                match.add(p1);
+                match.add(p);
+                return match;
+            }
+
+            if (p1.getElo() < p.getElo())
+            {
+                tempScore = p.getElo - p1.getElo();
+                if (tempScore < score)
+                {
+                    match.clear();
+                    match.add(p1);
+                    match.add(p);
+
+                    score = tempScore;
+                }
+            }
+
+            if (p1.getElo() > p.getElo())
+            {
+                tempScore = p1.getElo - p.getElo();
+
+                if (tempScore < score)
+                {
+                    match.clear();
+                    match.add(p1);
+                    match.add(p);
+
+                    score = tempScore;
+                }
+            }
+        }
+
+        return match;
     }
 }

@@ -6,6 +6,7 @@ public class Player {
     private String name;
     private Hand hand;
     private Deck deck;
+    private int elo;
 
     /**
      * Initilizes the Player class with the given hp and name
@@ -24,10 +25,11 @@ public class Player {
     * @param name the name of the player object
     * @param deck the deck that the player will be playing with
     */
-    public Player(int hp, String name, Deck deck){
+    public Player(int hp, String name, Deck deck, Elo elo){
         this.hp = hp;
         this.name = name;
         this.deck = deck;
+        this.elo = elo;
 
         hand = new Hand();
     }
@@ -111,4 +113,23 @@ public class Player {
      * @return The current deck object.
      */
     public Deck getDeck() { return deck; }
+
+    /**
+     * Sets the elo of this player
+     * @param elo which the new elo is set to.
+     */
+    public void setElo(int elo)
+    {
+        //TEMP, needs to be changed to update the elo with a given value, instead of overwriting it.
+        this.elo = elo;
+    }
+
+    /**
+     * Get elo of player.
+     * @return integer with elo of player.
+     */
+    public int getElo()
+    {
+        return this.elo;
+    }
 }

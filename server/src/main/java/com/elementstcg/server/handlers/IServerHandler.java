@@ -28,4 +28,13 @@ public interface IServerHandler extends Remote {
      * @throws RemoteException
      */
     IResponse register(String username, String password, String email) throws RemoteException;
+
+    /**
+     * Finds the best match for the given player, in a list of all players searching for a match.
+     * @param players are all the players looking for a match.
+     * @param player is the one who just started searching for a match.
+     * @throws RemoteException
+     */
+    List<Player> findMatch(List<Player> players, Player player) throws RemoteException;
+
 }
