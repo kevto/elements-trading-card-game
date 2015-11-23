@@ -6,8 +6,6 @@ import org.junit.Test;
 
 import java.rmi.RemoteException;
 
-import static org.junit.Assert.*;
-
 /**
  * Testing the response methods.
  *

@@ -5,10 +5,12 @@
 package com.elementstcg.server.game;
 
 
-import com.elementstcg.server.game.util.CustomException.*;
 import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
+import com.elementstcg.server.game.util.CustomException.EmptyFieldException;
+import com.elementstcg.server.game.util.CustomException.ExceedCapacityException;
+import com.elementstcg.server.game.util.CustomException.OccupiedFieldException;
 
 import java.util.HashMap;
 

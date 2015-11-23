@@ -1,7 +1,5 @@
 package com.elementstcg.server;
 
-import org.junit.Test;
-
 /**
  * Tests about the server and it's methods.
  *

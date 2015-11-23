@@ -1,7 +1,7 @@
 package com.elementstcg.server;
 
-import com.elementstcg.server.handlers.IServerHandler;
 import com.elementstcg.server.handlers.ServerHandler;
+import com.elementstcg.server.handlers.IServerHandler;
 import org.avaje.agentloader.AgentLoader;
 
 import java.rmi.registry.LocateRegistry;

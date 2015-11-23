@@ -1,15 +1,14 @@
 package com.elementstcg.server.handlers;
 
 import com.elementstcg.server.game.Account;
+import elementstcg.Handlers.IClientHandler;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -27,6 +26,7 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
     private Condition databaseBusy;
     private List<Account> clients;
     private ExecutorService tPool;
+    private static IResponse inst;
 
     /**
      * Public constructor for UnicastRemoteObject. Initializing the variables in this class.
@@ -44,7 +44,7 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
                 Runtime.getRuntime().availableProcessors() * 2));
     }
 
-    public IResponse login(String username, String password) throws RemoteException {
+    public IResponse login(IClientHandler client, String username, String password) throws RemoteException {
         //TODO Implement ServerHandler.login method.
         return new Response(false, 999, "Not implemented yet!");
     }
@@ -52,5 +52,33 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
     public IResponse register(String username, String password, String email) throws RemoteException {
         //TODO Implement ServerHandler.register method.
         return new Response(false, 999, "Not implemented yet!");
+    }
+
+    public IResponse placeCard(String key, int selected, int point) throws RemoteException {
+        return null;
+    }
+
+    public IResponse nextTurn(String key) throws RemoteException {
+        return null;
+    }
+
+    public IResponse replaceCard(String key, int selected, int point) throws RemoteException {
+        return null;
+    }
+
+    public IResponse attackCard(String key, int point, int enemyPoint) throws RemoteException {
+        return null;
+    }
+
+    public IResponse attackEnemy(String key, int point) throws RemoteException {
+        return null;
+    }
+
+    public IResponse findMatch(String key) throws RemoteException {
+        return null;
+    }
+
+    public IResponse quitMatch(String key) throws RemoteException {
+        return null;
     }
 }

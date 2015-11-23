@@ -7,7 +7,6 @@ package com.elementstcg.server.game;
  */
 
 import java.io.*;
-import java.nio.file.Files;
 
 
 public class Account implements Serializable {

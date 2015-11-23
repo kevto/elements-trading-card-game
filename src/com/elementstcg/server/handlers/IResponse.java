@@ -1,5 +1,6 @@
 package com.elementstcg.server.handlers;
 
+import java.io.Serializable;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
@@ -9,7 +10,7 @@ import java.rmi.RemoteException;
  * @author Kevin Berendsen
  * @since 2015-11-16
  */
-public interface IResponse extends Remote {
+public interface IResponse extends Remote, Serializable {
 
     /**
      * Gets the error message if any error occurred or was not successful.
