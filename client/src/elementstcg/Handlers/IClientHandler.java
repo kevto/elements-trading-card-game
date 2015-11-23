@@ -1,23 +1,27 @@
 
 import elementstcg.*;
 
+import java.lang.Boolean;
+
 /**
  * THIS INTERFACE IS USED BY THE SERVER TO COMMUNICATE WITH THE CLIENT.
  * Written by Danny ter Haar
  * Woensdag 18 november 2015
- * Oink!
+ * Oink, said the little piggy.
  */
 
 public interface IClientHandler{
     /**
      * Updates the player HP in the GUI at the request of the server
+     * @param hp The new HP total of the player
      */
-    public void updatePlayerHP(){}
+    public void updatePlayerHP(int hp){}
 
     /**
      * Updates the total amount of cards the player still has left in his/her deck at the request of the server.
+     * @param The new amount of cards left of the player deck
      */
-    public void updateDeckCount(){}
+    public void updateDeckCount(int amount){}
 
     /**
      * Places a card into the Hand of the player at the request of the server
@@ -104,8 +108,15 @@ public interface IClientHandler{
 
     /**
      * Removes a Card from the enemy hand Represents the spot or place where the card is placed.
+     * @param Specifies which card to remove from the enemy hand
      */
-    public void enemyRemoveCardFromHand(){}
+    public void enemyRemoveCardFromHand(int index){}
+
+    /**
+     * Handles the next turn in the client. At the request of the server
+     * @param isThisClientsTurn Specifies wetether it's this clients turn or not
+     */
+    public void nextTurn(Boolean isThisClientsTurn){}
 
 
 }
