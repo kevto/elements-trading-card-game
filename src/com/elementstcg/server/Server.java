@@ -1,9 +1,10 @@
 package com.elementstcg.server;
 
 import com.elementstcg.server.handlers.ServerHandler;
-import com.elementstcg.server.handlers.IServerHandler;
+import com.elementstcg.shared.trait.IServerHandler;
 import org.avaje.agentloader.AgentLoader;
 
+import java.net.Inet4Address;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.Scanner;
@@ -46,12 +47,13 @@ public class Server {
             registry.bind("game_server0", handler);
 
             // Load the agent into the running JVM process
-            if (!AgentLoader.loadAgentFromClasspath("avaje-ebeanorm-agent", "debug=1;packages=com.elementstcg.server.game.**")) {
-                System.err.println("avaje-ebeanorm-agent not found in classpath - not dynamically loaded");
-            }
+//            if (!AgentLoader.loadAgentFromClasspath("avaje-ebeanorm-agent", "debug=1;packages=com.elementstcg.server.game.**")) {
+//                System.err.println("avaje-ebeanorm-agent not found in classpath - not dynamically loaded");
+//            }
 
             System.out.println("SERVER IS UP AND RUNNING\n---------------");
             System.out.println("ELEMENTS TCG SERVER");
+            System.out.println("SERVER RUNNING AT: " + Inet4Address.getLocalHost().getHostAddress() + ":" + port );
             System.out.println("VERSION: 1.0 Beta");
             System.out.println("HAVE FUN!");
             System.out.println("---------------");
@@ -75,8 +77,6 @@ public class Server {
                 }
             }, 5000);
 
-            // While loop so the server wouldnt shutdown before the message.
-            while(true) {}
         } catch (Exception ex) {
             System.err.println(ex.getMessage());
             System.exit(1);

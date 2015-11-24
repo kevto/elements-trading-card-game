@@ -1,5 +1,7 @@
 package com.elementstcg.server.handlers;
 
+import com.elementstcg.shared.trait.IResponse;
+
 import java.rmi.RemoteException;
 
 /**

@@ -1,7 +1,9 @@
 package com.elementstcg.server.handlers;
 
 import com.elementstcg.server.game.Account;
-import elementstcg.Handlers.IClientHandler;
+import com.elementstcg.shared.trait.IClientHandler;
+import com.elementstcg.shared.trait.IResponse;
+import com.elementstcg.shared.trait.IServerHandler;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -19,7 +21,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * @author Kevin Berendsen
  * @since 2015-11-16
  */
-public class ServerHandler extends UnicastRemoteObject implements IServerHandler  {
+public class ServerHandler extends UnicastRemoteObject implements IServerHandler {
 
     private Lock lock;
     private Condition boardsBusy;
