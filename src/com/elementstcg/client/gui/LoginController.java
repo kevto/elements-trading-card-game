@@ -1,9 +1,12 @@
 package com.elementstcg.client.gui;
 
 import com.elementstcg.client.Account;
+import com.elementstcg.shared.trait.IResponse;
 import javafx.fxml.FXML;
 
 import java.net.URL;
+import java.rmi.Remote;
+import java.rmi.RemoteException;
 import java.util.ResourceBundle;
 
 import javafx.event.Event;
@@ -14,7 +17,7 @@ import javafx.scene.control.*;
 /**
  * Created by Mick on 5-10-2015.
  */
-public class InlogRegisterScreenController implements Initializable, ControlledScreen {
+public class LoginController implements Initializable, ControlledScreen {
 
     @FXML Button LoginButton;
     @FXML Hyperlink RegisterButton;
@@ -51,7 +54,7 @@ public class InlogRegisterScreenController implements Initializable, ControlledS
                 lblMessage.setText("Please enter both your username and password.");
             }
             else{
-                if (Account.login(tbUsername.getText(), tbPassword.getText())){
+                if (true){
                     lblMessage.setText("Succesfully logged in.");
                     myController.setScreen(ScreensFramework.screenBoardID);
                 }
@@ -91,7 +94,6 @@ public class InlogRegisterScreenController implements Initializable, ControlledS
 
 
         }
-
     }
 
     /**

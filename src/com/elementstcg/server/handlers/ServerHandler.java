@@ -47,8 +47,11 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
     }
 
     public IResponse login(IClientHandler client, String username, String password) throws RemoteException {
-        //TODO Implement ServerHandler.login method.
-        return new Response(false, 999, "Not implemented yet!");
+        if(username.equals("username") && password.equals("password")) {
+            return new Response(true, 1, "Succes");
+        }
+
+        return new Response(false, 2, "Unkown Account");
     }
 
     public IResponse register(String username, String password, String email) throws RemoteException {
@@ -82,5 +85,11 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
 
     public IResponse quitMatch(String key) throws RemoteException {
         return null;
+    }
+
+    @Override
+    public IResponse isConnected() throws RemoteException {
+
+        return new Response(true, 0, "Succes");
     }
 }

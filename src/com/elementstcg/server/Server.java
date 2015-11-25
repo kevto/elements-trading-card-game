@@ -22,6 +22,8 @@ public class Server {
     private Registry registry;
     private IServerHandler handler;
 
+    private String serverName = "server";
+
     /**
      * Public constructor.
      * @throws Exception if any exception occurs, shutdown the server immediately.
@@ -44,7 +46,7 @@ public class Server {
 
             registry = LocateRegistry.createRegistry(port);
             handler = new ServerHandler();
-            registry.bind("game_server0", handler);
+            registry.bind(serverName, handler);
 
             // Load the agent into the running JVM process
 //            if (!AgentLoader.loadAgentFromClasspath("avaje-ebeanorm-agent", "debug=1;packages=com.elementstcg.server.game.**")) {
@@ -53,7 +55,7 @@ public class Server {
 
             System.out.println("SERVER IS UP AND RUNNING\n---------------");
             System.out.println("ELEMENTS TCG SERVER");
-            System.out.println("SERVER RUNNING AT: " + Inet4Address.getLocalHost().getHostAddress() + ":" + port );
+            System.out.println("SERVER RUNNING AT: " + Inet4Address.getLocalHost().getHostAddress() + ":" + port  + "  -  Server Name: " + serverName);
             System.out.println("VERSION: 1.0 Beta");
             System.out.println("HAVE FUN!");
             System.out.println("---------------");
