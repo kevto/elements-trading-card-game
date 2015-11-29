@@ -76,8 +76,63 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
         return null;
     }
 
+    /**
+     * Try to find a match for the given player.
+     * @param key is the identifier for the person trying to find a match.
+     * @return Instance of IResponse which shows if it was succesfull or an error code.
+     * @throws RemoteException
+     */
     public IResponse findMatch(String key) throws RemoteException {
-        return null;
+        //TODO: remove the player from the pool of people searching for a match.
+        //TODO: is there a pool of players looking for a match?
+
+        String givenKey = key;
+        //Need a way to find the ELO of the given player (key)
+        int playerElo = 500 //test Elo, this will be the ELO of the key
+        Account match = null;
+        int tempScore;
+        int score = 10000;
+
+        for (Account x : clients)
+        {
+            if (x.getElo() == playerElo) //Need a check to see if player(s) are in a match already
+            {
+                //TODO: return this as match
+            }
+
+            if (x.getElo() < playerElo)
+            {
+                tempScore = playerElo - x.getElo();
+                if (tempScore < score)
+                {
+                    match = x;
+                    score = tempScore;
+                }
+            }
+
+            if (x.getElo() > playerElo)
+            {
+                tempScore = x.getElo() - playerElo;
+                if (tempScore < score)
+                {
+                    match = x;
+                    score = tempScore;
+                }
+            }
+        }
+
+        //check if a match has been found, if not then keep searching
+        if (match == null)
+        {
+            findMatch(givenKey);
+        }
+
+        else
+        {
+            //Not sure what to return as match, will return to later.
+            IResponse theMatch = match;
+            return theMatch;
+        }
     }
 
     public IResponse quitMatch(String key) throws RemoteException {
