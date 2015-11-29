@@ -50,11 +50,15 @@ public class LoginController implements Initializable, ControlledScreen {
     public void clickedLogin(Event event) {
         if (!isRegistering) {
             //User is logging in.
-            if (tbUsername.getText().isEmpty() || tbPassword.getText().isEmpty()) {
+
+            String username = tbUsername.getText();
+            String password = tbPassword.getText();
+
+            if ("".equals(username) || "".equals(password)) {
                 lblMessage.setText("Please enter both your username and password.");
             }
             else{
-                if (true){
+                if (myController.loginUser(username, password)){
                     lblMessage.setText("Succesfully logged in.");
                     myController.setScreen(ScreensFramework.screenBoardID);
                 }
@@ -91,8 +95,6 @@ public class LoginController implements Initializable, ControlledScreen {
                     //myController.setScreen(ScreensFramework.screenBoardID);
                 }
             }
-
-
         }
     }
 

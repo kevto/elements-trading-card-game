@@ -40,6 +40,7 @@
 
 package com.elementstcg.client.gui;
 
+import java.lang.reflect.InvocationTargetException;
 import java.net.Inet4Address;
 import java.net.MalformedURLException;
 import java.net.UnknownHostException;
@@ -50,6 +51,7 @@ import java.rmi.RemoteException;
 import java.util.HashMap;
 
 import com.elementstcg.client.handler.ClientHandler;
+import com.elementstcg.shared.trait.IClientHandler;
 import com.elementstcg.shared.trait.IResponse;
 import com.elementstcg.shared.trait.IServerHandler;
 import com.sun.deploy.util.SessionState;
@@ -69,7 +71,7 @@ import javafx.util.Duration;
 
 /**
  *
- * @author Mick
+ * @author Mickz
  */
 public class ScreenHandler extends StackPane {
     //Holds the screens to be displayed
@@ -146,8 +148,24 @@ public class ScreenHandler extends StackPane {
             System.out.println("serverHandler was null, no connection");
             return false;
         }
+    }
 
+    public boolean loginUser(String username, String password) {
+        try {
+            IClientHandler iClientHandler = (IClientHandler)clientHandler;
 
+            IResponse response = serverHandler.login(iClientHandler, username, password);
+            return response.wasSuccessful();
+        }
+        catch(RemoteException ex) {
+            System.out.println(ex.getMessage());
+            System.out.println(ex.getStackTrace());
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            System.out.println(ex.getStackTrace());
+        }
+
+        return false;
     }
 
     //Add the screen to the collection

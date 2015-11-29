@@ -87,9 +87,7 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
         return null;
     }
 
-    @Override
     public IResponse isConnected() throws RemoteException {
-
         return new Response(true, 0, "Succes");
     }
 }
