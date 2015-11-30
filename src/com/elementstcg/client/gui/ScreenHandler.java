@@ -40,7 +40,6 @@
 
 package com.elementstcg.client.gui;
 
-import java.util.HashMap;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -55,9 +54,11 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.util.HashMap;
+
 /**
  *
- * @author Mick
+ * @author Mickz
  */
 public class ScreenHandler extends StackPane {
     //Holds the screens to be displayed

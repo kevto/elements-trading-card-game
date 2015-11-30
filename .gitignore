@@ -13,3 +13,4 @@ bin/
 *.class
 target/
 savedaccount.ser
+Game.iml

@@ -1,20 +1,20 @@
 package com.elementstcg.client.gui;
 
 import com.elementstcg.client.Account;
+import com.elementstcg.client.handler.ClientHandler;
+import javafx.event.Event;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.*;
 
 import java.net.URL;
 import java.util.ResourceBundle;
-
-import javafx.event.Event;
-import javafx.fxml.Initializable;
-import javafx.scene.control.*;
 
 
 /**
  * Created by Mick on 5-10-2015.
  */
-public class InlogRegisterScreenController implements Initializable, ControlledScreen {
+public class LoginController implements Initializable, ControlledScreen {
 
     @FXML Button LoginButton;
     @FXML Hyperlink RegisterButton;
@@ -25,6 +25,8 @@ public class InlogRegisterScreenController implements Initializable, ControlledS
 
     ScreenHandler myController;
     boolean isRegistering = false;
+
+    private ClientHandler clientHandler = ClientHandler.getInstance();
 
 
     @Override
@@ -47,11 +49,15 @@ public class InlogRegisterScreenController implements Initializable, ControlledS
     public void clickedLogin(Event event) {
         if (!isRegistering) {
             //User is logging in.
-            if (tbUsername.getText().isEmpty() || tbPassword.getText().isEmpty()) {
+
+            String username = tbUsername.getText();
+            String password = tbPassword.getText();
+
+            if ("".equals(username) || "".equals(password)) {
                 lblMessage.setText("Please enter both your username and password.");
             }
             else{
-                if (Account.login(tbUsername.getText(), tbPassword.getText())){
+                if (clientHandler.loginUser(username, password)){
                     lblMessage.setText("Succesfully logged in.");
                     myController.setScreen(ScreensFramework.screenBoardID);
                 }
@@ -88,10 +94,7 @@ public class InlogRegisterScreenController implements Initializable, ControlledS
                     //myController.setScreen(ScreensFramework.screenBoardID);
                 }
             }
-
-
         }
-
     }
 
     /**

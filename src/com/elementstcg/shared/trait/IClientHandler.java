@@ -3,6 +3,7 @@ package com.elementstcg.shared.trait;
 import com.elementstcg.client.Card;
 
 import java.lang.Boolean;
+import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 /**
@@ -12,7 +13,7 @@ import java.rmi.RemoteException;
  * Oink, said the little piggy.
  */
 
-public interface IClientHandler{
+public interface IClientHandler extends Remote {
     /**
      * Updates the player HP in the GUI at the request of the server
      * @param hp The new HP total of the player

@@ -1,5 +1,6 @@
 package com.elementstcg.client.gui;
 
+import com.elementstcg.client.handler.ClientHandler;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -15,12 +16,13 @@ import java.util.ResourceBundle;
  */
 public class LobbyController implements Initializable, ControlledScreen {
 
-    @FXML Button
-            ButtonPlayVsAi;
-    @FXML Button
-            ButtonNormalGame;
+    private ScreenHandler myController;
+    private ClientHandler clientHandler = ClientHandler.getInstance();
+
+    @FXML Button ButtonPlayVsAi;
+    @FXML Button ButtonNormalGame;
     @FXML Label lblSearchText;
-    ScreenHandler myController;
+
 
 
     @Override

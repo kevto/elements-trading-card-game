@@ -3,6 +3,7 @@ package com.elementstcg.client.gui;
 import com.elementstcg.client.Board;
 import com.elementstcg.client.Card;
 import com.elementstcg.client.Deck;
+import com.elementstcg.client.handler.ClientHandler;
 import com.elementstcg.client.util.AIEnemy;
 import com.elementstcg.client.util.CustomException.EmptyFieldException;
 import com.elementstcg.client.util.CustomException.ExceedCapacityException;
@@ -28,46 +29,33 @@ import java.util.*;
 public class BoardController implements Initializable, ControlledScreen {
 
     // Class variables
-    ScreenHandler myController;
+    private ScreenHandler myController;
+    private ClientHandler clientHandler = ClientHandler.getInstance();
 
     // UI Components
-    @FXML
-    HBox hboxPlayerHand;
-    @FXML
-    Pane ghostPane;
-    @FXML
-    BorderPane bPaneField;
-    @FXML
-    Pane mainPane;
+    @FXML HBox hboxPlayerHand;
+    @FXML Pane ghostPane;
+    @FXML BorderPane bPaneField;
+    @FXML Pane mainPane;
 
-    @FXML
-    Button nextTurnButton;
+    @FXML Button nextTurnButton;
 
-    @FXML
-    Label labelEnemyCAP;
-    @FXML
-    Label labelPlayerCAP;
+    @FXML Label labelEnemyCAP;
+    @FXML Label labelPlayerCAP;
 
-    @FXML
-    Label labelEnemyDeckSize;
-    @FXML
-    Label labelPlayerDeckSize;
+    @FXML Label labelEnemyDeckSize;
+    @FXML Label labelPlayerDeckSize;
 
-    @FXML
-    Label labelEnemyHP;
-    @FXML
-    Label labelPlayerHP;
+    @FXML Label labelEnemyHP;
+    @FXML Label labelPlayerHP;
 
-    @FXML
-    Label labelEnemyName;
-    @FXML
-    Label labelPlayerName;
+    @FXML Label labelEnemyName;
+    @FXML Label labelPlayerName;
 
-    @FXML
-    Pane enemyInfo;
+    @FXML Pane enemyInfo;
 
-    FieldGrid playerField;
-    FieldGrid enemyField;
+    private FieldGrid playerField;
+    private FieldGrid enemyField;
 
     private CardPane selectedCard;
 
