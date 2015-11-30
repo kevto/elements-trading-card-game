@@ -103,6 +103,4 @@ public interface IServerHandler extends Remote {
      * @throws RemoteException
      */
     IResponse quitMatch(String key) throws RemoteException;
-
-    IResponse isConnected() throws RemoteException;
 }

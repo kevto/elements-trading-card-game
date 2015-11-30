@@ -1,17 +1,14 @@
 package com.elementstcg.client.gui;
 
 import com.elementstcg.client.Account;
-import com.elementstcg.shared.trait.IResponse;
-import javafx.fxml.FXML;
-
-import java.net.URL;
-import java.rmi.Remote;
-import java.rmi.RemoteException;
-import java.util.ResourceBundle;
-
+import com.elementstcg.client.handler.ClientHandler;
 import javafx.event.Event;
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+
+import java.net.URL;
+import java.util.ResourceBundle;
 
 
 /**
@@ -28,6 +25,8 @@ public class LoginController implements Initializable, ControlledScreen {
 
     ScreenHandler myController;
     boolean isRegistering = false;
+
+    private ClientHandler clientHandler = ClientHandler.getInstance();
 
 
     @Override
@@ -58,7 +57,7 @@ public class LoginController implements Initializable, ControlledScreen {
                 lblMessage.setText("Please enter both your username and password.");
             }
             else{
-                if (myController.loginUser(username, password)){
+                if (clientHandler.loginUser(username, password)){
                     lblMessage.setText("Succesfully logged in.");
                     myController.setScreen(ScreensFramework.screenBoardID);
                 }

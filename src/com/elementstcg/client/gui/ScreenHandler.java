@@ -40,21 +40,6 @@
 
 package com.elementstcg.client.gui;
 
-import java.lang.reflect.InvocationTargetException;
-import java.net.Inet4Address;
-import java.net.MalformedURLException;
-import java.net.UnknownHostException;
-import java.rmi.Naming;
-import java.rmi.NotBoundException;
-import java.rmi.Remote;
-import java.rmi.RemoteException;
-import java.util.HashMap;
-
-import com.elementstcg.client.handler.ClientHandler;
-import com.elementstcg.shared.trait.IClientHandler;
-import com.elementstcg.shared.trait.IResponse;
-import com.elementstcg.shared.trait.IServerHandler;
-import com.sun.deploy.util.SessionState;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -69,6 +54,8 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.util.HashMap;
+
 /**
  *
  * @author Mickz
@@ -77,95 +64,10 @@ public class ScreenHandler extends StackPane {
     //Holds the screens to be displayed
     private Stage stage;
     private HashMap<String, Node> screens = new HashMap<String, Node>();
-    private IServerHandler serverHandler;
-    private ClientHandler clientHandler;
     
     public ScreenHandler(Stage stage) {
         super();
         this.stage = stage;
-
-        try {
-            clientHandler = new ClientHandler();
-        } catch (RemoteException ex) {
-            System.out.println(ex.getStackTrace());
-            System.out.println(ex.getMessage());
-        }
-
-
-        if(!setupServerConnection("192.168.0.30", "8112", "server")) {
-            System.out.println("[CRITICAL] Could not setup connection with server");
-        }
-
-    }
-
-    public ClientHandler getClientHandler() {
-        return clientHandler;
-    }
-
-    public IServerHandler getServerHandler() {
-        return serverHandler;
-    }
-
-    public void setServerHandler(IServerHandler handler) {
-        serverHandler = handler;
-    }
-
-    public boolean setupServerConnection (String ip, String port, String name) {
-        if(!"".equals(ip) && !"".equals(port) && !"".equals(name) )
-        {
-            try {
-                serverHandler = (IServerHandler)Naming.lookup("rmi://" + ip + ":" + port + "/" + name);
-            } catch (RemoteException ex) {
-                ex.printStackTrace();
-                ex.getMessage();
-            } catch (MalformedURLException ex) {
-                ex.printStackTrace();
-                ex.getMessage();
-            } catch (NotBoundException ex) {
-                ex.printStackTrace();
-                ex.getMessage();
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                ex.getMessage();
-            }
-        }
-        else {
-            System.out.println("[CRITICAL] ip, port or name was empty or null. Could not setup RMI connection!");
-        }
-
-        if(serverHandler != null) {
-
-            try {
-                IResponse message = serverHandler.isConnected();
-                System.out.println("Message: " + message.getMessage());
-            } catch (RemoteException ex) {
-                ex.getMessage();
-            }
-
-            return true;
-        }
-        else {
-            System.out.println("serverHandler was null, no connection");
-            return false;
-        }
-    }
-
-    public boolean loginUser(String username, String password) {
-        try {
-            IClientHandler iClientHandler = (IClientHandler)clientHandler;
-
-            IResponse response = serverHandler.login(iClientHandler, username, password);
-            return response.wasSuccessful();
-        }
-        catch(RemoteException ex) {
-            System.out.println(ex.getMessage());
-            System.out.println(ex.getStackTrace());
-        } catch (Exception ex) {
-            System.out.println(ex.getMessage());
-            System.out.println(ex.getStackTrace());
-        }
-
-        return false;
     }
 
     //Add the screen to the collection
