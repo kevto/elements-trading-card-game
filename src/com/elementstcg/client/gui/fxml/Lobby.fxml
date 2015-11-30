@@ -35,14 +35,19 @@
       </ImageView>
       <Button fx:id="ButtonPlayVsAi" layoutX="1.0" layoutY="264.0" mnemonicParsing="false" onMouseClicked="#clickedVsAi" prefHeight="74.0" prefWidth="288.0" style="-fx-opacity: 0.1;" textFill="TRANSPARENT" />
       <Button fx:id="ButtonNormalGame" layoutX="302.0" layoutY="263.0" mnemonicParsing="false" onMouseClicked="#clickedNormalGame" prefHeight="74.0" prefWidth="296.0" style="-fx-opacity: 0.1;" textFill="TRANSPARENT" />
-      <Label contentDisplay="CENTER" layoutX="371.0" layoutY="279.0" onMouseClicked="#clickedNormalGame" text="NORMAL GAME" textAlignment="CENTER" textFill="#e46dff">
+      <Label contentDisplay="CENTER" layoutX="328.0" layoutY="275.0" onMouseClicked="#clickedNormalGame" text="NORMAL GAME" textAlignment="CENTER" textFill="#e46dff">
          <font>
             <Font name="BebasNeueBold" size="36.0" />
          </font>
       </Label>
-      <Label contentDisplay="CENTER" layoutX="84.0" layoutY="279.0" onMouseClicked="#clickedVsAi" text="PLAY VS AI" textAlignment="CENTER" textFill="#40bcff">
+      <Label contentDisplay="CENTER" layoutX="55.0" layoutY="275.0" onMouseClicked="#clickedVsAi" text="PLAY VS AI" textAlignment="CENTER" textFill="#40bcff">
          <font>
             <Font name="BebasNeueBold" size="36.0" />
+         </font>
+      </Label>
+      <Label fx:id="lblPlayerWelcome" alignment="BOTTOM_CENTER" layoutX="320.0" layoutY="14.0" nodeOrientation="LEFT_TO_RIGHT" textAlignment="RIGHT" textFill="WHITE">
+         <font>
+            <Font size="13.0" />
          </font>
       </Label>
    </children>
