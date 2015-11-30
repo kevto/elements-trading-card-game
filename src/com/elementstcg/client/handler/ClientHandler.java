@@ -16,7 +16,7 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
     private static ClientHandler instance;
     private static IServerHandler serverHandler;
 
-    private static String ip = "145.93.61.44";
+    private static String ip = "145.93.174.253";
     private static String port = "8112";
     private static String name = "server";
 
@@ -84,7 +84,7 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
         return false;
     }
 
-    public IServerHandler getServerHandler() {
+    public static IServerHandler getServerHandler() {
         return serverHandler;
     }
 

@@ -10,6 +10,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 
 import java.net.URL;
+import java.rmi.RemoteException;
 import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -54,6 +55,16 @@ public class LobbyController implements Initializable, ControlledScreen {
         //TODO implementation
     }
 
+    public void findMatch(){
+        try {
+            clientHandler.getServerHandler().findMatch(clientHandler.getSessionKey());
+        }
+        catch (RemoteException ex){
+            System.out.println(ex.getMessage());
+            ex.printStackTrace();
+        }
+    }
+
     /**
      * Button event occurs when the user clicks "NORMAL GAME"
      * Queues the user for searching match against other players.
@@ -68,6 +79,7 @@ public class LobbyController implements Initializable, ControlledScreen {
             lblSearchText.setVisible(true);
             lblSearchText.setText("SEARCHING FOR GAME.... " + waitTime + " SECONDS");
             searchingmatch = true;
+            findMatch();
         }
     }
 
@@ -90,6 +102,7 @@ public class LobbyController implements Initializable, ControlledScreen {
      * This method is called uppon found match.
      */
     public void foundMatch(){
+        //TODO on match found callback from server
         matchmakingTimer.cancel();
     }
 
