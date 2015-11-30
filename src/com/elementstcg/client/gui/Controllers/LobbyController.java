@@ -1,4 +1,6 @@
-public class LobbyController(){
+package com.elementstcg.client.gui.Controllers;
+
+public class LobbyController {
         public void findMatch(){
 
         }
