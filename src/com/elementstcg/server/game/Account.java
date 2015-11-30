@@ -21,7 +21,7 @@ public class Account extends Model implements Serializable {
     private transient String ip;
     private transient int port;
     private String email;
-    private int elo;
+    private transient int elo;
 
     /**
      * Checks if the given username and password combination exist,
@@ -102,7 +102,8 @@ public class Account extends Model implements Serializable {
             this.password = password;
             this.ip = ip;
             this.port = port;
-            this.elo = elo == null || elo == 0 ? 500 : elo;
+            this.elo = elo;
+
         }
         else{
             throw new IllegalArgumentException("username/password/email can't be empty.");

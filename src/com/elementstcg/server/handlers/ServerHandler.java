@@ -121,21 +121,20 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
         //TODO: make sure this is thread-safe.
 
         String givenKey = key;
-        //Need a way to find the ELO of the given player (key)
         Session playerSession = clients.get(key);
         int playerElo = playerSession.getAccount().getElo();
         int itElo;
         int tempScore;
         int score = 10000;
         Account match = null;
+        Session matchSession = null;
         Iterator it = searchingPlayers.entrySet().iterator();
 
         while (it.hasNext())
         {
-            //TODO: rebuild to iterator.
             HashMap.Entry pair = (HashMap.Entry)it.next();
-            Session accSession = (Session)pair.getValue();
-            itElo = accSession.getAccount().getElo();
+            matchSession = (Session)pair.getValue();
+            itElo = matchSession.getAccount().getElo();
 
             if (itElo == playerElo) //Need a check to see if player(s) are in a match already
             {
@@ -148,7 +147,7 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
                 tempScore = playerElo - itElo;
                 if (tempScore < score)
                 {
-                    match = accSession.getAccount();
+                    match = matchSession.getAccount();
                     score = tempScore;
                 }
             }
@@ -158,15 +157,14 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
                 tempScore = itElo - playerElo;
                 if (tempScore < score)
                 {
-                    match = accSession.getAccount();
+                    match = matchSession.getAccount();
                     score = tempScore;
                 }
             }
         }
 
         //check if a match has been found, if not then keep searching
-        //TODO: remove players from the pool of players currently searching for a match.
-        if (match == null)
+        if (match == null && matchSession == null)
         {
             findMatch(givenKey);
         }
@@ -175,6 +173,9 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
         {
             //Not sure what to return as match, will return to later.
             //TODO: connect these players so they can actually play against each other.
+            searchingPlayers.remove(playerSession);
+            searchingPlayers.remove(matchSession);
+
             Response foundMatch = new Response(true);
             return foundMatch;
         }
