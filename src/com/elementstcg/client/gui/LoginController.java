@@ -73,14 +73,18 @@ public class LoginController implements Initializable, ControlledScreen {
             java.util.regex.Pattern p = java.util.regex.Pattern.compile(ePattern);
             java.util.regex.Matcher m = p.matcher(tbEmail.getText());
 
+            String username = tbUsername.getText();
+            String password = tbPassword.getText();
+            String email = tbEmail.getText();
+
             //Check the username and password
-            if (tbUsername.getText().isEmpty() || tbPassword.getText().isEmpty() || tbEmail.getText().isEmpty())  {
+            if (username.isEmpty() || password.isEmpty() || email.isEmpty())  {
                 lblMessage.setText("Please enter all fields.");
             }
-            else if (tbUsername.getText().length() < 6){
+            else if (username.length() < 6){
                 lblMessage.setText("Username must be at least 6 characters.");
             }
-            else if (tbPassword.getText().length() < 8){
+            else if (password.length() < 8){
                 lblMessage.setText("Password must be at least 8 characters.");
             }
             else if (!m.matches()){ //Is invalid email
@@ -88,8 +92,13 @@ public class LoginController implements Initializable, ControlledScreen {
             }
             else{
                 //All fields are valid.
-                if (Account.register(tbUsername.getText(), tbPassword.getText(), tbEmail.getText())) {
-                    lblMessage.setText("Succesfully registered.");
+                if (Account.register(username, password, email)) {
+                    if(clientHandler.registerUser(username, password, email)) {
+                        lblMessage.setText("Succesfully registered.");
+                    } else {
+                        lblMessage.setText("Username or email already in use.");
+                    }
+
                     //TODO Go back to the login screen.
                     //myController.setScreen(ScreensFramework.screenBoardID);
                 }

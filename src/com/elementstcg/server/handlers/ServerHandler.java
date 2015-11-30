@@ -50,13 +50,51 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
     }
 
     public IResponse login(IClientHandler client, String username, String password) throws RemoteException {
-        //TODO Implement ServerHandler.login method.
-        return new Response(false, 999, "Not implemented yet!");
+        if("".equals(username) || "".equals(password)) {
+            return new Response(false, 999, "An empty username or password was supplied");
+        }
+
+        if(client == null) {
+            return new Response(false, 999, "IClientHandler was null");
+        }
+
+        // Trying to obtain an Account object based on user credentials.
+        Account acc = Account.find.where()
+                .eq("username", username)
+                .eq("password", password)
+                .findUnique();
+
+        if(acc == null || !acc.getUserName().equals(username)) {
+            return new Response(false, 999, "No account was found with the provided username and password");
+        } else {
+            //TODO: Create session
+            //TODO: Give session to client
+            return new Response(true, 1, "Account found, client added");
+        }
     }
 
     public IResponse register(String username, String password, String email) throws RemoteException {
-        //TODO Implement ServerHandler.register method.
-        return new Response(false, 999, "Not implemented yet!");
+
+        Account usernameAcc = Account.find.where()
+                .eq("username", username)
+                .findUnique();
+
+        Account emailAcc = Account.find.where()
+                .eq("email", email)
+                .findUnique();
+
+        if(usernameAcc != null || emailAcc != null) {
+            return new Response(false, 999, "Username or Email is already in use");
+        } else {
+            if(Account.register(username, password, email)) {
+                Account acc = new Account(username, password, email);
+                acc.save();
+
+                return new Response(true, 1, "Account has been created");
+            } else {
+                return new Response(false, 999, "Illegal use of characters in username/password, or invalid email");
+            }
+        }
     }
 
     public IResponse placeCard(String key, int selected, int point) throws RemoteException {

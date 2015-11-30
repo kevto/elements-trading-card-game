@@ -49,9 +49,9 @@ public class Server {
             registry.bind(serverName, handler);
 
             // Load the agent into the running JVM process
-//            if (!AgentLoader.loadAgentFromClasspath("avaje-ebeanorm-agent", "debug=1;packages=com.elementstcg.server.game.**")) {
-//                System.err.println("avaje-ebeanorm-agent not found in classpath - not dynamically loaded");
-//            }
+           if (!AgentLoader.loadAgentFromClasspath("avaje-ebeanorm-agent", "debug=1;packages=com.elementstcg.server.game.**")) {
+               System.err.println("avaje-ebeanorm-agent not found in classpath - not dynamically loaded");
+            }
 
             System.out.println("SERVER IS UP AND RUNNING\n---------------");
             System.out.println("ELEMENTS TCG SERVER");
