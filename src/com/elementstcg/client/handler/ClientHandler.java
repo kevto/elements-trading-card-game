@@ -63,7 +63,7 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
             return true;
         }
         else {
-            System.out.println("serverHandler was null, no connection");
+            System.out.println("[CRITICAL] serverHandler was null, no connection");
             return false;
         }
     }
@@ -82,6 +82,24 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
         }
 
         return false;
+    }
+
+    public boolean registerUser(String username, String password, String email) {
+
+        try {
+            IResponse response = serverHandler.register(username, password, email);
+            return response.wasSuccessful();
+        }
+        catch(RemoteException ex) {
+            System.out.println(ex.getMessage());
+            System.out.println(ex.getStackTrace());
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            System.out.println(ex.getStackTrace());
+        }
+
+        return false;
+
     }
 
     public IServerHandler getServerHandler() {

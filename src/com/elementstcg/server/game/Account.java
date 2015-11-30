@@ -6,16 +6,20 @@ package com.elementstcg.server.game;
  * @Author Rick
  */
 
+import com.avaje.ebean.Model;
+
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import java.io.*;
 
+@Entity
+@Table(name="player")
+public class Account extends Model implements Serializable {
 
-public class Account implements Serializable {
-
-    private static Account instance;
     private String username;
     private String password;
-    private String ip;
-    private int port;
+    private transient String ip;
+    private transient int port;
     private String email;
 
     /**
@@ -26,6 +30,7 @@ public class Account implements Serializable {
      * @param password
      * @return
      */
+    @Deprecated
     public static boolean login(String username, String password)
     {
         //TODO Implement new login method for Account class.
@@ -58,12 +63,8 @@ public class Account implements Serializable {
             return false;
         }
 
-        instance = new Account(username, password, "12.0.0.1", 2048);
-        instance.setEmail(email);
-
         return true;
     }
-
 
     /**
      * Constructor of Account, creates an instance of Account.
@@ -106,13 +107,10 @@ public class Account implements Serializable {
         }
     }
 
-    /**
-     * Returns the current Account instance.
-     * can return null.
-     * @return
-     */
-    public static Account getInstance(){
-        return instance;
+    public Account(String username, String password, String email) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
     }
 
     /**
@@ -205,16 +203,6 @@ public class Account implements Serializable {
         }
     }
 
-    /**
-     * Clears the Account instance.
-     */
-    public void logOut()
-    {
-        //TODO : further implementation
-        instance = null;
-    }
-
-
-
+    public static Finder<Long, Account> find = new Finder<>(Account.class);
 
 }
