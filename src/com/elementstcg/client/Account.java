@@ -18,6 +18,7 @@ public class Account implements Serializable {
     private String ip;
     private int port;
     private String email;
+    private int elo;
 
     /**
      * Checks if the given username and password combination exist,
@@ -152,7 +153,7 @@ public class Account implements Serializable {
      * @param ip
      * @param port
      */
-    private Account(String username, String password, String ip, int port){
+    private Account(String username, String password, String ip, int port, int elo){
 
         if (!username.isEmpty() && !password.isEmpty()) {
             String pattern = "[$&+,:;=?@#|'<>.-^*()%!]";
@@ -177,6 +178,8 @@ public class Account implements Serializable {
             this.password = password;
             this.ip = ip;
             this.port = port;
+
+            this.elo = elo == null || elo == 0 ? 500 : elo;
         }
         else{
             throw new IllegalArgumentException("username/password/email can't be empty.");
@@ -246,6 +249,12 @@ public class Account implements Serializable {
     public String getPassword(){
         return password;
     }
+
+    /**
+     * Gets the elo of the account.
+     * @return an int that is the elo.
+     */
+    public int getElo() { return elo; }
 
     /**
      * Sets the ip and port field.
