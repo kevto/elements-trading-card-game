@@ -169,16 +169,14 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
             findMatch(givenKey);
         }
 
-        else
-        {
-            //Not sure what to return as match, will return to later.
-            //TODO: connect these players so they can actually play against each other.
-            searchingPlayers.remove(playerSession);
-            searchingPlayers.remove(matchSession);
+        //Not sure what to return as match, will return to later.
+        //TODO: connect these players so they can actually play against each other.
+        searchingPlayers.remove(playerSession);
+        searchingPlayers.remove(matchSession);
+        
+        Response foundMatch = new Response(true);
+        return foundMatch;
 
-            Response foundMatch = new Response(true);
-            return foundMatch;
-        }
     }
 
     public IResponse quitMatch(String key) throws RemoteException {
