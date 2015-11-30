@@ -8,6 +8,8 @@ import com.elementstcg.shared.trait.IServerHandler;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -23,10 +25,12 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class ServerHandler extends UnicastRemoteObject implements IServerHandler {
 
+    //TODO: add a list/hashmap for players who are searching for a match
     private Lock lock;
     private Condition boardsBusy;
     private Condition databaseBusy;
-    private List<Account> clients;
+    private HashMap<String, Session> clients;
+    private HashMap<String, Session> searchingPlayers;
     private ExecutorService tPool;
     private static IResponse inst;
 
@@ -39,11 +43,13 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
         lock = new ReentrantLock();
         boardsBusy = lock.newCondition();
         databaseBusy = lock.newCondition();
-        clients = new ArrayList<>();
         // Available processors multiplied by two.
         tPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2);
         System.out.println(String.format("ServerHandler initialized with a thread pool consisting of %d threads.",
                 Runtime.getRuntime().availableProcessors() * 2));
+        clients = new HashMap<String, Session>();
+        searchingPlayers = new HashMap<String, Session>();
+
     }
 
     public IResponse login(IClientHandler client, String username, String password) throws RemoteException {
@@ -76,28 +82,23 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
         return null;
     }
 
-    /**
-     * Try to find a match for the given player.
-     * @param key is the identifier for the person trying to find a match.
-     * @return Instance of IResponse which shows if it was succesfull or an error code.
-     * @throws RemoteException
-     */
     public IResponse findMatch(String key) throws RemoteException {
-        //TODO: remove the player from the pool of people searching for a match.
-        //TODO: is there a pool of players looking for a match?
+        //TODO: make sure this is thread-safe.
 
         String givenKey = key;
         //Need a way to find the ELO of the given player (key)
-        int playerElo = 500 //test Elo, this will be the ELO of the key
+        int playerElo = 500; //test Elo, this will be the ELO of the key
         Account match = null;
         int tempScore;
         int score = 10000;
+        Iterator it = searchingPlayers.entrySet().iterator();
 
-        for (Account x : clients)
+        for (Account x : searchingPlayers)
         {
             if (x.getElo() == playerElo) //Need a check to see if player(s) are in a match already
             {
-                //TODO: return this as match
+                Response foundMatch = new Response(true);
+                return foundMatch;
             }
 
             if (x.getElo() < playerElo)
@@ -122,6 +123,7 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
         }
 
         //check if a match has been found, if not then keep searching
+        //TODO: remove players from the pool of players currently searching for a match.
         if (match == null)
         {
             findMatch(givenKey);
@@ -130,8 +132,9 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
         else
         {
             //Not sure what to return as match, will return to later.
-            IResponse theMatch = match;
-            return theMatch;
+            //TODO: connect these players so they can actually play against each other.
+            Response foundMatch = new Response(true);
+            return foundMatch;
         }
     }
 
