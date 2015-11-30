@@ -7,10 +7,7 @@ import com.elementstcg.shared.trait.IServerHandler;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.locks.Condition;
@@ -25,7 +22,7 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class ServerHandler extends UnicastRemoteObject implements IServerHandler {
 
-    //TODO: add a list/hashmap for players who are searching for a match
+    //TODO: add a list/HashMapfor players who are searching for a match
     private Lock lock;
     private Condition boardsBusy;
     private Condition databaseBusy;
@@ -47,8 +44,8 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
         tPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2);
         System.out.println(String.format("ServerHandler initialized with a thread pool consisting of %d threads.",
                 Runtime.getRuntime().availableProcessors() * 2));
-        clients = new HashMap<String, Session>();
-        searchingPlayers = new HashMap<String, Session>();
+        clients = new HashMap<>();
+        searchingPlayers = new HashMap<>();
 
     }
 
@@ -87,36 +84,43 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
 
         String givenKey = key;
         //Need a way to find the ELO of the given player (key)
-        int playerElo = 500; //test Elo, this will be the ELO of the key
-        Account match = null;
+        Session playerSession = clients.get(key);
+        int playerElo = playerSession.getAccount().getElo();
+        int itElo;
         int tempScore;
         int score = 10000;
+        Account match = null;
         Iterator it = searchingPlayers.entrySet().iterator();
 
-        for (Account x : searchingPlayers)
+        while (it.hasNext())
         {
-            if (x.getElo() == playerElo) //Need a check to see if player(s) are in a match already
+            //TODO: rebuild to iterator.
+            HashMap.Entry pair = (HashMap.Entry)it.next();
+            Session accSession = (Session)pair.getValue();
+            itElo = accSession.getAccount().getElo();
+
+            if (itElo == playerElo) //Need a check to see if player(s) are in a match already
             {
                 Response foundMatch = new Response(true);
                 return foundMatch;
             }
 
-            if (x.getElo() < playerElo)
+            if (itElo < playerElo)
             {
-                tempScore = playerElo - x.getElo();
+                tempScore = playerElo - itElo;
                 if (tempScore < score)
                 {
-                    match = x;
+                    match = accSession.getAccount();
                     score = tempScore;
                 }
             }
 
-            if (x.getElo() > playerElo)
+            if (itElo > playerElo)
             {
-                tempScore = x.getElo() - playerElo;
+                tempScore = itElo - playerElo;
                 if (tempScore < score)
                 {
-                    match = x;
+                    match = accSession.getAccount();
                     score = tempScore;
                 }
             }
