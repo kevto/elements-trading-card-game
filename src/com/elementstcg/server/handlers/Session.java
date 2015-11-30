@@ -1,6 +1,6 @@
 package com.elementstcg.server.handlers;
 
-import com.elementstcg.client.Account;
+import com.elementstcg.server.game.Account;
 import com.elementstcg.shared.trait.IClientHandler;
 
 /**
