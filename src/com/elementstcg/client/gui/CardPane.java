@@ -1,6 +1,7 @@
 package com.elementstcg.client.gui;
 
 import com.elementstcg.client.Card;
+import com.elementstcg.client.gui.Controllers.*;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -26,7 +27,7 @@ public class CardPane extends StackPane {
     private Pane ghostObject;
 
     private Pane ghostPane;
-    private BoardController controller;
+    private BoardControlller controller;
 
     private int cardWidth = 125;
     private int cardHeight = 200;

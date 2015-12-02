@@ -29,7 +29,7 @@ public class LoginController implements Initializable, ControlledScreen {
     private ClientHandler clientHandler = ClientHandler.getInstance();
 
 
-    @Override
+
     public void initialize(URL url, ResourceBundle rb) {
 
     }
