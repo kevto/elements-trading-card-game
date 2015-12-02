@@ -27,7 +27,7 @@ public class CardPane extends StackPane {
     private Pane ghostObject;
 
     private Pane ghostPane;
-    private BoardControlller controller;
+    private BoardController controller;
 
     private int cardWidth = 125;
     private int cardHeight = 200;
@@ -376,15 +376,7 @@ public class CardPane extends StackPane {
         ((Label) n).setText(String.valueOf(card.getHP()));
 
     }
+
+
 }
 
-/**
- * The different states a card can have
- * PlayerHand: This object is currently in the hand of the player
- * EnemyHand: This object is currently in the hand of the enemy
- * PlayerField: This object is currently on the playing field on the player side
- * EnemyField: This ob ject is currently on the playing field on the enemy side
- */
-enum CardState {
-    PlayerHand, EnemyHand, PlayerField, EnemyField;
-}

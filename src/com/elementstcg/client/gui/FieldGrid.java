@@ -1,6 +1,6 @@
 package com.elementstcg.client.gui;
 
-import com.elementstcg.client.gui.Controllers.BoardControlller;
+import com.elementstcg.client.gui.Controllers.BoardController;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -13,7 +13,7 @@ import java.util.ArrayList;
 public class FieldGrid extends Pane {
 
     private ArrayList<FieldPane> fields = new ArrayList<FieldPane>();
-    private BoardControlller controller;
+    private BoardController controller;
     private FieldType fieldType;
 
     /**
@@ -26,7 +26,7 @@ public class FieldGrid extends Pane {
      * @param columns The amount columns (if 0 no panes will be created)
      * @param controller The controller where all actions should be reported
      */
-    public FieldGrid(int width, int height, int rows, int columns, BoardControlller controller, FieldType fieldType) {
+    public FieldGrid(int width, int height, int rows, int columns, BoardController controller, FieldType fieldType) {
         this.controller = controller;
 
         this.setWidth(width);
