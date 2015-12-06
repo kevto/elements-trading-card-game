@@ -105,6 +105,14 @@ public class Board {
     }
 
     /**
+     * This method forces the turn to be set
+     */
+    public void setTurn(boolean turn) {
+        playerTurn = turn;
+    }
+
+
+    /**
      * This method places a card from the players hand onto the board.
      * @param point Location of the card on the board where it gets placed.
      * @param card Which card gets placed.

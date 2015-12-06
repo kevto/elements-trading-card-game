@@ -1,10 +1,9 @@
-package com.elementstcg.client.gui.Controllers;
+package com.elementstcg.client.gui.controllers;
 
 import com.elementstcg.client.gui.*;
 import com.elementstcg.client.*;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -40,34 +39,45 @@ public class BoardControlller {
     @FXML Pane enemyInfo;
     private FieldGrid playerField;
     private CardPane selectedCard;
-    private com.elementstcg.client.gui.FieldGrid enemyField;
-    //
-    //Dat is de methode die aangeroepen word als de speler wint of
-    //verliest dan word game over aangeroepen en als het game over is dan krijg je een menu of je wilt stoppen of naar de lobby wilt
+    private FieldGrid enemyField;
+
+    /**
+     * Method is called when the game is over.
+     * Forces the turn to false so the player cant preform any actions
+     */
     public void SetGameOver(){
-
+        board.setTurn(false);
     }
+
     public void attackCard(Card card, int point){
-
+        CardPane cardPane = (CardPane)enemyField.getChildren().get(point);
+        cardPane.getCard().modifyHP(card.getAttack());
     }
+
     public void putCardPlayer(Card card, int point){
-
+        board.getPlayerField().put(point, card);
     }
+
     public void updatePlayerHP(int hp){
-
+        board.getPlayer().modifyHp(hp);
     }
+
     public void removeCardPlayer(int point){
-
+        board.getPlayerField().remove(point);
     }
+
     public void putCardEnemy(Card card, int point){
-
+        board.getEnemyField().put(point, card);
     }
+
     public void updateEnemyHp(int hp){
-
+        board.getEnemy().modifyHp(hp);
     }
+
     public void removeCardEnemy(int point){
-
+        board.getEnemyField().remove(point);
     }
+
     public void updateUI(String playerCapPoints, String enemyCapPoints){
         labelEnemyCAP.setText(String.valueOf(enemyField.getCapPoints()));
         labelPlayerCAP.setText(String.valueOf(playerField.getCapPoints()));
@@ -89,11 +99,26 @@ public class BoardControlller {
         }
     }
 
-        public void nextTurn(){
+    public void nextTurn(){
 
     }
     public void selectCard(CardPane cardPane){
+        if (!board.isGameOver()) {
+            if (selectedCard == null) {
+                selectedCard = cardPane;
+                cardPane.setSelected(true);
+            } else {
+                if (cardPane != selectedCard) {
+                    selectedCard.setSelected(false);
 
+                    selectedCard = cardPane;
+                    cardPane.setSelected(true);
+                } else {
+                    cardPane.setSelected(false);
+                    selectedCard = null;
+                }
+            }
+        }
     }
     public void showGhostPane(Node node){
 
