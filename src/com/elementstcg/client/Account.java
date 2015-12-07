@@ -179,7 +179,8 @@ public class Account implements Serializable {
             this.ip = ip;
             this.port = port;
 
-            this.elo = elo == null || elo == 0 ? 500 : elo;
+            this.elo = elo == 0 || elo <= -1 ? 500 : elo;
+
         }
         else{
             throw new IllegalArgumentException("username/password/email can't be empty.");
