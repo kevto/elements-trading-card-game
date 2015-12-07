@@ -2,6 +2,9 @@ package com.elementstcg.server.handlers;
 
 import com.elementstcg.server.game.Account;
 import com.elementstcg.server.game.Board;
+import com.elementstcg.server.game.Card;
+import com.elementstcg.server.game.Player;
+import com.elementstcg.shared.trait.ICard;
 import com.elementstcg.shared.trait.IClientHandler;
 import com.elementstcg.shared.trait.IResponse;
 import com.elementstcg.shared.trait.IServerHandler;
@@ -127,8 +130,40 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
         return null;
     }
 
+    /**
+     * Next turn of a player.
+     * @param key mag niet leeg of null zijn
+     * @return IResponse object.
+     * @throws RemoteException
+     */
     public IResponse nextTurn(String key) throws RemoteException {
-        return null;
+
+        Session caller = clients.get(key);
+        Board board = games.get(caller.getBoardKey());
+
+        if((board.getTurn() && board.getPlayerOne().getSession().equals(caller)) ||
+                (!board.getTurn() && board.getPlayerTwo().getSession().equals(caller))) {
+            board.nextTurn();
+
+            Player turn = (board.getTurn() ? board.getPlayerOne() : board.getPlayerTwo());
+            Player notTurn = (!board.getTurn() ? board.getPlayerOne() : board.getPlayerTwo());
+
+            // Drawing cards for the next turn player.
+            if(turn.getAmountCardsInDeck() > 0) {
+                ICard drawedCard = turn.drawCard();
+                turn.getSession().getClient().addCardToHand(drawedCard);
+                notTurn.getSession().getClient().enemyUpdateDeckCount(turn.getAmountCardsInDeck());
+                //TODO Display new card in the hand of the enemy player.
+                //notTurn.getSession().getClient().enemyAddCardToHand();
+            }
+
+            notTurn.getSession().getClient().nextTurn(false);
+            turn.getSession().getClient().nextTurn(true);
+        } else {
+            return new Response(false, 1, "You can't force next turn if it's not your turn!");
+        }
+
+        return new Response(true);
     }
 
     public IResponse replaceCard(String key, int selected, int point) throws RemoteException {
@@ -207,7 +242,7 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
      * @param ses1 Session object of the searching player.
      * @param ses2 Session object of the second searching player.
      */
-    private void createBoardSession(Session ses1, Session ses2) {
+    private void createBoardSession(Session ses1, Session ses2) throws RemoteException {
         try {
             String key = MessageDigest.getInstance("MD5").digest((ses1.getAccount().getUserName() + String.valueOf(System.currentTimeMillis()) + ses2.getAccount().getUserName()).getBytes()).toString();
             ses1.setBoardKey(key);
@@ -217,13 +252,23 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
             searchingPlayers.remove(ses1);
             searchingPlayers.remove(ses2);
 
-            if(ses1.getClient().setupNewMatch(ses2.getAccount().getUserName())) {
+            if(ses1.getClient().setupMatch(ses2.getAccount().getUserName())) {
+                ses1.getClient().addCardToHand(board.getPlayerOne().drawCard());
+                ses1.getClient().addCardToHand(board.getPlayerOne().drawCard());
+                ses1.getClient().addCardToHand(board.getPlayerOne().drawCard());
+                ses1.getClient().addCardToHand(board.getPlayerOne().drawCard());
                 ses1.getClient().addCardToHand(board.getPlayerOne().drawCard());
             }
 
-            if(ses2.getClient().setupNewMatch(ses1.getAccount().getUserName())) {
+            if(ses2.getClient().setupMatch(ses1.getAccount().getUserName())) {
+                ses2.getClient().addCardToHand(board.getPlayerTwo().drawCard());
+                ses2.getClient().addCardToHand(board.getPlayerTwo().drawCard());
+                ses2.getClient().addCardToHand(board.getPlayerTwo().drawCard());
+                ses2.getClient().addCardToHand(board.getPlayerTwo().drawCard());
                 ses2.getClient().addCardToHand(board.getPlayerTwo().drawCard());
             }
+
+            //TODO Update enemy amount of cards in deck.
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
