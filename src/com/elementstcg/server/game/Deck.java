@@ -1,11 +1,10 @@
 package com.elementstcg.server.game;
 
-import com.elementstcg.client.*;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import com.elementstcg.shared.trait.Element;
 
 public class Deck {
 
