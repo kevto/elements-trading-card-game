@@ -1,11 +1,14 @@
 package com.elementstcg.server.game;
 
+import com.elementstcg.server.handlers.Session;
+
 public class Player {
 
     private int hp;
     private String name;
     private Hand hand;
     private Deck deck;
+    private final Session session;
 
     /**
      * Initilizes the Player class with the given hp and name
@@ -13,8 +16,8 @@ public class Player {
      * @param hp the amount of HP the player object starts with
      * @param name the name of the player object
      */
-    public Player(int hp, String name){
-        this(hp, name, null);
+    public Player(int hp, String name, Session session){
+        this(hp, name, null, session);
     }
 
     /**
@@ -23,12 +26,14 @@ public class Player {
     * @param hp the amount of HP the player object starts with
     * @param name the name of the player object
     * @param deck the deck that the player will be playing with
+    * @param session session of the player.
     */
-    public Player(int hp, String name, Deck deck){
+    public Player(int hp, String name, Deck deck, Session session){
         this.hp = hp;
         this.name = name;
         this.deck = deck;
 
+        this.session = session;
         hand = new Hand();
     }
 
@@ -111,4 +116,10 @@ public class Player {
      * @return The current deck object.
      */
     public Deck getDeck() { return deck; }
+
+    /**
+     * Get the current session of the player
+     * @return Session object of the player.
+     */
+    public Session getSession() { return session; }
 }

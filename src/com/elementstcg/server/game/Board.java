@@ -4,6 +4,7 @@ import com.elementstcg.server.game.util.CalculateMultiplier;
 import com.elementstcg.server.game.util.CustomException.ExceedCapacityException;
 import com.elementstcg.server.game.util.CustomException.EmptyFieldException;
 import com.elementstcg.server.game.util.CustomException.OccupiedFieldException;
+import com.elementstcg.server.handlers.Session;
 import javafx.application.Platform;
 
 import java.util.HashMap;
@@ -11,40 +12,31 @@ import java.util.Map;
 
 public class Board {
 
-    private int initialHp = 45;
-    private boolean playerTurn = true;
+    private boolean playerOneTurn = true;
     public static final int MAX_CAP_POINTS = 15;
-    private Player player;
-    private Player enemy;
+    public static final int INITIAL_HP = 45;
+    private Player playerOne;
+    private Player playerTwo;
 
-    private HashMap<Integer, Card> playerField;
-    private HashMap<Integer, Card> enemyField;
+    private HashMap<Integer, Card> playerOneField;
+    private HashMap<Integer, Card> playerTwoField;
 
     /**
      * Constructor with the enemy player.
-     * @param enemyName name of the enemy player.
-     * @param playerName name of the starting player.
+     * @param playerOne session object of the first player
+     * @param playerTwo session object of the second player
      */
-    public Board(String playerName, String enemyName){
-        playerField = new HashMap<>();
-        enemyField = new HashMap<>();
+    public Board(Session playerOne, Session playerTwo){
+        playerOneField = new HashMap<>();
+        playerTwoField = new HashMap<>();
 
-        if (enemyName == null || enemyName == "")
-        {
-            throw new IllegalArgumentException("enemyName cannot be empty in this constructor.");
-        }
+        this.playerOne = new Player(INITIAL_HP, playerOne.getAccount().getUserName(), playerOne);
+        this.playerTwo = new Player(INITIAL_HP, playerTwo.getAccount().getUserName(), playerTwo);
 
-        player = new Player(initialHp, playerName);
-        setupPlayer(enemyName);
+        this.playerOne.setDeck(new Deck(Deck.getDeckOne()));
+        this.playerTwo.setDeck(new Deck(Deck.getDeckOne()));
     }
 
-    /**
-     * Gets the opponent and sets him up/adds him to the board.
-     * @param enemyName name of the enemy player. Enemy name may not be null nor empty
-     */
-    public void setupPlayer(String enemyName){
-        enemy = new Player(initialHp, enemyName);
-    }
 
     /**
      * Updates the players HP with the given value. And checks if the game is over
