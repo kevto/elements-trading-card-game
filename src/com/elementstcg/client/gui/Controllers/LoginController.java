@@ -1,4 +1,8 @@
+package com.elementstcg.client.gui.Controllers;
 import java.lang.Boolean;
+import com.elementstcg.client.Account;
+
+
 
 public class LoginController{
 
