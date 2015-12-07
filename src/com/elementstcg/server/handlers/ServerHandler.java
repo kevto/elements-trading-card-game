@@ -175,7 +175,52 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
     }
 
     public IResponse attackEnemy(String key, int point) throws RemoteException {
-        return null;
+        Session caller = clients.get(key);
+        Board board = games.get(caller.getBoardKey());
+
+        if((board.getTurn() && board.getPlayerOne().getSession().equals(caller)) ||
+                (!board.getTurn() && board.getPlayerTwo().getSession().equals(caller))) {
+
+            // Getting the right variables (player).
+            Player attacker = (board.getPlayerOne().getSession().equals(caller) ? board.getPlayerOne() : board.getPlayerTwo());
+            boolean isPlayerOne = (board.getPlayerOne().equals(attacker) ? true : false);
+
+            // Checking if the defend fields are empty.
+            boolean hasDefenseCards = false;
+
+            // Looping through all the cards om field.
+            for(Map.Entry<Integer, Card> entry : (isPlayerOne ? board.getPlayerTwoField().entrySet() : board.getPlayerOneField().entrySet())) {
+                if(entry.getKey() >= 0 && entry.getKey() <= 5) {
+                    hasDefenseCards = true;
+                }
+            }
+
+            if(hasDefenseCards) {
+                return new Response(false, 2, "Your opponent has defense cards on his field!");
+            } else {
+                Card selectedCard = (isPlayerOne ? board.getPlayerOneField().get(point) : board.getPlayerTwoField().get(point));
+
+                if(selectedCard.getAttacked()) {
+                    return new Response(false, 3, "The selected card already attacked this turn!");
+                }
+
+                // Updating the HP at both sides.
+                if(isPlayerOne) {
+                    board.updatePlayerTwoHP(selectedCard.getAttack());
+                    caller.getClient().enemyUpdatePlayerHP(board.getPlayerTwo().getHp());
+                    board.getPlayerTwo().getSession().getClient().updatePlayerHP(board.getPlayerTwo().getHp());
+                } else {
+                    board.updatePlayerOneHP(selectedCard.getAttack());
+                    caller.getClient().enemyUpdatePlayerHP(board.getPlayerOne().getHp());
+                    board.getPlayerOne().getSession().getClient().updatePlayerHP(board.getPlayerOne().getHp());
+                }
+            }
+
+        } else {
+            return new Response(false, 1, "This is not your turn!");
+        }
+
+        return new Response(true, "You damaged your opponent!");
     }
 
     public IResponse findMatch(String key) throws RemoteException {

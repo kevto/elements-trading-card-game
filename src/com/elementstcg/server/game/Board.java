@@ -42,7 +42,7 @@ public class Board {
      * Updates the players HP with the given value. And checks if the game is over
      * @param hp updating the player HP by input. Can be negative as of positive value.
      */
-    public void updatePlayerHP(int hp){
+    public void updatePlayerOneHP(int hp){
         playerOne.modifyHp(hp);
 
         isGameOver();
@@ -52,7 +52,7 @@ public class Board {
      * Updates the enemy's HP with the given value. And checks if the game is over
      * @param hp updating the enemy HP by input. Can be negative as of positive value.
      */
-    public void updateEnemyHP(int hp){
+    public void updatePlayerTwoHP(int hp){
         playerTwo.modifyHp(hp);
 
         isGameOver();
@@ -270,7 +270,7 @@ public class Board {
      * Getter to get all the cards on the play field of the enemy.
      * @return List of cards of the enemy field
      */
-    public HashMap<Integer, Card> getEnemyTwoField() {
+    public HashMap<Integer, Card> getPlayerTwoField() {
         return playerTwoField;
     }
 }
