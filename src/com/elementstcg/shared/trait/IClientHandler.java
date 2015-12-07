@@ -1,6 +1,5 @@
 package com.elementstcg.shared.trait;
 
-import com.elementstcg.client.ICard;
 
 import java.lang.Boolean;
 import java.rmi.Remote;

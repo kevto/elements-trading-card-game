@@ -2,6 +2,7 @@ package com.elementstcg.client.handler;
 
 import com.elementstcg.client.Card;
 import com.elementstcg.client.gui.Controllers.BoardController;
+import com.elementstcg.shared.trait.ICard;
 import com.elementstcg.shared.trait.IClientHandler;
 import com.elementstcg.shared.trait.IResponse;
 import com.elementstcg.shared.trait.IServerHandler;
@@ -20,6 +21,7 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
     private static String ip = "145.93.61.44";
     private static String port = "8112";
     private static String name = "server";
+    private static String sessionKey;
 
     private static BoardController boardController;
 
@@ -121,6 +123,16 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
 
     }
 
+    @Override
+    public void addCardToHand(ICard card) throws RemoteException {
+
+    }
+
+    @Override
+    public void placeCard(ICard card, int point) throws RemoteException {
+
+    }
+
     public void addCardToHand(Card card) throws RemoteException {
 
     }
@@ -132,51 +144,56 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
     public void removeCard(int pointer) throws RemoteException {
         boardController.removeCardPlayer(pointer);
     }
-
+    //TODO: Mick
     public void setCardHp(int point, int hp) throws RemoteException {
     }
-
+    //TODO: Maarten
     public void removeCardFromHand(int index) throws RemoteException {
 
     }
-
     public String getSessionKey() throws RemoteException {
-        return null;
+        return sessionKey;
     }
-
     public void setSessionKey(String key) throws RemoteException {
 
-
+        sessionKey = key;
     }
 
     public void enemyUpdatePlayerHP(int hp) throws RemoteException {
-
+        boardController.updateEnemyHp(hp);
     }
-
+    //TODO: Mick
     public void enemyUpdateDeckCount(int count) throws RemoteException {
 
     }
-
+    //TODO: Danny
     public void enemyAddCardToHand() throws RemoteException {
+        //TODO: This is a placeholder until I have discussed this issue
+        Card card = null;
+        boardController.addEnemyCardToHand(card);
+    }
+
+    @Override
+    public void enemyPlaceCard(ICard card, int point) throws RemoteException {
 
     }
 
     public void enemyPlaceCard(Card card, int point) throws RemoteException {
+        boardController.putCardEnemy(card,point);
 
     }
-
     public void enemyRemoveCard(int point) throws RemoteException {
-
+        boardController.removeCardEnemy(point);
     }
-
     public void enemySetCardHp(int point, int hp) throws RemoteException {
+        boardController.updateEnemyHPCard(point, hp);
 
     }
-
     public void enemyRemoveCardFromHand(int index) throws RemoteException {
+        boardController.removeEnemyCardFromHand(index);
 
     }
-
+    //TODO: Maarten
     public void nextTurn(Boolean isThisClientsTurn) throws RemoteException {
 
     }
