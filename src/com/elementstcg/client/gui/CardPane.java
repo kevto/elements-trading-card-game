@@ -1,7 +1,6 @@
 package com.elementstcg.client.gui;
 
 import com.elementstcg.client.Card;
-import com.elementstcg.client.gui.Controllers.*;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -16,8 +15,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
 import java.io.IOException;
-
-import static com.elementstcg.client.gui.CardState.*;
 
 public class CardPane extends StackPane {
 
@@ -65,7 +62,7 @@ public class CardPane extends StackPane {
 
         CreateShadow();
 
-        cardState = PlayerHand;
+        cardState = CardState.PlayerHand;
 
         cardObject = CreateCard(card);
         ghostObject = CreateCard(card);
@@ -90,11 +87,11 @@ public class CardPane extends StackPane {
                 if (event.getButton() == MouseButton.PRIMARY) {
                     //TODO: Add LEFT click event logic (EG. call method when a card is clicked)
 
-                    if (cardState == PlayerHand) {
+                    if (cardState == CardState.PlayerHand) {
                         controller.selectCardInHandButtonAction(instance);
-                    } else if (cardState == PlayerField) {
+                    } else if (cardState == CardState.PlayerField) {
                         controller.selectCardButtonAction(instance);
-                    } else if (cardState == EnemyField) {
+                    } else if (cardState == CardState.EnemyField) {
                         try {
                             controller.attackEnemyCardButtonAction(instance);
                         } catch (IOException e) {
@@ -110,7 +107,7 @@ public class CardPane extends StackPane {
                     System.out.println("RIGHT");
                     System.out.println(cardState);
 
-                    if (cardState == PlayerField || cardState == EnemyField) {
+                    if (cardState == CardState.PlayerField || cardState == CardState.EnemyField) {
                         controller.showCardButtonAction(instance);
                     }
                 }
@@ -121,7 +118,7 @@ public class CardPane extends StackPane {
         instance.addEventHandler(MouseEvent.MOUSE_ENTERED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                if (cardState == PlayerHand) {
+                if (cardState == CardState.PlayerHand) {
                     showCard(true);
                 }
             }
@@ -131,7 +128,7 @@ public class CardPane extends StackPane {
         instance.addEventHandler(MouseEvent.MOUSE_EXITED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                if (cardState == PlayerHand) {
+                if (cardState == CardState.PlayerHand) {
                     showCard(false);
                 }
             }
@@ -274,18 +271,18 @@ public class CardPane extends StackPane {
      */
     public void setSelected(boolean selected) {
         if(selected) {
-            if(cardState == PlayerHand) {
+            if(cardState == CardState.PlayerHand) {
                 this.setTranslateY(-50);
             }
-            if(cardState == PlayerField || cardState == EnemyField){
+            if(cardState == CardState.PlayerField || cardState == CardState.EnemyField){
                 cardObject.setEffect(selectShadow);
             }
         }
         else {
-            if(cardState == PlayerHand) {
+            if(cardState == CardState.PlayerHand) {
                 this.setTranslateY(-25);
             }
-            if(cardState == PlayerField || cardState == EnemyField){
+            if(cardState == CardState.PlayerField || cardState == CardState.EnemyField){
                 cardObject.setEffect(shadow);
             }
         }
@@ -306,7 +303,7 @@ public class CardPane extends StackPane {
      * @return true if the card is on the field and false when it's not.
      */
     public boolean onField() {
-        return (cardState == PlayerField || cardState == EnemyField ? true : false);
+        return (cardState == CardState.PlayerField || cardState == CardState.EnemyField ? true : false);
     }
 
     /**
