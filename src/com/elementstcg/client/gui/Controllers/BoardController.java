@@ -61,6 +61,13 @@ public class BoardController {
         CardPane cardPane = (CardPane)enemyField.getChildren().get(point);
         cardPane.getCard().modifyHP(card.getAttack());
     }
+
+    public void updateEnemyHPCard(int point, int hp){
+        board.getEnemyField().get(point).modifyHP(hp);
+    }
+    public void removeEnemyCardFromHand(int point){
+        board.getEnemy().getHand().getCards().remove(point);
+    }
     public void putCardPlayer(Card card, int point){
         board.getPlayerField().put(point, card);
     }
@@ -303,6 +310,10 @@ public class BoardController {
                 // Check if the card is in a defend position.
             }
         }
+    }
+
+    public void addEnemyCardToHand(Card card){
+        board.getEnemy().getHand().addCard(card);
     }
 
 

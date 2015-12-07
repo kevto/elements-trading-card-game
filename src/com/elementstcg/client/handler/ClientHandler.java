@@ -21,6 +21,7 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
     private static String ip = "145.93.61.44";
     private static String port = "8112";
     private static String name = "server";
+    private static String sessionKey;
 
     private static BoardController boardController;
 
@@ -150,14 +151,12 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
     public void removeCardFromHand(int index) throws RemoteException {
 
     }
-    //TODO: Danny
     public String getSessionKey() throws RemoteException {
-        return null;
+        return sessionKey;
     }
-    //TODO: Danny
+
     public void setSessionKey(String key) throws RemoteException {
-
-
+        sessionKey = key;
     }
 
     public void enemyUpdatePlayerHP(int hp) throws RemoteException {
@@ -169,9 +168,23 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
     }
     //TODO: Danny
     public void enemyAddCardToHand() throws RemoteException {
+        //TODO: This is a placeholder until I have discussed this issue
+        Card card = null;
+        boardController.addEnemyCardToHand(card);
+    }
+
+    @Override
+    public void enemyPlaceCard(ICard card, int point) throws RemoteException {
 
     }
 
+    public void enemyPlaceCard(Card card, int point) throws RemoteException {
+        boardController.putCardEnemy(card,point);
+
+    }
+    public void enemyRemoveCard(int point) throws RemoteException {
+        boardController.removeCardEnemy(point);
+    }
     @Override
     public void enemyPlaceCard(ICard card, int point) throws RemoteException {
 
@@ -187,10 +200,12 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
     }
     //TODO: Mick
     public void enemySetCardHp(int point, int hp) throws RemoteException {
+        boardController.updateEnemyHPCard(point, hp);
 
     }
-    //TODO: Mick
+
     public void enemyRemoveCardFromHand(int index) throws RemoteException {
+        boardController.removeEnemyCardFromHand(index);
 
     }
     //TODO: Maarten
