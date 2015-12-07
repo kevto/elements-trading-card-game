@@ -2,6 +2,7 @@ package com.elementstcg.client.gui.Controllers;
 
 import com.elementstcg.client.gui.*;
 import com.elementstcg.client.*;
+import com.elementstcg.client.handler.ClientHandler;
 import com.elementstcg.client.util.CustomException.ExceedCapacityException;
 import com.elementstcg.client.util.CustomException.OccupiedFieldException;
 import com.elementstcg.client.util.DialogUtility;
@@ -51,7 +52,9 @@ public class BoardController {
     //Dat is de methode die aangeroepen word als de speler wint of
     //verliest dan word game over aangeroepen en als het game over is dan krijg je een menu of je wilt stoppen of naar de lobby wilt
     public void SetGameOver(){
+        ClientHandler.getInstance().setBoardController(null);
         board.setTurn(false);
+
     }
 
     public void attackCard(Card card, int point){
@@ -178,7 +181,8 @@ public class BoardController {
 
         // Update the UI
         updateUI();
-
+        // Notify ClientHandler
+        ClientHandler.getInstance().setBoardController(this);
     }
 
     public void selectCardInHandButtonAction(CardPane cardPane) {

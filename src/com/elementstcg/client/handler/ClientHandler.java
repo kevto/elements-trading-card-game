@@ -1,6 +1,7 @@
 package com.elementstcg.client.handler;
 
 import com.elementstcg.client.Card;
+import com.elementstcg.client.gui.Controllers.BoardController;
 import com.elementstcg.shared.trait.IClientHandler;
 import com.elementstcg.shared.trait.IResponse;
 import com.elementstcg.shared.trait.IServerHandler;
@@ -19,6 +20,8 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
     private static String ip = "145.93.61.44";
     private static String port = "8112";
     private static String name = "server";
+
+    private static BoardController boardController;
 
     private ClientHandler() throws RemoteException {
         setupServerConnection();
@@ -106,8 +109,12 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
         return serverHandler;
     }
 
-    public void updatePlayerHP(int hp) throws RemoteException {
+    public void SetupMatch(String enemyName) {
 
+    }
+
+    public void updatePlayerHP(int hp) throws RemoteException {
+        boardController.updatePlayerHP(hp);
     }
 
     public void updateDeckCount(int amount) throws RemoteException {
@@ -119,15 +126,14 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
     }
 
     public void placeCard(Card card, int point) throws RemoteException {
-
+        boardController.putCardPlayer(card, point);
     }
 
     public void removeCard(int pointer) throws RemoteException {
-
+        boardController.removeCardPlayer(pointer);
     }
 
     public void setCardHp(int point, int hp) throws RemoteException {
-
     }
 
     public void removeCardFromHand(int index) throws RemoteException {
@@ -139,6 +145,7 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
     }
 
     public void setSessionKey(String key) throws RemoteException {
+
 
     }
 
@@ -172,5 +179,9 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
 
     public void nextTurn(Boolean isThisClientsTurn) throws RemoteException {
 
+    }
+
+    public void setBoardController(BoardController BoardController){
+        boardController = BoardController;
     }
 }
