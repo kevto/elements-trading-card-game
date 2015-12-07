@@ -100,7 +100,7 @@ public class Account implements Serializable {
             return false;
         }
 
-        instance = new Account(username, password, "12.0.0.1", 2048);
+        instance = new Account(username, password, "12.0.0.1", 2048, 0);
         instance.setEmail(email);
 
         //Serialization
@@ -179,7 +179,7 @@ public class Account implements Serializable {
             this.ip = ip;
             this.port = port;
 
-            this.elo = elo == null || elo == 0 ? 500 : elo;
+            this.elo = elo;
         }
         else{
             throw new IllegalArgumentException("username/password/email can't be empty.");

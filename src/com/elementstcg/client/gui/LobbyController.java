@@ -1,6 +1,7 @@
 package com.elementstcg.client.gui;
 
 import com.elementstcg.client.handler.ClientHandler;
+import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -8,7 +9,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 
 import java.net.URL;
+import java.rmi.RemoteException;
 import java.util.ResourceBundle;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 /**
@@ -18,6 +22,9 @@ public class LobbyController implements Initializable, ControlledScreen {
 
     private ScreenHandler myController;
     private ClientHandler clientHandler = ClientHandler.getInstance();
+    Timer matchmakingTimer = new Timer();
+    int waitTime = 0;
+    boolean searchingmatch = false;
 
     @FXML Button ButtonPlayVsAi;
     @FXML Button ButtonNormalGame;
@@ -27,7 +34,44 @@ public class LobbyController implements Initializable, ControlledScreen {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        //String playerName = Account.getInstance().getUserName();
+        //lblPlayerWelcome.setText("Welcome, " + playerName + "!");
+    }
 
+
+    /*
+     * Request finding match to the server.
+     */
+    public void findMatch() {
+        try {
+            if (!searchingmatch) {
+                matchmakingTimer = new Timer();
+                matchmakingTimer.scheduleAtFixedRate(new UpponTask(), 1000, 1000);
+                lblSearchText.setVisible(true);
+                lblSearchText.setText("SEARCHING FOR GAME.... " + waitTime + " SECONDS");
+                searchingmatch = true;
+                clientHandler.getServerHandler().findMatch(clientHandler.getSessionKey());
+            }
+
+        } catch (Exception ex) {
+            System.out.print(ex.getMessage());
+            ex.printStackTrace();
+        }
+    }
+
+    class UpponTask extends TimerTask {
+        public void run() {
+            waitTime++;
+            System.out.println(waitTime);
+            Platform.runLater(
+                    new Runnable() {
+                        @Override
+                        public void run() {
+                            lblSearchText.setText("SEARCHING FOR GAME.... " + waitTime + " SECONDS");
+                        }
+                    }
+            );
+        }
     }
 
 
@@ -41,7 +85,7 @@ public class LobbyController implements Initializable, ControlledScreen {
      * @param event
      */
     public void clickedVsAi(Event event) {
-        //TODO implementation
+        //TODO optinonal implementation
     }
 
     /**
@@ -50,9 +94,9 @@ public class LobbyController implements Initializable, ControlledScreen {
      * @param event
      */
     public void clickedNormalGame(Event event) {
-        //TODO implementation
+        findMatch();
         lblSearchText.setVisible(true);
-        lblSearchText.setText("SEARCHING FOR GAME.... XX SECONDS");
+
     }
 
     /**
