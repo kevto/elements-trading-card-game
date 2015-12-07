@@ -130,12 +130,6 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
         return null;
     }
 
-    /**
-     * Next turn of a player.
-     * @param key mag niet leeg of null zijn
-     * @return IResponse object.
-     * @throws RemoteException
-     */
     public IResponse nextTurn(String key) throws RemoteException {
 
         Session caller = clients.get(key);
@@ -170,8 +164,37 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
         return null;
     }
 
+
     public IResponse attackCard(String key, int point, int enemyPoint) throws RemoteException {
-        return null;
+        Session caller = clients.get(key);
+        Board board = games.get(caller.getBoardKey());
+
+        if((board.getTurn() && board.getPlayerOne().getSession().equals(caller)) ||
+                (!board.getTurn() && board.getPlayerTwo().getSession().equals(caller))) {
+
+            // Getting the right variables (player).
+            Player attacker = (board.getPlayerOne().getSession().equals(caller) ? board.getPlayerOne() : board.getPlayerTwo());
+            boolean isPlayerOne = (board.getPlayerOne().equals(attacker) ? true : false);
+
+            Card selectedCard = (isPlayerOne ? board.getPlayerOneField().get(point) : board.getPlayerTwoField().get(point));
+
+            if(selectedCard.getAttacked()) {
+                return new Response(false, 3, "The selected card already attacked this turn!");
+            }
+
+            //TODO Search for the card of the defender
+
+            //TODO Attack with the selected card on the defender card
+
+            //TODO Update HP of defender card and mark attacker card that it attacked.
+
+            //TODO Remove card from the board if no HP left.
+
+        } else {
+            return new Response(false, 1, "This is not your turn!");
+        }
+
+        return new Response(true, "You damaged your opponent!");
     }
 
     public IResponse attackEnemy(String key, int point) throws RemoteException {
@@ -213,6 +236,20 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
                     board.updatePlayerOneHP(selectedCard.getAttack());
                     caller.getClient().enemyUpdatePlayerHP(board.getPlayerOne().getHp());
                     board.getPlayerOne().getSession().getClient().updatePlayerHP(board.getPlayerOne().getHp());
+                }
+
+                // Game over.
+                if(board.isGameOver()) {
+                    String message = "%s has won the match with %d HP left!";
+                    if(board.getPlayerOne().getHp() < 1) {
+                        message = String.format(message, board.getPlayerTwo().getName(), board.getPlayerOne().getHp());
+                    } else {
+                        message = String.format(message, board.getPlayerOne().getName(), board.getPlayerOne().getHp());
+                    }
+
+                    //TODO Client needs endMatch method with String for the message.
+                    board.getPlayerOne().getSession().getClient().endMatch(message);
+                    board.getPlayerTwo().getSession().getClient().endMatch(message);
                 }
             }
 
@@ -320,6 +357,27 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
     }
 
     public IResponse quitMatch(String key) throws RemoteException {
-        return null;
+        Session caller = clients.get(key);
+        Board board = games.get(caller.getBoardKey());
+
+        boolean isPlayerOne = (board.getPlayerOne().getSession().equals(caller) ? true : false);
+        String message = "You've won! %s chickened out!!";
+
+        if(isPlayerOne) {
+            message = String.format(message, board.getPlayerOne().getName());
+            board.getPlayerTwo().getSession().getClient().endMatch(message);
+        } else {
+            message = String.format(message, board.getPlayerTwo().getName());
+            board.getPlayerOne().getSession().getClient().endMatch(message);
+        }
+
+        return new Response(true);
+    }
+
+    private void removeBoardSession(Board board) {
+        board.getPlayerOne().getSession().setBoardKey(null);
+        board.getPlayerTwo().getSession().setBoardKey(null);
+
+        games.remove(board)
     }
 }

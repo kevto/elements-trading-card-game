@@ -17,16 +17,19 @@ public class Board {
     public static final int INITIAL_HP = 45;
     private Player playerOne;
     private Player playerTwo;
+    private String sessionKey;
 
     private HashMap<Integer, Card> playerOneField;
     private HashMap<Integer, Card> playerTwoField;
 
     /**
      * Constructor with the enemy player.
+     * @param key is the session key of the board.
      * @param playerOne session object of the first player
      * @param playerTwo session object of the second player
      */
-    public Board(Session playerOne, Session playerTwo){
+    public Board(String key, Session playerOne, Session playerTwo){
+        sessionKey = key;
         playerOneField = new HashMap<>();
         playerTwoField = new HashMap<>();
 
@@ -84,6 +87,12 @@ public class Board {
      */
     public void nextTurn(){
         playerOneTurn ^= true;
+
+        for(Map.Entry<Integer, Card> entry : playerOneField.entrySet())
+            entry.getValue().setAttacked(false);
+
+        for(Map.Entry<Integer, Card> entry : playerTwoField.entrySet())
+            entry.getValue().setAttacked(false);
     }
 
     /**
@@ -272,5 +281,13 @@ public class Board {
      */
     public HashMap<Integer, Card> getPlayerTwoField() {
         return playerTwoField;
+    }
+
+    /**
+     * Gets the session key.
+     * @return session key in String.
+     */
+    public String getSessionKey() {
+        return sessionKey;
     }
 }
