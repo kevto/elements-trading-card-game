@@ -51,28 +51,30 @@ public class BoardController {
     //Dat is de methode die aangeroepen word als de speler wint of
     //verliest dan word game over aangeroepen en als het game over is dan krijg je een menu of je wilt stoppen of naar de lobby wilt
     public void SetGameOver(){
-
+        board.setTurn(false);
     }
-    public void attackCard(Card card, int point){
 
+    public void attackCard(Card card, int point){
+        CardPane cardPane = (CardPane)enemyField.getChildren().get(point);
+        cardPane.getCard().modifyHP(card.getAttack());
     }
     public void putCardPlayer(Card card, int point){
-
+        board.getPlayerField().put(point, card);
     }
     public void updatePlayerHP(int hp){
-
+        board.getPlayer().modifyHp(hp);
     }
     public void removeCardPlayer(int point){
-
+        board.getPlayerField().remove(point);
     }
     public void putCardEnemy(Card card, int point){
-
+        board.getEnemyField().put(point, card);
     }
     public void updateEnemyHp(int hp){
-
+        board.getEnemy().modifyHp(hp);
     }
     public void removeCardEnemy(int point){
-
+        board.getEnemyField().remove(point);
     }
     public void updateUI(){
         labelEnemyCAP.setText(String.valueOf(enemyField.getCapPoints()));
