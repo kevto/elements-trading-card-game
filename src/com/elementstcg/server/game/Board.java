@@ -139,22 +139,11 @@ public class Board {
     }
 
     /**
-     * This method places a card from the players hand onto the board. Forcefully does that.
-     * @param point Location of the card on the board where it gets placed.
-     * @param card Which card gets placed.
-     */
-    public void forcePutCardPlayer(int point, Card card) {
-        if(playerField.containsKey(point))
-            playerField.remove(point);
-        playerField.put(point, card);
-    }
-
-    /**
      * This method places a card from the enemys hand onto the board.
      * @param point Location on the board where the card gets placed.
      * @param card Which card gets placed.
      */
-    public void putCardEnemy(int point, Card card){
+    public void putCardPlayerTwo(int point, Card card){
         playerTwoField.put(point, card);
     }
 
@@ -163,7 +152,7 @@ public class Board {
      * @param card to search on.
      * @return point of the card that was being searched for.
      */
-    public int getPlayerCardPoint(Card card) {
+    public int getPlayerOneCardPoint(Card card) {
         for(Map.Entry<Integer, Card> entry : playerOneField.entrySet())
             if(entry.getValue().equals(card))
                 return entry.getKey();
@@ -175,7 +164,7 @@ public class Board {
      * @param card to search on.
      * @return point of the card that was being searched for.
      */
-    public int getEnemyCardPoint(Card card) {
+    public int getPlayerTwoCardPoint(Card card) {
         for(Map.Entry<Integer, Card> entry : playerTwoField.entrySet())
             if(entry.getValue().equals(card))
                 return entry.getKey();
@@ -186,7 +175,7 @@ public class Board {
      * Removes a player card from the field.
      * @param point key of the card to remove.
      */
-    public void removePlayerCard(int point) {
+    public void removePlayerOneCard(int point) {
         playerOneField.remove(point);
     }
 
@@ -194,25 +183,28 @@ public class Board {
      * Removes an enemy card from the field.
      * @param point key of the card to remove.
      */
-    public void removeEnemyCard(int point) {
+    public void removePlayerTwoCard(int point) {
         playerTwoField.remove(point);
     }
 
     /**
      * * Method that gets called when the player or enemy attacks an opponent's card.
-     * @param card The card that attacks.
+     * @param player Player that is attacking.
      * @param point Location of the card that gets attacked.
-     * @param defenderField Dictionary of cards that are on the player field will be the defender.
+     * @param selected
      * @param removeCard Runnable that will run on the JavaFX thread to remove the card.
      * @throws EmptyFieldException happens when the selected enemy playerfield doesn't contain
      * a card in it.
      */
-    public void attackCard(Card card, int point, HashMap<Integer, Card> defenderField, Runnable removeCard) throws EmptyFieldException{
-        Card fieldCard = defenderField.get(point);
+    public void attackCard(Player player, int selected, int point, Runnable removeCard) throws EmptyFieldException{
+        HashMap<Integer, Card> defender = (player.equals(playerOne) ? this.playerTwoField : this.playerOneField);
+        HashMap<Integer, Card> attacker = (player.equals(playerOne) ? this.playerTwoField : this.playerOneField);
+        Card fieldCard = defender.get(point);
+        Card attackCard = attacker.get(selected);
 
         double totalDamage = 0;
         if(fieldCard != null) {
-            totalDamage = card.getAttack() * CalculateMultiplier.calculatedMultplier(fieldCard, card);
+            totalDamage = attackCard.getAttack() * CalculateMultiplier.calculatedMultplier(fieldCard, attackCard);
 
             // Checking if there's a defender card infront of the card that
             // the persons wishes to attack. Attack that one if true.
@@ -227,18 +219,18 @@ public class Board {
             //} else {
             //    fieldCard.modifyHP((int) totalDamage);
             //}
-            
-            card.setAttacked(true);
+
+            attackCard.setAttacked(true);
 
             if(fieldCard.getHP() <= 0) {
                 int keyToRemove = -1;
 
-                for(Map.Entry<Integer, Card> entry : defenderField.entrySet())
+                for(Map.Entry<Integer, Card> entry : defender.entrySet())
                     if(entry.getValue().equals(fieldCard))
                         keyToRemove = entry.getKey();
 
                 if(keyToRemove != -1)
-                    defenderField.remove(keyToRemove);
+                    defender.remove(keyToRemove);
                 if(removeCard != null) {
                     Platform.runLater(removeCard);
                 }
@@ -254,7 +246,7 @@ public class Board {
      * Gets the enemy Player instance
      * @return enemy player instance.
      */
-    public Player getEnemy() {
+    public Player getPlayerTwo() {
         return playerTwo;
     }
 
@@ -262,7 +254,7 @@ public class Board {
      * Getter for the player Player instance
      * @return player Player instance.
      */
-    public Player getPlayer() {
+    public Player getPlayerOne() {
         return playerOne;
     }
 
@@ -270,7 +262,7 @@ public class Board {
      * Getter to get all the cards on the play field of the player.
      * @return List of cards of the player field
      */
-    public HashMap<Integer, Card> getPlayerField() {
+    public HashMap<Integer, Card> getPlayerOneField() {
         return playerOneField;
     }
 
@@ -278,7 +270,7 @@ public class Board {
      * Getter to get all the cards on the play field of the enemy.
      * @return List of cards of the enemy field
      */
-    public HashMap<Integer, Card> getEnemyField() {
+    public HashMap<Integer, Card> getEnemyTwoField() {
         return playerTwoField;
     }
 }
