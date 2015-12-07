@@ -154,8 +154,8 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
     public String getSessionKey() throws RemoteException {
         return sessionKey;
     }
-    public void setSessionKey(String key) throws RemoteException {
 
+    public void setSessionKey(String key) throws RemoteException {
         sessionKey = key;
     }
 
@@ -185,10 +185,25 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
     public void enemyRemoveCard(int point) throws RemoteException {
         boardController.removeCardEnemy(point);
     }
+    @Override
+    public void enemyPlaceCard(ICard card, int point) throws RemoteException {
+
+    }
+
+    //TODO: Danny
+    public void enemyPlaceCard(Card card, int point) throws RemoteException {
+
+    }
+    //TODO: Danny
+    public void enemyRemoveCard(int point) throws RemoteException {
+
+    }
+    //TODO: Mick
     public void enemySetCardHp(int point, int hp) throws RemoteException {
         boardController.updateEnemyHPCard(point, hp);
 
     }
+
     public void enemyRemoveCardFromHand(int index) throws RemoteException {
         boardController.removeEnemyCardFromHand(index);
 
