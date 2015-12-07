@@ -40,6 +40,7 @@
 
 package com.elementstcg.client.gui;
 
+import com.elementstcg.client.handler.ClientHandler;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -68,6 +69,8 @@ public class ScreenHandler extends StackPane {
     public ScreenHandler(Stage stage) {
         super();
         this.stage = stage;
+
+        ClientHandler.getInstance().setScreenHandler(this);
     }
 
     //Add the screen to the collection
