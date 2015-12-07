@@ -1,6 +1,8 @@
 package com.elementstcg.shared.trait;
 
-public interface ICard {
+import java.io.Serializable;
+
+public interface ICard extends Serializable {
 
     int getHP();
 
