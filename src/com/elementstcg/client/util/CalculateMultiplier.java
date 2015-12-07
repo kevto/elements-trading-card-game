@@ -1,7 +1,7 @@
 package com.elementstcg.client.util;
 
 import com.elementstcg.client.Card;
-import com.elementstcg.client.Element;
+import com.elementstcg.shared.trait.Element;
 
 /**
  * Created by Danny ter Haar on 12/10/15.
