@@ -4,10 +4,7 @@
 
 package com.elementstcg.client;
 
-import com.elementstcg.client.Board;
-import com.elementstcg.client.Card;
-import com.elementstcg.client.Element;
-import com.elementstcg.client.Player;
+import com.elementstcg.shared.trait.Element;
 import com.elementstcg.client.util.CustomException.EmptyFieldException;
 import com.elementstcg.client.util.CustomException.ExceedCapacityException;
 import com.elementstcg.client.util.CustomException.OccupiedFieldException;

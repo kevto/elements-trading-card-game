@@ -1,4 +1,4 @@
-package com.elementstcg.client;
+package com.elementstcg.shared.trait;
 
 /**
  * Created by Mick on 28-9-2015.

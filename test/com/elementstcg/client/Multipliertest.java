@@ -1,7 +1,6 @@
 package com.elementstcg.client;
 
-import com.elementstcg.client.Card;
-import com.elementstcg.client.Element;
+import com.elementstcg.shared.trait.Element;
 import com.elementstcg.client.util.CalculateMultiplier;
 import junit.framework.TestCase;
 import org.junit.Test;
