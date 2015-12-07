@@ -4,6 +4,7 @@ import com.elementstcg.server.game.util.CalculateMultiplier;
 import com.elementstcg.server.game.util.CustomException.ExceedCapacityException;
 import com.elementstcg.server.game.util.CustomException.EmptyFieldException;
 import com.elementstcg.server.game.util.CustomException.OccupiedFieldException;
+import com.elementstcg.server.handlers.Session;
 import javafx.application.Platform;
 
 import java.util.HashMap;
@@ -11,47 +12,38 @@ import java.util.Map;
 
 public class Board {
 
-    private int initialHp = 45;
-    private boolean playerTurn = true;
+    private boolean playerOneTurn = true;
     public static final int MAX_CAP_POINTS = 15;
-    private Player player;
-    private Player enemy;
+    public static final int INITIAL_HP = 45;
+    private Player playerOne;
+    private Player playerTwo;
 
-    private HashMap<Integer, Card> playerField;
-    private HashMap<Integer, Card> enemyField;
+    private HashMap<Integer, Card> playerOneField;
+    private HashMap<Integer, Card> playerTwoField;
 
     /**
      * Constructor with the enemy player.
-     * @param enemyName name of the enemy player.
-     * @param playerName name of the starting player.
+     * @param playerOne session object of the first player
+     * @param playerTwo session object of the second player
      */
-    public Board(String playerName, String enemyName){
-        playerField = new HashMap<>();
-        enemyField = new HashMap<>();
+    public Board(Session playerOne, Session playerTwo){
+        playerOneField = new HashMap<>();
+        playerTwoField = new HashMap<>();
 
-        if (enemyName == null || enemyName == "")
-        {
-            throw new IllegalArgumentException("enemyName cannot be empty in this constructor.");
-        }
+        this.playerOne = new Player(INITIAL_HP, playerOne.getAccount().getUserName(), playerOne);
+        this.playerTwo = new Player(INITIAL_HP, playerTwo.getAccount().getUserName(), playerTwo);
 
-        player = new Player(initialHp, playerName);
-        setupPlayer(enemyName);
+        this.playerOne.setDeck(new Deck(Deck.getDeckOne()));
+        this.playerTwo.setDeck(new Deck(Deck.getDeckOne()));
     }
 
-    /**
-     * Gets the opponent and sets him up/adds him to the board.
-     * @param enemyName name of the enemy player. Enemy name may not be null nor empty
-     */
-    public void setupPlayer(String enemyName){
-        enemy = new Player(initialHp, enemyName);
-    }
 
     /**
      * Updates the players HP with the given value. And checks if the game is over
      * @param hp updating the player HP by input. Can be negative as of positive value.
      */
     public void updatePlayerHP(int hp){
-        player.modifyHp(hp);
+        playerOne.modifyHp(hp);
 
         isGameOver();
     }
@@ -61,7 +53,7 @@ public class Board {
      * @param hp updating the enemy HP by input. Can be negative as of positive value.
      */
     public void updateEnemyHP(int hp){
-        enemy.modifyHp(hp);
+        playerTwo.modifyHp(hp);
 
         isGameOver();
     }
@@ -71,9 +63,9 @@ public class Board {
      * @return if the game is over.
      */
     public boolean isGameOver(){
-        if(player.getHp() <= 0) {
+        if(playerOne.getHp() <= 0) {
             return true;
-        } else if(enemy.getHp() <= 0) {
+        } else if(playerTwo.getHp() <= 0) {
             return true;
         } else
             return false;
@@ -84,14 +76,14 @@ public class Board {
      * @return value of playerTurn
      */
     public boolean getTurn() {
-        return playerTurn;
+        return playerOneTurn;
     }
 
     /**
      * This method gets called when the turn advances to the other player.
      */
     public void nextTurn(){
-        playerTurn = !playerTurn;
+        playerOneTurn ^= true;
     }
 
     /**
@@ -99,26 +91,51 @@ public class Board {
      * @param point Location of the card on the board where it gets placed.
      * @param card Which card gets placed.
      */
-    public void putCardPlayer(int point, Card card) throws OccupiedFieldException, ExceedCapacityException {
+    public void putCardPlayer(int point, Card card, Player p) throws OccupiedFieldException, ExceedCapacityException {
         int cap = 0;
 
-        for (Card c : playerField.values()) {
-            if(c != null) {
-                cap += c.getCapacityPoints();
+        if (p == playerOne) {
+
+            for (Card c : playerOneField.values()) {
+                if (c != null) {
+                    cap += c.getCapacityPoints();
+                }
             }
-        }
 
-        if(cap + card.getCapacityPoints() <= MAX_CAP_POINTS) {
-            Card fieldCard = playerField.get(point);
+            if(cap + card.getCapacityPoints() <= MAX_CAP_POINTS) {
+                Card fieldCard = playerOneField.get(point);
 
-            if(fieldCard == null){
-                playerField.put(point, card);
+                if(fieldCard == null){
+                    playerOneField.put(point, card);
+                } else {
+                    throw new OccupiedFieldException("There is already a card on this field");
+                }
             } else {
-                throw new OccupiedFieldException("There is already a card on this field");
+                throw new ExceedCapacityException("Card cannot be played, total capacity points exceed the maximum (" + (cap + card.getCapacityPoints()) + "/" + MAX_CAP_POINTS + ")");
             }
-        } else {
-            throw new ExceedCapacityException("Card cannot be played, total capacity points exceed the maximum (" + (cap + card.getCapacityPoints()) + "/" + MAX_CAP_POINTS + ")");
         }
+        else
+        {
+            for (Card c : playerTwoField.values()) {
+                if (c != null) {
+                    cap += c.getCapacityPoints();
+                }
+            }
+
+            if(cap + card.getCapacityPoints() <= MAX_CAP_POINTS) {
+                Card fieldCard = playerTwoField.get(point);
+
+                if(fieldCard == null){
+                    playerTwoField.put(point, card);
+                } else {
+                    throw new OccupiedFieldException("There is already a card on this field");
+                }
+            } else {
+                throw new ExceedCapacityException("Card cannot be played, total capacity points exceed the maximum (" + (cap + card.getCapacityPoints()) + "/" + MAX_CAP_POINTS + ")");
+            }
+        }
+
+
     }
 
     /**
@@ -138,7 +155,7 @@ public class Board {
      * @param card Which card gets placed.
      */
     public void putCardEnemy(int point, Card card){
-        enemyField.put(point, card);
+        playerTwoField.put(point, card);
     }
 
     /**
@@ -147,7 +164,7 @@ public class Board {
      * @return point of the card that was being searched for.
      */
     public int getPlayerCardPoint(Card card) {
-        for(Map.Entry<Integer, Card> entry : playerField.entrySet())
+        for(Map.Entry<Integer, Card> entry : playerOneField.entrySet())
             if(entry.getValue().equals(card))
                 return entry.getKey();
         return -1;
@@ -159,7 +176,7 @@ public class Board {
      * @return point of the card that was being searched for.
      */
     public int getEnemyCardPoint(Card card) {
-        for(Map.Entry<Integer, Card> entry : enemyField.entrySet())
+        for(Map.Entry<Integer, Card> entry : playerTwoField.entrySet())
             if(entry.getValue().equals(card))
                 return entry.getKey();
         return -1;
@@ -170,7 +187,7 @@ public class Board {
      * @param point key of the card to remove.
      */
     public void removePlayerCard(int point) {
-        playerField.remove(point);
+        playerOneField.remove(point);
     }
 
     /**
@@ -178,7 +195,7 @@ public class Board {
      * @param point key of the card to remove.
      */
     public void removeEnemyCard(int point) {
-        enemyField.remove(point);
+        playerTwoField.remove(point);
     }
 
     /**
@@ -238,7 +255,7 @@ public class Board {
      * @return enemy player instance.
      */
     public Player getEnemy() {
-        return enemy;
+        return playerTwo;
     }
 
     /**
@@ -246,7 +263,7 @@ public class Board {
      * @return player Player instance.
      */
     public Player getPlayer() {
-        return player;
+        return playerOne;
     }
 
     /**
@@ -254,7 +271,7 @@ public class Board {
      * @return List of cards of the player field
      */
     public HashMap<Integer, Card> getPlayerField() {
-        return playerField;
+        return playerOneField;
     }
 
     /**
@@ -262,6 +279,6 @@ public class Board {
      * @return List of cards of the enemy field
      */
     public HashMap<Integer, Card> getEnemyField() {
-        return enemyField;
+        return playerTwoField;
     }
 }
