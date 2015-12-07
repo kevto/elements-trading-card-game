@@ -1,9 +1,12 @@
 package com.elementstcg.server.game;
 
+import com.elementstcg.shared.trait.ICard;
+import com.elementstcg.shared.trait.Element;
+
 /**
  * Created by Mick on 28-9-2015.
  */
-public class Card {
+public class Card implements ICard {
 
     private int attack;
     private int hp;
