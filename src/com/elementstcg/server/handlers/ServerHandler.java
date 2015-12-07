@@ -250,6 +250,8 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
                     //TODO Client needs endMatch method with String for the message.
                     board.getPlayerOne().getSession().getClient().endMatch(message);
                     board.getPlayerTwo().getSession().getClient().endMatch(message);
+
+                    removeBoardSession(board);
                 }
             }
 
@@ -329,7 +331,7 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
             String key = MessageDigest.getInstance("MD5").digest((ses1.getAccount().getUserName() + String.valueOf(System.currentTimeMillis()) + ses2.getAccount().getUserName()).getBytes()).toString();
             ses1.setBoardKey(key);
             ses2.setBoardKey(key);
-            Board board = new Board(ses1, ses2);
+            Board board = new Board(key, ses1, ses2);
             games.put(key, board);
             searchingPlayers.remove(ses1);
             searchingPlayers.remove(ses2);
@@ -371,6 +373,8 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
             board.getPlayerOne().getSession().getClient().endMatch(message);
         }
 
+        removeBoardSession(board);
+
         return new Response(true);
     }
 
@@ -378,6 +382,6 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
         board.getPlayerOne().getSession().setBoardKey(null);
         board.getPlayerTwo().getSession().setBoardKey(null);
 
-        games.remove(board)
+        games.remove(board.getSessionKey());
     }
 }
