@@ -1,6 +1,6 @@
 package com.elementstcg.shared.trait;
 
-import com.elementstcg.client.Card;
+import com.elementstcg.client.ICard;
 
 import java.lang.Boolean;
 import java.rmi.Remote;
@@ -14,6 +14,11 @@ import java.rmi.RemoteException;
  */
 
 public interface IClientHandler extends Remote {
+    /**
+     * When the player is matched to another player this methoded is called to make the client ready for the match
+     * @param enemyName The name of the enemyPlayer
+     */
+    public void SetupMatch(String enemyName);
     /**
      * Updates the player HP in the GUI at the request of the server
      * @param hp The new HP total of the player
@@ -30,14 +35,14 @@ public interface IClientHandler extends Remote {
      * Places a card into the Hand of the player at the request of the server
      * @param card The card that is being added to the hand of the player.
      */
-    public void addCardToHand(Card card) throws RemoteException;
+    public void addCardToHand(ICard card) throws RemoteException;
 
     /**
      * Places a card on the field at the request server.
      * @param card The card that is going to be placed on the field
      * @param point Represents on which spot the card is going to be placed on the field.
      */
-    public void placeCard(Card card, int point) throws RemoteException;
+    public void placeCard(ICard card, int point) throws RemoteException;
 
     /**
      * Removes a card from the field, and sends this request to the server.
@@ -55,7 +60,7 @@ public interface IClientHandler extends Remote {
 
     /**
      * Removes a card from the player's hand at the request of the server.
-     * @param index points to which Card in the array is going to be removed.
+     * @param index points to which ICard in the array is going to be removed.
      */
     public void removeCardFromHand(int index) throws RemoteException;
 
@@ -94,7 +99,7 @@ public interface IClientHandler extends Remote {
      * @param card The card that is going to be palced.
      * @param point Represents the spot or place where the card is placed.
      */
-    public void enemyPlaceCard(Card card, int point) throws RemoteException;
+    public void enemyPlaceCard(ICard card, int point) throws RemoteException;
 
     /**
      * Removes a card from the enemy field.
@@ -110,7 +115,7 @@ public interface IClientHandler extends Remote {
     public void enemySetCardHp(int point, int hp) throws RemoteException;
 
     /**
-     * Removes a Card from the enemy hand Represents the spot or place where the card is placed.
+     * Removes a ICard from the enemy hand Represents the spot or place where the card is placed.
      * @param index Specifies which card to remove from the enemy hand
      */
     public void enemyRemoveCardFromHand(int index) throws RemoteException;
