@@ -96,16 +96,40 @@ public class BoardController {
     }
 
     public void nextTurn(){
+        board.nextTurn();
 
     }
     public void selectCard(CardPane cardPane){
+        if (!board.isGameOver()) {
+            if (selectedCard == null) {
+                selectedCard = cardPane;
+                cardPane.setSelected(true);
+            } else {
+                if (cardPane != selectedCard) {
+                    selectedCard.setSelected(false);
+
+                    selectedCard = cardPane;
+                    cardPane.setSelected(true);
+                } else {
+                    cardPane.setSelected(false);
+                    selectedCard = null;
+                }
+            }
+        }
 
     }
     public void showGhostPane(Node node){
+        if (ghostPane.getChildren().size() > 0) {
+            ghostPane.getChildren().removeAll(ghostPane.getChildren());
+        }
 
+        ghostPane.getChildren().add(node);
+
+        ghostPane.toFront();
     }
-    public void hideGhostPane(){
-
+    public void hideGhostPane() {
+        ghostPane.getChildren().removeAll(ghostPane.getChildren());
+        ghostPane.toBack();
     }
     public void attackEnemyDirectButtonAction() {
         if (selectedCard != null && selectedCard.isSelected() && selectedCard.onField()) {
@@ -253,11 +277,7 @@ public class BoardController {
     }
     public void nextTurnButtonAction() {
         //Implement RMI action
-
-
         updateUI();
-
-
     }
 
 
