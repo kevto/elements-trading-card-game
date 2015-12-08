@@ -3,6 +3,8 @@ package com.elementstcg.server.handlers;
 import com.elementstcg.server.game.Account;
 import com.elementstcg.server.game.Board;
 import com.elementstcg.server.game.Card;
+import com.elementstcg.server.game.util.CustomException.ExceedCapacityException;
+import com.elementstcg.server.game.util.CustomException.OccupiedFieldException;
 import com.elementstcg.server.game.Player;
 import com.elementstcg.server.game.util.CustomException.EmptyFieldException;
 import com.elementstcg.shared.trait.ICard;
@@ -128,7 +130,25 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
     }
 
     public IResponse placeCard(String key, int selected, int point) throws RemoteException {
-        return null;
+        //TODO: RICK
+        //Key is the player that places the card, int is the selected card in the hand, and point is where it gets placed
+        //First, find the right board to place the card on, then place the card
+        Session caller = clients.get(key);
+        Board board = games.get(caller.getBoardKey());
+        Player player = (board.getPlayerOne().getSession().equals(caller) ? board.getPlayerOne() : board.getPlayerTwo());
+
+        //Place the card at the right spot
+        //It first gets the right board, then gets the needed card and needed player to place the right card.
+        try {
+            board.putCardPlayer(point, player.getHand().getCard(selected), player);
+            //TODO Call ClientHandler of both players to place the cards on their fields visually.
+        } catch (OccupiedFieldException e) {
+            e.printStackTrace();
+        } catch (ExceedCapacityException e) {
+            e.printStackTrace();
+        }
+
+        return new Response(true);
     }
 
     public IResponse nextTurn(String key) throws RemoteException {
@@ -162,6 +182,7 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
     }
 
     public IResponse replaceCard(String key, int selected, int point) throws RemoteException {
+        //TODO: RICK
         return null;
     }
 

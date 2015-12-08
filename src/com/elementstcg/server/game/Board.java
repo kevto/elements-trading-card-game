@@ -148,6 +148,20 @@ public class Board {
     }
 
     /**
+<<<<<<< HEAD
+     * This method places a card from the players hand onto the board. Forcefully does that.
+     * @param point Location of the card on the board where it gets placed.
+     * @param card Which card gets placed.
+     */
+    public void forcePutCardPlayer(int point, Card card) {
+        if(playerOneField.containsKey(point))
+            playerOneField.remove(point);
+        playerOneField.put(point, card);
+    }
+
+    /**
+=======
+>>>>>>> development
      * This method places a card from the enemys hand onto the board.
      * @param point Location on the board where the card gets placed.
      * @param card Which card gets placed.
@@ -283,6 +297,10 @@ public class Board {
         return playerTwoField;
     }
 
+
+    public Player getCurrentPlayer() {
+        return playerOneTurn == true ? playerOne : playerTwo;
+    }
     /**
      * Gets the session key.
      * @return session key in String.
