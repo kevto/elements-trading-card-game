@@ -144,9 +144,9 @@ public class Board {
      * @param card Which card gets placed.
      */
     public void forcePutCardPlayer(int point, Card card) {
-        if(playerField.containsKey(point))
-            playerField.remove(point);
-        playerField.put(point, card);
+        if(playerOneField.containsKey(point))
+            playerOneField.remove(point);
+        playerOneField.put(point, card);
     }
 
     /**
@@ -280,5 +280,10 @@ public class Board {
      */
     public HashMap<Integer, Card> getEnemyField() {
         return playerTwoField;
+    }
+
+    public Player getCurrentPlayer()
+    {
+        return playerOneTurn == true ? playerOne : playerTwo;
     }
 }

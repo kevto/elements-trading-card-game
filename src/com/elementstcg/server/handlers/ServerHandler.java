@@ -2,6 +2,9 @@ package com.elementstcg.server.handlers;
 
 import com.elementstcg.server.game.Account;
 import com.elementstcg.server.game.Board;
+import com.elementstcg.server.game.Card;
+import com.elementstcg.server.game.util.CustomException.ExceedCapacityException;
+import com.elementstcg.server.game.util.CustomException.OccupiedFieldException;
 import com.elementstcg.shared.trait.IClientHandler;
 import com.elementstcg.shared.trait.IResponse;
 import com.elementstcg.shared.trait.IServerHandler;
@@ -124,7 +127,23 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
     }
 
     public IResponse placeCard(String key, int selected, int point) throws RemoteException {
-        return null;
+        //TODO: RICK
+        //Key is the player that places the card, int is the selected card in the hand, and point is where it gets placed
+        //First, find the right board to place the card on, then place the card
+
+        //Get the right board to place the card on.
+        String boardKey = clients.get(key).getBoardKey();
+
+        //Place the card at the right spot
+        //It first gets the right board, then gets the needed card and needed player to place the right card.
+        try {
+            games.get(boardKey).putCardPlayer(point, games.get(boardKey).getPlayer().getHand().getCard(selected), games.get(boardKey).getCurrentPlayer());
+        } catch (OccupiedFieldException e) {
+            e.printStackTrace();
+        } catch (ExceedCapacityException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public IResponse nextTurn(String key) throws RemoteException {
@@ -132,7 +151,7 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
     }
 
     public IResponse replaceCard(String key, int selected, int point) throws RemoteException {
-        return null;
+        //TODO: RICK
     }
 
     public IResponse attackCard(String key, int point, int enemyPoint) throws RemoteException {
