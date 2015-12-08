@@ -1,11 +1,16 @@
 package com.elementstcg.client.handler;
 
+import com.elementstcg.client.Account;
 import com.elementstcg.client.Card;
 import com.elementstcg.client.gui.Controllers.BoardController;
+import com.elementstcg.client.gui.ScreenHandler;
+import com.elementstcg.client.gui.ScreensFramework;
 import com.elementstcg.shared.trait.ICard;
 import com.elementstcg.shared.trait.IClientHandler;
 import com.elementstcg.shared.trait.IResponse;
 import com.elementstcg.shared.trait.IServerHandler;
+import com.sun.deploy.util.SessionState;
+import javafx.stage.Screen;
 
 import java.net.MalformedURLException;
 import java.rmi.Naming;
@@ -17,6 +22,8 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
 
     private static ClientHandler instance;
     private static IServerHandler serverHandler;
+
+    private static ScreenHandler screenHandler;
 
     private static String ip = "145.93.61.44";
     private static String port = "8112";
@@ -41,6 +48,15 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
 
         return instance;
     }
+
+    public void setScreenHandler(ScreenHandler screenHandler) {
+        this.screenHandler = screenHandler;
+    }
+
+    public ScreenHandler getScreenHandler() {
+        return screenHandler();
+    }
+
     public boolean setupServerConnection () {
         if(!"".equals(ip) && !"".equals(port) && !"".equals(name) )
         {
@@ -112,6 +128,13 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
     }
 
     public void SetupMatch(String enemyName) {
+        //TODO: have screenHandler change the screen from lobby to board
+        //TODO: create methodes to switch screen from clientHandler
+
+
+        boardController.setPlayerName(Account.getInstance().getUserName());
+        boardController.setEnemyName(enemyName);
+
 
     }
 
@@ -210,7 +233,9 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
     }
     //TODO: Maarten
     public void nextTurn(Boolean isThisClientsTurn) throws RemoteException {
-
+        if(isThisClientsTurn) {
+            boardController.nextTurn();
+        }
     }
 
     public void setBoardController(BoardController BoardController){

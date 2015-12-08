@@ -62,30 +62,54 @@ public class BoardController {
         cardPane.getCard().modifyHP(card.getAttack());
     }
 
+    public void setEnemyName(String name) {
+        labelEnemyName.setText(name);
+    }
+
+    public String getEnemyName() {
+        return labelEnemyName.getText();
+    }
+
+    public void setPlayerName(String name) {
+        labelPlayerName.setText(name);
+    }
+
+    public String getPlayerName() {
+        return labelPlayerName.getText();
+    }
+
     public void updateEnemyHPCard(int point, int hp){
         board.getEnemyField().get(point).modifyHP(hp);
     }
+
     public void removeEnemyCardFromHand(int point){
         board.getEnemy().getHand().getCards().remove(point);
     }
+
     public void putCardPlayer(Card card, int point){
         board.getPlayerField().put(point, card);
     }
+
     public void updatePlayerHP(int hp){
         board.getPlayer().modifyHp(hp);
     }
+
     public void removeCardPlayer(int point){
         board.getPlayerField().remove(point);
     }
+
     public void putCardEnemy(Card card, int point){
         board.getEnemyField().put(point, card);
     }
+
     public void updateEnemyHp(int hp){
         board.getEnemy().modifyHp(hp);
     }
+
     public void removeCardEnemy(int point){
         board.getEnemyField().remove(point);
     }
+
     public void updateUI(){
         labelEnemyCAP.setText(String.valueOf(enemyField.getCapPoints()));
         labelPlayerCAP.setText(String.valueOf(playerField.getCapPoints()));
@@ -111,6 +135,7 @@ public class BoardController {
         board.nextTurn();
 
     }
+
     public void selectCard(CardPane cardPane){
         if (!board.isGameOver()) {
             if (selectedCard == null) {
