@@ -66,7 +66,6 @@ public class ScreensFramework extends Application {
         ScreenHandler mainContainer = new ScreenHandler(primaryStage);
         mainContainer.loadScreen(ScreensFramework.screenLoginRegisterID, ScreensFramework.screenLoginRegisterPath);
         mainContainer.loadScreen(ScreensFramework.screenLobbyID, ScreensFramework.screenLobbyPath);
-        mainContainer.loadScreen(ScreensFramework.screenBoardID, ScreensFramework.screenBoardPath);
         
         mainContainer.setScreen(ScreensFramework.screenLoginRegisterID);
         

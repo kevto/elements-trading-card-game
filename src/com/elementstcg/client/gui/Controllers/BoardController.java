@@ -136,6 +136,10 @@ public class BoardController {
 
     }
 
+    public void setTurn(boolean turn) {
+        board.setTurn(turn);
+    }
+
     public void selectCard(CardPane cardPane){
         if (!board.isGameOver()) {
             if (selectedCard == null) {
