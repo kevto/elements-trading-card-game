@@ -153,7 +153,7 @@ public class Account implements Serializable {
      * @param ip
      * @param port
      */
-    private Account(String username, String password, String ip, int port, int elo){
+    private Account(String username, String password, String ip, int port){
 
         if (!username.isEmpty() && !password.isEmpty()) {
             String pattern = "[$&+,:;=?@#|'<>.-^*()%!]";
@@ -178,8 +178,6 @@ public class Account implements Serializable {
             this.password = password;
             this.ip = ip;
             this.port = port;
-
-            this.elo = elo == 0 || elo <= -1 ? 500 : elo;
 
         }
         else{
@@ -299,6 +297,10 @@ public class Account implements Serializable {
     {
         //TODO : further implementation
         instance = null;
+    }
+
+    public void setElo(int elo){
+        this.elo = elo;
     }
 
 

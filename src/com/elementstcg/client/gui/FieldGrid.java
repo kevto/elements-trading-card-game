@@ -1,5 +1,6 @@
 package com.elementstcg.client.gui;
 
+import com.elementstcg.client.gui.Controllers.BoardController;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -82,6 +83,8 @@ public class FieldGrid extends Pane {
         }
     }
 
+
+
     /**
      * Return the type of FieldGrid object this is (Player/Enemy)
      * @return the fieldType object
@@ -106,6 +109,3 @@ public class FieldGrid extends Pane {
     }
 }
 
-enum FieldType {
-    Player, Enemy
-}
