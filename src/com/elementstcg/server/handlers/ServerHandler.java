@@ -4,6 +4,7 @@ import com.elementstcg.server.game.Account;
 import com.elementstcg.server.game.Board;
 import com.elementstcg.server.game.Card;
 import com.elementstcg.server.game.Player;
+import com.elementstcg.server.game.util.CustomException.EmptyFieldException;
 import com.elementstcg.shared.trait.ICard;
 import com.elementstcg.shared.trait.IClientHandler;
 import com.elementstcg.shared.trait.IResponse;
@@ -174,6 +175,7 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
 
             // Getting the right variables (player).
             Player attacker = (board.getPlayerOne().getSession().equals(caller) ? board.getPlayerOne() : board.getPlayerTwo());
+            Player defender = (board.getPlayerOne().getSession().equals(caller) ? board.getPlayerTwo() : board.getPlayerOne());
             boolean isPlayerOne = (board.getPlayerOne().equals(attacker) ? true : false);
 
             Card selectedCard = (isPlayerOne ? board.getPlayerOneField().get(point) : board.getPlayerTwoField().get(point));
@@ -182,14 +184,24 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
                 return new Response(false, 3, "The selected card already attacked this turn!");
             }
 
-            //TODO Search for the card of the defender
+            try {
+                board.attackCard(attacker, point, enemyPoint, () -> {
+                    try {
+                        attacker.getSession().getClient().enemyRemoveCard(enemyPoint);
+                        defender.getSession().getClient().removeCard(enemyPoint);
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                });
+            } catch (EmptyFieldException e) {
+                return new Response(false, 4, "Your opponent has no card laying on that position!");
+            }
 
-            //TODO Attack with the selected card on the defender card
-
-            //TODO Update HP of defender card and mark attacker card that it attacked.
-
-            //TODO Remove card from the board if no HP left.
-
+            Card defenderCard = (isPlayerOne ? board.getPlayerTwoField().get(enemyPoint) : board.getPlayerOneField().get(enemyPoint));
+            if(defenderCard != null) {
+                attacker.getSession().getClient().enemySetCardHp(enemyPoint, defenderCard.getHP());
+                defender.getSession().getClient().setCardHp(enemyPoint, defenderCard.getHP());
+            }
         } else {
             return new Response(false, 1, "This is not your turn!");
         }

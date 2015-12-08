@@ -207,7 +207,7 @@ public class Board {
      */
     public void attackCard(Player player, int selected, int point, Runnable removeCard) throws EmptyFieldException{
         HashMap<Integer, Card> defender = (player.equals(playerOne) ? this.playerTwoField : this.playerOneField);
-        HashMap<Integer, Card> attacker = (player.equals(playerOne) ? this.playerTwoField : this.playerOneField);
+        HashMap<Integer, Card> attacker = (player.equals(playerOne) ? this.playerOneField : this.playerTwoField);
         Card fieldCard = defender.get(point);
         Card attackCard = attacker.get(selected);
 
