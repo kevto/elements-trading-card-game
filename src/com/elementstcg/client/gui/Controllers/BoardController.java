@@ -354,7 +354,6 @@ public class BoardController {
     }
     public void RemoveCardFromEnemyHand(){
         board.getEnemy().getHand().RemoveCardFromEnemy();
->>>>>>> 0c52167f43b96fbe6e3f44a95259e884b97a7db5
     }
 
 
