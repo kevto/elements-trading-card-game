@@ -1,5 +1,6 @@
 package com.elementstcg.shared.trait;
 
+import com.elementstcg.shared.trait.ICard;
 
 import java.lang.Boolean;
 import java.rmi.Remote;
@@ -117,7 +118,7 @@ public interface IClientHandler extends Remote {
      * Removes a ICard from the enemy hand Represents the spot or place where the card is placed.
      * @param index Specifies which card to remove from the enemy hand
      */
-    public void enemyRemoveCardFromHand(int index) throws RemoteException;
+    public void enemyRemoveCardFromHand() throws RemoteException;
 
     /**
      * Handles the next turn in the client. At the request of the server

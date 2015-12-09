@@ -7,6 +7,7 @@ import java.util.Random;
 public class Deck {
 
     private List<Card> cards;
+    private int cardsLeft;
     public static int MAX_CARDS = 50;
 
     /**
@@ -80,4 +81,10 @@ public class Deck {
             return false;
         }
     }
+
+    public void setRemainingCards(int amount){
+        cardsLeft = amount;
+    }
+
+
 }

@@ -28,9 +28,10 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
     private static String ip = "145.93.61.44";
     private static String port = "8112";
     private static String name = "server";
-    private static String sessionKey;
 
     private static BoardController boardController;
+
+    private static String sessionKey;
 
     private ClientHandler() throws RemoteException {
         setupServerConnection();
@@ -143,41 +144,37 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
     }
 
     public void updateDeckCount(int amount) throws RemoteException {
-
+        boardController.UpdatePlayerDeckCount(amount);
     }
 
     @Override
     public void addCardToHand(ICard card) throws RemoteException {
-
+        boardController.AddCardToPlayerHand((Card) card);
     }
 
     @Override
     public void placeCard(ICard card, int point) throws RemoteException {
-
+        boardController.PutCardPlayer((Card) card, point);
     }
 
-    public void addCardToHand(Card card) throws RemoteException {
-
-    }
 
     public void placeCard(Card card, int point) throws RemoteException {
-        boardController.putCardPlayer(card, point);
+        boardController.PutCardPlayer(card, point);
     }
 
     public void removeCard(int pointer) throws RemoteException {
         boardController.removeCardPlayer(pointer);
     }
-    //TODO: Mick
     public void setCardHp(int point, int hp) throws RemoteException {
-    }
-    //TODO: Maarten
-    public void removeCardFromHand(int index) throws RemoteException {
+        boardController.SetPlayerCardHp(point, hp);
 
+    }
+    public void removeCardFromHand(int index) throws RemoteException {
+        boardController.RemoveCardFromHandPlayer(index);
     }
     public String getSessionKey() throws RemoteException {
         return sessionKey;
     }
-
     public void setSessionKey(String key) throws RemoteException {
         sessionKey = key;
     }
@@ -185,51 +182,35 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
     public void enemyUpdatePlayerHP(int hp) throws RemoteException {
         boardController.updateEnemyHp(hp);
     }
-    //TODO: Mick
     public void enemyUpdateDeckCount(int count) throws RemoteException {
-
+        boardController.UpdateEnemyDeckCount(count);
     }
-    //TODO: Danny
     public void enemyAddCardToHand() throws RemoteException {
         //TODO: This is a placeholder until I have discussed this issue
         Card card = null;
-        boardController.addEnemyCardToHand(card);
+        boardController.AddCardToEnemyHand();
     }
 
-    @Override
-    public void enemyPlaceCard(ICard card, int point) throws RemoteException {
 
-    }
-
-    public void enemyPlaceCard(Card card, int point) throws RemoteException {
-        boardController.putCardEnemy(card,point);
-
-    }
     public void enemyRemoveCard(int point) throws RemoteException {
         boardController.removeCardEnemy(point);
     }
     @Override
     public void enemyPlaceCard(ICard card, int point) throws RemoteException {
-
+        boardController.putCardEnemy((Card) card, point);
     }
 
-    //TODO: Danny
     public void enemyPlaceCard(Card card, int point) throws RemoteException {
-
-    }
-    //TODO: Danny
-    public void enemyRemoveCard(int point) throws RemoteException {
-
-    }
-    //TODO: Mick
-    public void enemySetCardHp(int point, int hp) throws RemoteException {
-        boardController.updateEnemyHPCard(point, hp);
+        boardController.putCardEnemy(card, point);
 
     }
 
-    public void enemyRemoveCardFromHand(int index) throws RemoteException {
-        boardController.removeEnemyCardFromHand(index);
+   public void enemySetCardHp(int point, int hp) throws RemoteException {
+        boardController.SetEnemyCardHP(point, hp);
 
+    }
+    public void enemyRemoveCardFromHand() throws RemoteException {
+        boardController.RemoveCardFromEnemyHand();
     }
     //TODO: Maarten
     public void nextTurn(Boolean isThisClientsTurn) throws RemoteException {

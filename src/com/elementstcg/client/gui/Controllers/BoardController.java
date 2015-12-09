@@ -8,7 +8,6 @@ import com.elementstcg.client.util.CustomException.OccupiedFieldException;
 import com.elementstcg.client.util.DialogUtility;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -19,7 +18,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 
 import java.io.IOException;
-import java.util.Map;
 
 public class BoardController {
 
@@ -77,16 +75,7 @@ public class BoardController {
     public String getPlayerName() {
         return labelPlayerName.getText();
     }
-
-    public void updateEnemyHPCard(int point, int hp){
-        board.getEnemyField().get(point).modifyHP(hp);
-    }
-
-    public void removeEnemyCardFromHand(int point){
-        board.getEnemy().getHand().getCards().remove(point);
-    }
-
-    public void putCardPlayer(Card card, int point){
+    public void PutCardPlayer(Card card, int point){
         board.getPlayerField().put(point, card);
     }
 
@@ -313,7 +302,7 @@ public class BoardController {
             }
         }
     }
-    public void nextTurnButtonAction() {
+    public void NextTurnButtonAction() {
         //Implement RMI action
         updateUI();
     }
@@ -324,11 +313,11 @@ public class BoardController {
      *
      * @param cardPane that's been selected.
      */
-    public void showCardButtonAction(CardPane cardPane) {
+    public void ShowCardButtonAction(CardPane cardPane) {
         showGhostPane(cardPane.getGhostObject());
     }
 
-    public void attackEnemyCardButtonAction(CardPane cardPane) throws IOException {
+    public void AttackEnemyCardButtonAction(CardPane cardPane) throws IOException {
         if (!board.isGameOver()) {
             //TODO: Implement RMI
             if (selectedCard != null && selectedCard.isSelected() && selectedCard.onField()) {
@@ -337,8 +326,35 @@ public class BoardController {
         }
     }
 
-    public void addEnemyCardToHand(Card card){
-        board.getEnemy().getHand().addCard(card);
+    public void AddCardToPlayerHand(Card card){
+        board.getPlayer().getHand().addCard(card);
+
+    }
+    public void UpdatePlayerDeckCount(int amount){
+        board.getPlayer().getDeck().setRemainingCards(amount);
+    }
+    public void UpdateEnemyDeckCount(int amount){
+        board.getEnemy().getDeck().setRemainingCards(amount);
+    }
+    public void SetPlayerCardHp(int point, int hp){
+        board.getPlayerField().get(point).modifyHP(hp);
+
+    }
+    public void RemoveCardFromHandPlayer(int index){
+        board.getPlayer().getHand().RemoveCard(index);
+    }
+
+    public void AddCardToEnemyHand(){
+        board.getEnemy().getHand().AddCardFromEnemy();
+
+    }
+
+    public void SetEnemyCardHP(int point, int hp){
+        board.getEnemyField().get(point).modifyHP(hp);
+    }
+    public void RemoveCardFromEnemyHand(){
+        board.getEnemy().getHand().RemoveCardFromEnemy();
+>>>>>>> 0c52167f43b96fbe6e3f44a95259e884b97a7db5
     }
 
 
