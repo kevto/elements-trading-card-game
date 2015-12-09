@@ -21,7 +21,7 @@ import java.rmi.server.UnicastRemoteObject;
 public class ClientHandler extends UnicastRemoteObject implements IClientHandler {
 
     private static ClientHandler instance;
-    private static IServerHandler serverHandler;
+    public static IServerHandler serverHandler;
 
     private static ScreenHandler screenHandler;
 
@@ -221,5 +221,13 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
 
     public void setBoardController(BoardController BoardController){
         boardController = BoardController;
+    }
+
+    public static void AttackCard(int playerPoint, int enemyPoint){
+        try {
+            serverHandler.attackCard(sessionKey ,playerPoint, enemyPoint);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 }
