@@ -32,7 +32,6 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class ServerHandler extends UnicastRemoteObject implements IServerHandler {
 
-    //TODO: add a list/HashMapfor players who are searching for a match
     private Lock lock;
     private Condition boardsBusy;
     private Condition databaseBusy;
@@ -165,8 +164,8 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
 
             // Drawing cards for the next turn player.
             if(turn.getAmountCardsInDeck() > 0) {
-                ICard drawedCard = turn.drawCard();
-                turn.getSession().getClient().addCardToHand(drawedCard);
+                ICard drawnCard = turn.drawCard();
+                turn.getSession().getClient().addCardToHand(drawnCard);
                 notTurn.getSession().getClient().enemyUpdateDeckCount(turn.getAmountCardsInDeck());
                 //TODO Display new card in the hand of the enemy player.
                 //notTurn.getSession().getClient().enemyAddCardToHand();
@@ -183,7 +182,17 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
 
     public IResponse replaceCard(String key, int selected, int point) throws RemoteException {
         //TODO: RICK
-        return null;
+        //First bring the card that's currently there back to the hand, then place the given card there.
+        Session caller = clients.get(key);
+        Board board = games.get(caller.getBoardKey());
+        Player player = (board.getPlayerOne().getSession().equals(caller) ? board.getPlayerOne() : board.getPlayerTwo());
+
+        //Get the right card.
+        Card c = board.getCard(point);
+        //Add the card to the hand.
+        player.getHand().addCard(c);
+
+        board.removePlayerOneCard(point);
     }
 
 
