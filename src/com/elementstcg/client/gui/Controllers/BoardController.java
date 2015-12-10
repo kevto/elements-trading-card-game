@@ -8,6 +8,7 @@ import com.elementstcg.client.util.CustomException.OccupiedFieldException;
 import com.elementstcg.client.util.DialogUtility;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -18,8 +19,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 
 import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
 
-public class BoardController {
+public class BoardController implements Initializable, ControlledScreen {
 
     private Board board;
 
@@ -43,62 +46,138 @@ public class BoardController {
     @FXML Label labelPlayerName;
 
     @FXML Pane enemyInfo;
+
     private FieldGrid playerField;
+    private FieldGrid enemyField;
     private CardPane selectedCard;
-    private com.elementstcg.client.gui.FieldGrid enemyField;
-    //
-    //Dat is de methode die aangeroepen word als de speler wint of
-    //verliest dan word game over aangeroepen en als het game over is dan krijg je een menu of je wilt stoppen of naar de lobby wilt
+    private ScreenHandler screenHandler;
+
+    /**
+     * Methode for the server to call if the game is over
+     * Forces the player turn to be false so he cant issue an commands to the server
+     * Removes this boardController from the clientHandler
+     */
     public void SetGameOver(){
         ClientHandler.getInstance().setBoardController(null);
         board.setTurn(false);
 
+        //TODO: Have a screen show with the result (win/lose) and a button to return to the lobby
     }
 
+    /**
+     * Add damage to the selected point with the given card
+     * @param card The card that is attacking
+     * @param point The point that is getting attacked
+     */
     public void attackCard(Card card, int point){
         CardPane cardPane = (CardPane)enemyField.getChildren().get(point);
-        cardPane.getCard().modifyHP(card.getAttack());
+        //TODO: Catch exception like there is no card in that pos
+        if(cardPane != null) {
+            cardPane.getCard().modifyHP(card.getAttack());
+        }
     }
 
+    /**
+     * Set the value of the enemyNameLabel to the given name value
+     * @param name the name of the enemy
+     */
     public void setEnemyName(String name) {
         labelEnemyName.setText(name);
     }
 
+    /**
+     * Returns the value of the enemyNameLabel
+     * @return String
+     */
     public String getEnemyName() {
         return labelEnemyName.getText();
     }
 
+    /**
+     * Set the value of the playerNameLabel to the given name value
+     * @param name the name of the player
+     */
     public void setPlayerName(String name) {
         labelPlayerName.setText(name);
     }
 
+    /**
+     * Returns the value of the playerNameLabel
+     * @return String
+     */
     public String getPlayerName() {
         return labelPlayerName.getText();
     }
+
+    /**
+     * Places the given card on the player field at the provided point
+     * @param card The card that needs to be placed
+     * @param point The point on the playing field it has to be placed on
+     */
     public void PutCardPlayer(Card card, int point){
-        board.getPlayerField().put(point, card);
+        if(board.getPlayerField().get(point) == null) {
+            board.getPlayerField().put(point, card);
+        } else {
+            //TODO: handle if there is already a card on that point
+        }
+
     }
 
+    /**
+     * Decreases the value HP of the player object by the provided value
+     * @param hp the value by with HP needs to be lowered
+     */
     public void updatePlayerHP(int hp){
         board.getPlayer().modifyHp(hp);
     }
 
+    /**
+     * Removes the card at the provided point from the players field
+     * @param point the point of the card that needs to be removed
+     */
     public void removeCardPlayer(int point){
         board.getPlayerField().remove(point);
     }
 
+    /**
+     * Places the given card on the enemy field at the provided point
+     * @param card The card that needs to be placed
+     * @param point The point on the playing field it has to be placed on
+     */
     public void putCardEnemy(Card card, int point){
         board.getEnemyField().put(point, card);
     }
 
+    /**
+     * Decreases the value HP of the enemy object by the provided value
+     * @param hp the value by with HP needs to be lowered
+     */
     public void updateEnemyHp(int hp){
         board.getEnemy().modifyHp(hp);
     }
 
+    /**
+     * Removes the card at the provided point from the enemy's field
+     * @param point the point of the card that needs to be removed
+     */
     public void removeCardEnemy(int point){
         board.getEnemyField().remove(point);
     }
 
+    /**
+     * Updates the complete UI this includes
+     * - Enemy field CAP points
+     * - Player field CAP points
+     *
+     * - Enemy deck size
+     * - Player deck size
+     *
+     * - Enemy HP value
+     * - Player HP value
+     *
+     * - HP of all enemy cards
+     * - HP of all player cards
+     */
     public void updateUI(){
         labelEnemyCAP.setText(String.valueOf(enemyField.getCapPoints()));
         labelPlayerCAP.setText(String.valueOf(playerField.getCapPoints()));
@@ -120,15 +199,27 @@ public class BoardController {
         }
     }
 
+    /**
+     * Sets the turn to false if true and vice versa
+     */
     public void nextTurn(){
         board.nextTurn();
 
     }
 
+    /**
+     * Forces the value of turn to the provided value
+     * @param turn the value to wich turn has to be set
+     */
     public void setTurn(boolean turn) {
         board.setTurn(turn);
     }
 
+    /**
+     * If the provided card is not equal to selectedCard this card will be selected card.
+     * If the provided card is equal to the selectedCard, selectedCard will be set to null.
+     * @param cardPane
+     */
     public void selectCard(CardPane cardPane){
         if (!board.isGameOver()) {
             if (selectedCard == null) {
@@ -148,6 +239,12 @@ public class BoardController {
         }
 
     }
+
+    /**
+     * Removes all children from ghostPane and moves the ghostPane object to the front of the stage
+     * and adds the provided node to the ghostPane showing it.
+     * @param node
+     */
     public void showGhostPane(Node node){
         if (ghostPane.getChildren().size() > 0) {
             ghostPane.getChildren().removeAll(ghostPane.getChildren());
@@ -157,39 +254,55 @@ public class BoardController {
 
         ghostPane.toFront();
     }
+
+    /**
+     * Removes all children from ghostPane and moves the ghostPane to the back of the stage
+     */
     public void hideGhostPane() {
         ghostPane.getChildren().removeAll(ghostPane.getChildren());
         ghostPane.toBack();
     }
+
     public void attackEnemyDirectButtonAction() {
+
+        //TODO: Finish this methode
+
         if (selectedCard != null && selectedCard.isSelected() && selectedCard.onField()) {
 
         }
 
     }
-    public BoardController(String enemyName, String sessionID, CardPane cardPane){
+
+    /**
+     * Initializes the BoardController and sets up the game
+     */
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        //Create a board object
         board = new Board();
-        //Even overleggen of de game een deck van de server krijgt of dat de client een deck maakt
-        hboxPlayerHand.getChildren().add(cardPane);
-        // Initializing the UI.
-        labelEnemyName.setText(enemyName);
+
+        //Setup the player hands
         hboxPlayerHand.getParent().prefWidth(hboxPlayerHand.getPrefWidth());
         hboxPlayerHand.getParent().prefHeight(hboxPlayerHand.getPrefHeight());
 
+        //Setup the player fields
         playerField = new FieldGrid(847, 253, 2, 6, this, FieldType.Player);
         enemyField = new FieldGrid(847, 253, 2, 6, this, FieldType.Enemy);
 
+        //Set the styles for both fields
         playerField.getStyleClass().add("field");
         enemyField.getStyleClass().add("field-enemy");
 
+        //Move the playerField down (the height of the enemyField)
         playerField.setTranslateY(253);
 
+        //Add the fields to the stage (a special pane for the play fields)
         bPaneField.getChildren().add(playerField);
         bPaneField.getChildren().add(enemyField);
 
-        /**
-         * Hide the ghostPane object when an player selects it
-         */
+        //Add an methode where the ghostPane hides itself when clicked
+        //Both the make sure the player can hide it after clicking it
+        //and to give the player a way to hide it, if it bugs for whatever reason
         ghostPane.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -206,13 +319,31 @@ public class BoardController {
 
         // Update the UI
         updateUI();
+    }
+
+    /**
+     * Registers the boardController with clientHandler
+     */
+    public BoardController(){
         // Notify ClientHandler
         ClientHandler.getInstance().setBoardController(this);
     }
 
+    /**
+     * Sets the provided cardPane as select (should only be called if the card is currently in the hand of the player)
+     * @param cardPane
+     */
     public void selectCardInHandButtonAction(CardPane cardPane) {
-        selectCard(cardPane);
+        if(!board.isGameOver()) {
+            selectCard(cardPane);
+        }
     }
+
+    /**
+     * Is called when a card is selected thats on the field. This methode will handle switching of cards
+     * and attacking enemy cards
+     * @param cardPane
+     */
     public void selectCardButtonAction(CardPane cardPane) {
         if (!board.isGameOver()) {
             FieldGrid grid = (FieldGrid) cardPane.getParent().getParent();
@@ -236,10 +367,12 @@ public class BoardController {
                         board.putCardPlayer(point, handCard.getCard());
                     } catch (OccupiedFieldException e) {
                         DialogUtility.newDialog(e.getMessage());
+                        //TODO: Why is there a forcefull way of putting a card?
                         board.forcePutCardPlayer(point, cardRemoved);
                         return;
                     } catch (ExceedCapacityException e) {
                         DialogUtility.newDialog(e.getMessage());
+                        //TODO: Why is there a forcefull way of putting a card?
                         board.forcePutCardPlayer(point, cardRemoved);
                         return;
                     }
@@ -271,6 +404,11 @@ public class BoardController {
             }
         }
     }
+
+    /**
+     * Called when an fieldPane is clicked
+     * @param field the field that has been clicked
+     */
     public void selectFieldPane(FieldPane field) {
         if (!board.isGameOver()) {
             FieldGrid grid = (FieldGrid) field.getParent();
@@ -306,6 +444,10 @@ public class BoardController {
             }
         }
     }
+
+    /**
+     * Called when the player clicks on the next turn button
+     */
     public void NextTurnButtonAction() {
         //Implement RMI action
         updateUI();
@@ -314,13 +456,17 @@ public class BoardController {
 
     /**
      * This methode is called when a player right clicks on an card on the field
-     *
      * @param cardPane that's been selected.
      */
     public void ShowCardButtonAction(CardPane cardPane) {
         showGhostPane(cardPane.getGhostObject());
     }
 
+    /**
+     * Called when an player clicks an enemy card
+     * @param cardPane
+     * @throws IOException
+     */
     public void AttackEnemyCardButtonAction(CardPane cardPane) throws IOException {
         if (!board.isGameOver()) {
             //TODO: Implement RMI
@@ -330,35 +476,79 @@ public class BoardController {
         }
     }
 
+    /**
+     * Add the provided card to the hand of the player and show the card in the game
+     * @param card the card that needs to be added
+     */
     public void AddCardToPlayerHand(Card card){
         board.getPlayer().getHand().addCard(card);
 
+        //TODO: Add the card to the hboxPlayerHand or find an alternative that uses the board.player.hand to automaticly do this
     }
+
+    /**
+     * Sets the player deck size to the provided value. The value has to be the total size
+     * @param amount the total size of the deck
+     */
     public void UpdatePlayerDeckCount(int amount){
         board.getPlayer().getDeck().setRemainingCards(amount);
     }
+
+    /**
+     * Sets the enemy deck size to the provided value. The value has to be the total size
+     * @param amount the total size of the deck
+     */
     public void UpdateEnemyDeckCount(int amount){
         board.getEnemy().getDeck().setRemainingCards(amount);
     }
+
+    /**
+     * Sets the HP value of a card at the provided point to the provided value
+     * @param point The point that needs to be edited
+     * @param hp The value by which it needs to be lowered
+     */
     public void SetPlayerCardHp(int point, int hp){
         board.getPlayerField().get(point).modifyHP(hp);
 
     }
+
+    /**
+     * Removes the card from the players hand on the provided index
+     * @param index the index of the card that needs to be removed
+     */
     public void RemoveCardFromHandPlayer(int index){
         board.getPlayer().getHand().RemoveCard(index);
     }
 
+    /**
+     * Adds a card to the enemy hand (no card needs to be provided)
+     */
     public void AddCardToEnemyHand(){
         board.getEnemy().getHand().AddCardFromEnemy();
-
     }
 
+    /**
+     * Sets the HP value of a card at the provided point to the provided value
+     * @param point The point that needs to be edited
+     * @param hp The value by which it needs to be lowered
+     */
     public void SetEnemyCardHP(int point, int hp){
         board.getEnemyField().get(point).modifyHP(hp);
     }
+
+    /**
+     * Removes a card from the enemy hand (no index needs to be provided)
+     */
     public void RemoveCardFromEnemyHand(){
         board.getEnemy().getHand().RemoveCardFromEnemy();
     }
 
-
+    /**
+     * Sets the screenHandler to the provided value
+     * @param screenParent the screenHandler
+     */
+    @Override
+    public void setScreenParent(ScreenHandler screenParent) {
+        screenHandler = screenParent;
+    }
 }

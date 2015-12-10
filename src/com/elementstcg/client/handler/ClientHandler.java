@@ -213,11 +213,11 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
    public void enemySetCardHp(int point, int hp) throws RemoteException {
         boardController.SetEnemyCardHP(point, hp);
 
-    }
+   }
     public void enemyRemoveCardFromHand() throws RemoteException {
         boardController.RemoveCardFromEnemyHand();
     }
-    //TODO: Maarten
+
     public void nextTurn(Boolean isThisClientsTurn) throws RemoteException {
         boardController.setTurn(isThisClientsTurn);
     }
