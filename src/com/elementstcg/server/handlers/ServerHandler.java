@@ -11,7 +11,6 @@ import com.elementstcg.shared.trait.ICard;
 import com.elementstcg.shared.trait.IClientHandler;
 import com.elementstcg.shared.trait.IResponse;
 import com.elementstcg.shared.trait.IServerHandler;
-import com.sun.xml.internal.ws.encoding.MtomCodec;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;

@@ -1,7 +1,7 @@
 package com.elementstcg.server.game.util;
 
 import com.elementstcg.server.game.Card;
-import com.elementstcg.server.game.Element;
+import com.elementstcg.shared.trait.Element;
 
 /**
  * Created by Danny ter Haar on 12/10/15.
@@ -10,9 +10,6 @@ import com.elementstcg.server.game.Element;
  * Earth storm and fire hear my call.
  */
 public class CalculateMultiplier {
-
-
-
 
     public static double calculatedMultplier(Card Enemy_c, Card Player_c) {
 
@@ -63,9 +60,6 @@ public class CalculateMultiplier {
                 }
                 break;
         }
-
-
-
 
         return multiplier;
     }
