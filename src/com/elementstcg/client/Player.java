@@ -14,11 +14,14 @@ public class Player {
      * @param name the name of the player object
      */
     public Player(int hp, String name){
-        this(hp, name, null);
+        //TODO: Implement deck a proper way or remove all together
+        //Deck is empty. Do we still need a deck
+        //Or do we need the refactor player to exclude a deck from the client side
+        this(hp, name, new Deck());
     }
 
     /**
-    * Initializes the Player class with the given hp and name
+    * Initializes the Player class with the given hp, name and deck
     * @author Maarten Verboogen
     * @param hp the amount of HP the player object starts with
     * @param name the name of the player object

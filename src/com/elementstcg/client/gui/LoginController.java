@@ -98,9 +98,6 @@ public class LoginController implements Initializable, ControlledScreen {
                     } else {
                         lblMessage.setText("Username or email already in use.");
                     }
-
-                    //TODO Go back to the login screen.
-                    //myController.setScreen(ScreensFramework.screenBoardID);
                 }
             }
         }
