@@ -448,7 +448,7 @@ public class BoardController implements Initializable, ControlledScreen {
     /**
      * Called when the player clicks on the next turn button
      */
-    public void NextTurnButtonAction() {
+    public void nextTurnButtonAction() {
         //Implement RMI action
         updateUI();
     }
@@ -458,7 +458,7 @@ public class BoardController implements Initializable, ControlledScreen {
      * This methode is called when a player right clicks on an card on the field
      * @param cardPane that's been selected.
      */
-    public void ShowCardButtonAction(CardPane cardPane) {
+    public void showCardButtonAction(CardPane cardPane) {
         showGhostPane(cardPane.getGhostObject());
     }
 
@@ -467,7 +467,7 @@ public class BoardController implements Initializable, ControlledScreen {
      * @param cardPane
      * @throws IOException
      */
-    public void AttackEnemyCardButtonAction(CardPane cardPane) throws IOException {
+    public void attackEnemyCardButtonAction(CardPane cardPane) throws IOException {
         if (!board.isGameOver()) {
             //TODO: Implement RMI
             if (selectedCard != null && selectedCard.isSelected() && selectedCard.onField()) {

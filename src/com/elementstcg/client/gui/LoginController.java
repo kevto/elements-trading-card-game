@@ -2,6 +2,7 @@ package com.elementstcg.client.gui;
 
 import com.elementstcg.client.Account;
 import com.elementstcg.client.handler.ClientHandler;
+import com.elementstcg.shared.trait.IResponse;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -59,7 +60,7 @@ public class LoginController implements Initializable, ControlledScreen {
             else{
                 if (clientHandler.loginUser(username, password)){
                     lblMessage.setText("Succesfully logged in.");
-                    myController.setScreen(ScreensFramework.screenBoardID);
+                    myController.setScreen(ScreensFramework.screenLobbyID);
                 }
                 else{
                     lblMessage.setText("Invalid username or password.");

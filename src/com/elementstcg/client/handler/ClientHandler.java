@@ -25,7 +25,7 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
 
     private static ScreenHandler screenHandler;
 
-    private static String ip = "145.93.61.44";
+    private static String ip = "192.168.0.13";
     private static String port = "8112";
     private static String name = "server";
 
@@ -93,6 +93,10 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
     public boolean loginUser(String username, String password) {
         try {
             IResponse response = serverHandler.login(this, username, password);
+            if(response.wasSuccessful()) {
+                setSessionKey(response.getMessage());
+                System.out.println("Session:" + getSessionKey());
+            }
             return response.wasSuccessful();
         }
         catch(RemoteException ex) {
@@ -128,7 +132,8 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
         return serverHandler;
     }
 
-    public void SetupMatch(String enemyName) {
+    public boolean setupMatch(String enemyName) throws RemoteException{
+
         //Check if there already is an board screen (there shouldn't)
         if(screenHandler.getScreen(ScreensFramework.screenBoardID) != null) {
             screenHandler.unloadScreen(ScreensFramework.screenBoardID);
@@ -142,6 +147,8 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
 
         //Display screen
         screenHandler.setScreen(ScreensFramework.screenBoardID);
+
+        return true;
     }
 
     public void updatePlayerHP(int hp) throws RemoteException {
@@ -224,5 +231,9 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
 
     public void setBoardController(BoardController BoardController){
         boardController = BoardController;
+    }
+
+    public void endMatch(String message) throws RemoteException {
+
     }
 }

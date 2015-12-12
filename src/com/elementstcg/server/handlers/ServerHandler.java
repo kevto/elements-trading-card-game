@@ -97,7 +97,7 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
 
                 // Creating new session.
                 clients.put(key, new Session(key, client, acc));
-                return new Response(true, 1, "Account found, client added");
+                return new Response(true, 1, key);
             } else {
                 return new Response(false, 2, "Couldn't generate session key.");
             }
