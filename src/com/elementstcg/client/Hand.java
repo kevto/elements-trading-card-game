@@ -9,6 +9,14 @@ import java.util.List;
 public class Hand {
 
     private List<Card> cards;
+
+    /*
+    This has been added for the enemy player since you're not allowed to see his cards,
+    but you still need to see how many cards he still has left.
+     */
+    private int remainingCards;
+
+
     public static int MAX_CARDS = 0;
 
     /**
@@ -17,6 +25,7 @@ public class Hand {
      */
     public Hand() {
         cards = new ArrayList<Card>();
+
     }
 
     /**
@@ -76,6 +85,11 @@ public class Hand {
             return null;
         }
     }
+    public void RemoveCard(int index){
+        if ((index <= cards.size()-1) && (index >= 0)) {
+            cards.remove(index);
+        }
+    }
 
     /**
      * Gets a list of cards of this hand object.
@@ -84,4 +98,14 @@ public class Hand {
     public List<Card> getCards() {
         return cards;
     }
+    public void AddCardFromEnemy(){
+        remainingCards++;
+    }
+    public void RemoveCardFromEnemy(){
+        remainingCards--;
+    }
+    public int ReturnEnemyCardsInHand(){
+        return remainingCards;
+    }
+
 }

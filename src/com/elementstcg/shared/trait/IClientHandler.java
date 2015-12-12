@@ -1,5 +1,7 @@
 package com.elementstcg.shared.trait;
 
+import com.elementstcg.shared.trait.ICard;
+
 import java.lang.Boolean;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -16,7 +18,7 @@ public interface IClientHandler extends Remote {
      * When the player is matched to another player this methoded is called to make the client ready for the match
      * @param enemyName The name of the enemyPlayer
      */
-    public boolean setupMatch(String enemyName);
+    public void SetupMatch(String enemyName);
     /**
      * Updates the player HP in the GUI at the request of the server
      * @param hp The new HP total of the player
@@ -116,7 +118,7 @@ public interface IClientHandler extends Remote {
      * Removes a ICard from the enemy hand Represents the spot or place where the card is placed.
      * @param index Specifies which card to remove from the enemy hand
      */
-    public void enemyRemoveCardFromHand(int index) throws RemoteException;
+    public void enemyRemoveCardFromHand() throws RemoteException;
 
     /**
      * Handles the next turn in the client. At the request of the server

@@ -1,10 +1,16 @@
 package com.elementstcg.client.handler;
 
+import com.elementstcg.client.Account;
 import com.elementstcg.client.Card;
 import com.elementstcg.client.gui.Controllers.BoardController;
+import com.elementstcg.client.gui.ScreenHandler;
+import com.elementstcg.client.gui.ScreensFramework;
+import com.elementstcg.shared.trait.ICard;
 import com.elementstcg.shared.trait.IClientHandler;
 import com.elementstcg.shared.trait.IResponse;
 import com.elementstcg.shared.trait.IServerHandler;
+import com.sun.deploy.util.SessionState;
+import javafx.stage.Screen;
 
 import java.net.MalformedURLException;
 import java.rmi.Naming;
@@ -17,11 +23,15 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
     private static ClientHandler instance;
     private static IServerHandler serverHandler;
 
+    private static ScreenHandler screenHandler;
+
     private static String ip = "145.93.61.44";
     private static String port = "8112";
     private static String name = "server";
 
     private static BoardController boardController;
+
+    private static String sessionKey;
 
     private ClientHandler() throws RemoteException {
         setupServerConnection();
@@ -39,6 +49,15 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
 
         return instance;
     }
+
+    public void setScreenHandler(ScreenHandler screenHandler) {
+        this.screenHandler = screenHandler;
+    }
+
+    public ScreenHandler getScreenHandler() {
+        return screenHandler;
+    }
+
     public boolean setupServerConnection () {
         if(!"".equals(ip) && !"".equals(port) && !"".equals(name) )
         {
@@ -110,7 +129,19 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
     }
 
     public void SetupMatch(String enemyName) {
+        //Check if there already is an board screen (there shouldn't)
+        if(screenHandler.getScreen(ScreensFramework.screenBoardID) != null) {
+            screenHandler.unloadScreen(ScreensFramework.screenBoardID);
+        }
+        //Create a board screen
+        screenHandler.loadScreen(ScreensFramework.screenBoardID, ScreensFramework.screenBoardPath);
 
+        //Load all needed data/set all needed data
+        boardController.setPlayerName(Account.getInstance().getUserName());
+        boardController.setEnemyName(enemyName);
+
+        //Display screen
+        screenHandler.setScreen(ScreensFramework.screenBoardID);
     }
 
     public void updatePlayerHP(int hp) throws RemoteException {
@@ -118,67 +149,77 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
     }
 
     public void updateDeckCount(int amount) throws RemoteException {
-
+        boardController.UpdatePlayerDeckCount(amount);
     }
 
-    public void addCardToHand(Card card) throws RemoteException {
-
+    @Override
+    public void addCardToHand(ICard card) throws RemoteException {
+        boardController.AddCardToPlayerHand((Card) card);
     }
+
+    @Override
+    public void placeCard(ICard card, int point) throws RemoteException {
+        boardController.PutCardPlayer((Card) card, point);
+    }
+
 
     public void placeCard(Card card, int point) throws RemoteException {
-        boardController.putCardPlayer(card, point);
+        boardController.PutCardPlayer(card, point);
     }
 
     public void removeCard(int pointer) throws RemoteException {
         boardController.removeCardPlayer(pointer);
     }
-
     public void setCardHp(int point, int hp) throws RemoteException {
-    }
+        boardController.SetPlayerCardHp(point, hp);
 
+    }
     public void removeCardFromHand(int index) throws RemoteException {
-
+        boardController.RemoveCardFromHandPlayer(index);
     }
-
     public String getSessionKey() throws RemoteException {
-        return null;
+        return sessionKey;
     }
-
     public void setSessionKey(String key) throws RemoteException {
-
-
+        sessionKey = key;
     }
 
     public void enemyUpdatePlayerHP(int hp) throws RemoteException {
-
+        boardController.updateEnemyHp(hp);
     }
-
     public void enemyUpdateDeckCount(int count) throws RemoteException {
-
+        boardController.UpdateEnemyDeckCount(count);
+    }
+    public void enemyAddCardToHand() throws RemoteException {
+        //TODO: This is a placeholder until I have discussed this issue
+        Card card = null;
+        boardController.AddCardToEnemyHand();
     }
 
-    public void enemyAddCardToHand() throws RemoteException {
 
+    public void enemyRemoveCard(int point) throws RemoteException {
+        boardController.removeCardEnemy(point);
+    }
+    @Override
+    public void enemyPlaceCard(ICard card, int point) throws RemoteException {
+        boardController.putCardEnemy((Card) card, point);
     }
 
     public void enemyPlaceCard(Card card, int point) throws RemoteException {
+        boardController.putCardEnemy(card, point);
 
     }
 
-    public void enemyRemoveCard(int point) throws RemoteException {
+   public void enemySetCardHp(int point, int hp) throws RemoteException {
+        boardController.SetEnemyCardHP(point, hp);
 
-    }
-
-    public void enemySetCardHp(int point, int hp) throws RemoteException {
-
-    }
-
-    public void enemyRemoveCardFromHand(int index) throws RemoteException {
-
+   }
+    public void enemyRemoveCardFromHand() throws RemoteException {
+        boardController.RemoveCardFromEnemyHand();
     }
 
     public void nextTurn(Boolean isThisClientsTurn) throws RemoteException {
-
+        boardController.setTurn(isThisClientsTurn);
     }
 
     public void setBoardController(BoardController BoardController){
