@@ -135,12 +135,15 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
         Session caller = clients.get(key);
         Board board = games.get(caller.getBoardKey());
         Player player = (board.getPlayerOne().getSession().equals(caller) ? board.getPlayerOne() : board.getPlayerTwo());
+        Player notPlayer = (!board.getTurn() ? board.getPlayerOne() : board.getPlayerTwo());
 
         //Place the card at the right spot
         //It first gets the right board, then gets the needed card and needed player to place the right card.
         try {
             board.putCardPlayer(point, player.getHand().getCard(selected), player);
-            //TODO Call ClientHandler of both players to place the cards on their fields visually.
+            //Call ClientHandler of both players to place the cards on their fields visually.
+            caller.getClient().placeCard(player.getHand().getCard(selected), point);
+            notPlayer.getSession().getClient().placeCard(notPlayer.getHand().getCard(selected), point);
         } catch (OccupiedFieldException e) {
             e.printStackTrace();
         } catch (ExceedCapacityException e) {
@@ -186,13 +189,27 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
         Session caller = clients.get(key);
         Board board = games.get(caller.getBoardKey());
         Player player = (board.getPlayerOne().getSession().equals(caller) ? board.getPlayerOne() : board.getPlayerTwo());
+        Player notPlayer = (!board.getTurn() ? board.getPlayerOne() : board.getPlayerTwo());
 
-        //Get the right card.
+        //Get the right card and remove it from the board.
         Card c = board.getCard(point);
+        board.removePlayerOneCard(point);
+
         //Add the card to the hand.
         player.getHand().addCard(c);
 
-        board.removePlayerOneCard(point);
+        //Play the card that replaces the old one.
+        try {
+            board.putCardPlayer(point, player.getHand().getCard(selected), player);
+            //Call ClientHandler of both players to place the cards on their fields visually.
+            caller.getClient().placeCard(player.getHand().getCard(selected), point);
+            notPlayer.getSession().getClient().placeCard(notPlayer.getHand().getCard(selected), point);
+        } catch (OccupiedFieldException e) {
+            e.printStackTrace();
+        } catch (ExceedCapacityException e) {
+            e.printStackTrace();
+        }
+
     }
 
 
