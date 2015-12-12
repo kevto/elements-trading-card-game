@@ -296,59 +296,28 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
 
     public IResponse findMatch(String key) throws RemoteException {
         //TODO: make sure this is thread-safe.
-        String givenKey = key;
         Session playerSession = clients.get(key);
-        int playerElo = playerSession.getAccount().getElo();
-        int itElo;
-        int tempScore;
-        int score = 10000;
-        Account match = null;
         Session matchSession = null;
-        Iterator it = searchingPlayers.entrySet().iterator();
 
-        while (it.hasNext())
-        {
-            HashMap.Entry pair = (HashMap.Entry)it.next();
-            matchSession = (Session)pair.getValue();
-            itElo = matchSession.getAccount().getElo();
+        searchingPlayers.put(key, playerSession);
 
-            if (itElo == playerElo) //Need a check to see if player(s) are in a match already
-            {
-                createBoardSession(playerSession, matchSession);
-                return new Response(true);
-            }
+        for(Map.Entry<String, Session> entry : searchingPlayers.entrySet()) {
+            if(!entry.getValue().equals(playerSession)) {
 
-            if (itElo < playerElo)
-            {
-                tempScore = playerElo - itElo;
-                if (tempScore < score)
-                {
-                    match = matchSession.getAccount();
-                    score = tempScore;
-                }
-            }
+                //TODO Implement the elo system thingy.
 
-            if (itElo > playerElo)
-            {
-                tempScore = itElo - playerElo;
-                if (tempScore < score)
-                {
-                    match = matchSession.getAccount();
-                    score = tempScore;
-                }
+                matchSession = entry.getValue();
+                break;
             }
         }
 
-        //check if a match has been found, if not then keep searching
-        if (match == null && matchSession == null)
-        {
-            //TODO Let thread sleep for 1000ms.
-            findMatch(givenKey);
-        }
+        //TODO Schedule to check every second for a new match.
 
-        //Not sure what to return as match, will return to later.
-        createBoardSession(playerSession, matchSession);
-
+        if(matchSession != null) {
+            System.out.println("MATCH FOUND BITCHES");
+            createBoardSession(playerSession, matchSession);
+        } else
+            System.out.println("MATCH NOT FOUND!");
         
         return new Response(true);
     }
@@ -359,6 +328,7 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
      * @param ses2 Session object of the second searching player.
      */
     private void createBoardSession(Session ses1, Session ses2) throws RemoteException {
+        System.out.println("Setting up the board [server]");
         try {
             String key = MessageDigest.getInstance("MD5").digest((ses1.getAccount().getUserName() + String.valueOf(System.currentTimeMillis()) + ses2.getAccount().getUserName()).getBytes()).toString();
             ses1.setBoardKey(key);

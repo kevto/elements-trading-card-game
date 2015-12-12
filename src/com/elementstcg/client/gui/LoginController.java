@@ -59,6 +59,7 @@ public class LoginController implements Initializable, ControlledScreen {
             }
             else{
                 if (clientHandler.loginUser(username, password)){
+                    Account.setInstance(username);
                     lblMessage.setText("Succesfully logged in.");
                     myController.setScreen(ScreensFramework.screenLobbyID);
                 }
@@ -93,12 +94,10 @@ public class LoginController implements Initializable, ControlledScreen {
             }
             else{
                 //All fields are valid.
-                if (Account.register(username, password, email)) {
-                    if(clientHandler.registerUser(username, password, email)) {
-                        lblMessage.setText("Succesfully registered.");
-                    } else {
-                        lblMessage.setText("Username or email already in use.");
-                    }
+                if(clientHandler.registerUser(username, password, email)) {
+                    lblMessage.setText("Succesfully registered.");
+                } else {
+                    lblMessage.setText("Username or email already in use.");
                 }
             }
         }
