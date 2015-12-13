@@ -95,7 +95,7 @@ public class CardPane extends StackPane {
                     } else if (cardState == CardState.EnemyField) {
                         try {
                             //Zat eerst een (instance) parameter bij
-                            controller.attackEnemyDirectButtonAction();
+                            controller.attackEnemyCardButtonAction(instance);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
