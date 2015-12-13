@@ -12,6 +12,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 
 import java.net.URL;
+import java.rmi.RemoteException;
 import java.util.ResourceBundle;
 
 
@@ -59,15 +60,24 @@ public class LoginController implements Initializable, ControlledScreen {
 
             if ("".equals(username) || "".equals(password)) {
                 lblMessage.setText("Please enter both your username and password.");
-            }
-            else{
-                if (clientHandler.loginUser(username, password)){
-                    Account.setInstance(username);
-                    lblMessage.setText("Succesfully logged in.");
-                    myController.setScreen(ScreensFramework.screenLobbyID);
-                }
-                else{
-                    lblMessage.setText("Invalid username or password.");
+            } else {
+
+                try {
+                    IResponse response = clientHandler.loginUser(username, password);
+
+                    if (response != null && response.wasSuccessful()) {
+                        Account.setInstance(username);
+                        lblMessage.setText("Succesfully logged in.");
+                        myController.setScreen(ScreensFramework.screenLobbyID);
+                    } else if (response != null && !response.wasSuccessful()) {
+                        lblMessage.setText(response.getMessage());
+                    } else {
+                        lblMessage.setText("Couldn't connect with the login server.");
+                    }
+                } catch (RemoteException ex) {
+                    ex.printStackTrace();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
                 }
             }
         }

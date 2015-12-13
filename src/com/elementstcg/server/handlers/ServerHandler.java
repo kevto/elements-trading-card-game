@@ -182,6 +182,9 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
             if(turn.getAmountCardsInDeck() > 0) {
                 ICard drawedCard = turn.drawCard();
                 turn.getSession().getClient().addCardToHand(drawedCard);
+
+                // Updating deck counts.
+                turn.getSession().getClient().updateDeckCount(turn.getAmountCardsInDeck());
                 notTurn.getSession().getClient().enemyUpdateDeckCount(turn.getAmountCardsInDeck());
                 //TODO Display new card in the hand of the enemy player.
                 //notTurn.getSession().getClient().enemyAddCardToHand();
@@ -204,7 +207,7 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
 
          //Get the right card and remove it from the board.
          //check which players turn it is, and replace the correct card.
-         Card c = null;
+
          //Check the board to see whose turn it is; if it's the caller: proceed.
         if((board.getTurn() && board.getPlayerOne().getSession().equals(caller)) ||
                 (!board.getTurn() && board.getPlayerTwo().getSession().equals(caller))) {
@@ -212,7 +215,8 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
             Player player = (board.getPlayerOne().getSession().equals(caller) ? board.getPlayerOne() : board.getPlayerTwo());
             Player enemy = (board.getPlayerOne().getSession().equals(caller) ? board.getPlayerTwo() : board.getPlayerOne());
 
-            c = board.getPlayerOne().equals(player) ? board.getPlayerOneField().get(selected) : board.getPlayerTwoField().get(selected);
+            Card c = board.getPlayerOne().equals(player) ? board.getPlayerOneField().get(point) : board.getPlayerTwoField().get(point);
+
 
             if (player != board.getPlayerOne()) {
                 board.removePlayerTwoCard(point);
@@ -220,17 +224,28 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
                 board.removePlayerOneCard(point);
             }
 
-            //Add the card to the hand.
-            player.getHand().addCard(c);
-
             //Play the card that replaces the old one.
             try {
                 Card card = player.getHand().playCard(selected);
 
+                if(card.getAttacked()) {
+                    return new Response(false, "Card can't be removed from the field due to it already attacked this turn.");
+                }
+
+                //Add the card to the hand.
+                player.getHand().addCard(c);
+
                 board.putCardPlayer(point, card, player);
 
-                //Call ClientHandler of both players to place the cards on their fields visually.
+                //Removing cards visually
+                caller.getClient().removeCard(point);
+                enemy.getSession().getClient().enemyRemoveCard(point);
+
+                // Removes the card from the hand of the player.
                 caller.getClient().removeCardFromHand(selected);
+                caller.getClient().addCardToHand(c);
+
+                // Places the new card on the board of the player and enemy.
                 caller.getClient().placeCard(card, point);
                 enemy.getSession().getClient().enemyPlaceCard(card, point);
                 //TODO Display new card in the hand of the enemy player.
@@ -255,6 +270,11 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
 
         if((board.getTurn() && board.getPlayerOne().getSession().equals(caller)) ||
                 (!board.getTurn() && board.getPlayerTwo().getSession().equals(caller))) {
+
+            // Defender cards are not allowed to attack. Any point below 6 is a defender card.
+            if(point < 6) {
+                return new Response(false, "This is a defender card. You can't attack with this card!");
+            }
 
             // Getting the right variables (player).
             Player attacker = (board.getPlayerOne().getSession().equals(caller) ? board.getPlayerOne() : board.getPlayerTwo());
@@ -298,6 +318,11 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
 
         if((board.getTurn() && board.getPlayerOne().getSession().equals(caller)) ||
                 (!board.getTurn() && board.getPlayerTwo().getSession().equals(caller))) {
+
+            // Defender cards are not allowed to attack. Any point below 6 is a defender card.
+            if(point < 6) {
+                return new Response(false, "This is a defender card. You can't attack with this card!");
+            }
 
             // Getting the right variables (player).
             Player attacker = (board.getPlayerOne().getSession().equals(caller) ? board.getPlayerOne() : board.getPlayerTwo());
@@ -414,6 +439,12 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
                 ses2.getClient().addCardToHand(board.getPlayerTwo().drawCard());
                 ses2.getClient().addCardToHand(board.getPlayerTwo().drawCard());
             }
+
+            // Updating deck counts.
+            ses1.getClient().updateDeckCount(board.getPlayerOne().getAmountCardsInDeck());
+            ses2.getClient().updateDeckCount(board.getPlayerTwo().getAmountCardsInDeck());
+            ses1.getClient().enemyUpdateDeckCount(board.getPlayerTwo().getAmountCardsInDeck());
+            ses2.getClient().enemyUpdateDeckCount(board.getPlayerOne().getAmountCardsInDeck());
 
             //TODO Update enemy amount of cards in deck.
         } catch (NoSuchAlgorithmException e) {

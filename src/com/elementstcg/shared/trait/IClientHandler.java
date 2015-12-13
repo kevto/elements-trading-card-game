@@ -116,7 +116,6 @@ public interface IClientHandler extends Remote {
 
     /**
      * Removes a ICard from the enemy hand Represents the spot or place where the card is placed.
-     * @param index Specifies which card to remove from the enemy hand
      */
     public void enemyRemoveCardFromHand() throws RemoteException;
 

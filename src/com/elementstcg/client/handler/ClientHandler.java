@@ -90,14 +90,16 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
         }
     }
 
-    public boolean loginUser(String username, String password) {
+    public IResponse loginUser(String username, String password) {
+        IResponse response = null;
+
         try {
-            IResponse response = serverHandler.login(this, username, password);
+            response = serverHandler.login(this, username, password);
             if(response.wasSuccessful()) {
                 setSessionKey(response.getMessage());
                 System.out.println("Session:" + getSessionKey());
             }
-            return response.wasSuccessful();
+            return response;
         }
         catch(RemoteException ex) {
             System.out.println(ex.getMessage());
@@ -107,7 +109,7 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
             System.out.println(ex.getStackTrace());
         }
 
-        return false;
+        return response;
     }
 
     public boolean registerUser(String username, String password, String email) {
