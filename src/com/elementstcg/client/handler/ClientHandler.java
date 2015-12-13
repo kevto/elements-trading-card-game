@@ -19,7 +19,7 @@ import java.rmi.server.UnicastRemoteObject;
 public class ClientHandler extends UnicastRemoteObject implements IClientHandler {
 
     private static ClientHandler instance;
-    public static IServerHandler serverHandler;
+    private static IServerHandler serverHandler;
 
     private static ScreenHandler screenHandler;
 
@@ -230,12 +230,13 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
         }
     }
 
-    public static void AttackEnemy(int playerPoint){
+    public static void AttackEnemy(int playerPoint) {
         try {
             serverHandler.attackEnemy(sessionKey, playerPoint);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
+    }
     public void endMatch(String message) throws RemoteException {
         //TODO Find a better way to end the match.
         System.exit(1);
