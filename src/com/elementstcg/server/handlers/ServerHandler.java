@@ -200,67 +200,47 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
          //First bring the card that's currently there back to the hand, then place the given card there.
          Session caller = clients.get(key);
          Board board = games.get(caller.getBoardKey());
-         Player player = (board.getPlayerOne().getSession().equals(caller) ? board.getPlayerOne() : board.getPlayerTwo());
-         Player notPlayer = (!board.getTurn() ? board.getPlayerOne() : board.getPlayerTwo());
+
 
          //Get the right card and remove it from the board.
          //TODO: check which players turn it is, and replace the correct card.
          Card c = null;
          //Check the board to see whose turn it is; if it's the caller: proceed.
-         if (board.getTurn())
-         {
-             //If board.getTurn == true, it is player one's turn. need to check if caller == player one.
-             if (board.getPlayerOne().getSession().equals(caller))
-             {
-                 //if it's true, caller is player one, and it is his turn, so we may proceed.
-                 c = board.getPlayerOneField().get(selected);
-             }
+        if((board.getTurn() && board.getPlayerOne().getSession().equals(caller)) ||
+                (!board.getTurn() && board.getPlayerTwo().getSession().equals(caller))) {
 
-             else
-             {
-                 //Return a false response, because the caller is not the one whose turn it is.
-                 return new Response(false);
-             }
-         }
+            Player player = (board.getPlayerOne().getSession().equals(caller) ? board.getPlayerOne() : board.getPlayerTwo());
+            Player enemy = (board.getPlayerOne().getSession().equals(caller) ? board.getPlayerTwo() : board.getPlayerOne());
 
-         else
-         {
-             //It's player two's turn
-             if (board.getPlayerTwo().getSession().equals(caller))
-             {
-                 c = board.getPlayerTwoField().get(selected);
-             }
-             else
-             {
-                 return new Response(false);
-             }
+            c = board.getPlayerOne().equals(player) ? board.getPlayerOneField().get(selected) : board.getPlayerTwoField().get(selected);
 
-         }
+            if (player != board.getPlayerOne()) {
+                board.removePlayerTwoCard(point);
+            } else {
+                board.removePlayerOneCard(point);
+            }
 
-         if (player != board.getPlayerOne()) {
-            board.removePlayerTwoCard(point);
-         } else {
-            board.removePlayerOneCard(point);
-         }
+            //Add the card to the hand.
+            player.getHand().addCard(c);
 
-         //Add the card to the hand.
-         player.getHand().addCard(c);
+            //Play the card that replaces the old one.
+            try {
+                board.putCardPlayer(point, player.getHand().getCard(selected), player);
+                //Call ClientHandler of both players to place the cards on their fields visually.
+                caller.getClient().placeCard(player.getHand().getCard(selected), point);
+                enemy.getSession().getClient().placeCard(enemy.getHand().getCard(selected), point);
+                //TODO Display new card in the hand of the enemy player.
+                // notPlayer.getSession().getClient().enemyAddCardToHand();
 
-         //Play the card that replaces the old one.
-         try {
-             board.putCardPlayer(point, player.getHand().getCard(selected), player);
-             //Call ClientHandler of both players to place the cards on their fields visually.
-             caller.getClient().placeCard(player.getHand().getCard(selected), point);
-             notPlayer.getSession().getClient().placeCard(notPlayer.getHand().getCard(selected), point);
-             //TODO Display new card in the hand of the enemy player.
-             // notPlayer.getSession().getClient().enemyAddCardToHand();
-         } catch (OccupiedFieldException e) {
+            } catch (OccupiedFieldException e) {
                 e.printStackTrace();
-         } catch (ExceedCapacityException e) {
-             e.printStackTrace();
-         }
-
-        return new Response(true);
+            } catch (ExceedCapacityException e) {
+                e.printStackTrace();
+            }
+            return new Response(true);
+        } else {
+            return new Response(false, "It's not your turn");
+        }
     }
 
 
