@@ -497,10 +497,17 @@ public class BoardController implements Initializable, ControlledScreen {
      * Called when the player clicks on the next turn button
      */
     public void nextTurnButtonAction() {
+
         try {
-            IResponse response = ClientHandler.getInstance().getServerHandler().nextTurn(ClientHandler.getInstance().getSessionKey());
+            final IResponse response = ClientHandler.getInstance().getServerHandler().nextTurn(ClientHandler.getInstance().getSessionKey());
             if(!response.wasSuccessful()) {
-                DialogUtility.newDialog(response.getMessage());
+                Platform.runLater(() -> {
+                    try {
+                        DialogUtility.newDialog(response.getMessage());
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                });
             }
         } catch (RemoteException e) {
             e.printStackTrace();
@@ -556,8 +563,10 @@ public class BoardController implements Initializable, ControlledScreen {
     public void AddCardToPlayerHand(Card card){
         board.getPlayer().getHand().addCard(card);
 
-        hboxPlayerHand.getChildren().add(new CardPane(card, ghostPane, this));
-        //TODO: Add the card to the hboxPlayerHand or find an alternative that uses the board.player.hand to automaticly do this
+        Platform.runLater(() -> {
+            hboxPlayerHand.getChildren().add(new CardPane(card, ghostPane, this));
+            //TODO: Add the card to the hboxPlayerHand or find an alternative that uses the board.player.hand to automaticly do this
+        });
     }
 
     /**
