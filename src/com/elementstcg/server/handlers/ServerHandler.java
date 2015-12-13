@@ -144,8 +144,30 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
                 //It first gets the right board, then gets the needed card and needed player to place the right card.
             try {
 
-                Card card = player.getHand().playCard(selected);
+                Card card = player.getHand().getCard(selected);
 
+                // Checking CAP points.
+                int cap = 0;
+                if(player == board.getPlayerOne()) {
+                    for (Card cc : board.getPlayerOneField().values()) {
+                        if (cc != null) {
+                            cap += cc.getCapacityPoints();
+                        }
+                    }
+                } else {
+                    for (Card cc : board.getPlayerTwoField().values()) {
+                        if (cc != null) {
+                            cap += cc.getCapacityPoints();
+                        }
+                    }
+                }
+                cap += card.getCapacityPoints();
+
+                if(cap > Board.MAX_CAP_POINTS) {
+                    return new Response(false, "Can not place that card because it would exceed the maximum amount of CAP points.");
+                }
+
+                card = player.getHand().playCard(selected); // Actual plays the card on the field (removing from the hand etc...)
                 board.putCardPlayer(point, card, player);
                 //System.out.println(player.getName() + " placed card " + player.getHand().getCard(selected).getName());
 
@@ -215,9 +237,32 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
             Player player = (board.getPlayerOne().getSession().equals(caller) ? board.getPlayerOne() : board.getPlayerTwo());
             Player enemy = (board.getPlayerOne().getSession().equals(caller) ? board.getPlayerTwo() : board.getPlayerOne());
 
-            Card c = board.getPlayerOne().equals(player) ? board.getPlayerOneField().get(point) : board.getPlayerTwoField().get(point);
+            Card oldCard = board.getPlayerOne().equals(player) ? board.getPlayerOneField().get(point) : board.getPlayerTwoField().get(point);
+            Card card = player.getHand().getCard(selected);
 
+            // Checking CAP points.
+            int cap = 0;
+            if(player == board.getPlayerOne()) {
+                for (Card cc : board.getPlayerOneField().values()) {
+                    if (cc != null) {
+                        cap += cc.getCapacityPoints();
+                    }
+                }
+            } else {
+                for (Card cc : board.getPlayerTwoField().values()) {
+                    if (cc != null) {
+                        cap += cc.getCapacityPoints();
+                    }
+                }
+            }
+            cap -= oldCard.getCapacityPoints();
+            cap += card.getCapacityPoints();
 
+            if(cap > Board.MAX_CAP_POINTS) {
+                return new Response(false, "Can not place that card because it would exceed the maximum amount of CAP points.");
+            }
+
+            // Removing card from the field.
             if (player != board.getPlayerOne()) {
                 board.removePlayerTwoCard(point);
             } else {
@@ -226,14 +271,16 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
 
             //Play the card that replaces the old one.
             try {
-                Card card = player.getHand().playCard(selected);
+                card = player.getHand().playCard(selected); // Actual plays the card on the field (removing from the hand etc...)
 
                 if(card.getAttacked()) {
                     return new Response(false, "Card can't be removed from the field due to it already attacked this turn.");
                 }
 
                 //Add the card to the hand.
-                player.getHand().addCard(c);
+                if(oldCard != null) {
+                    player.getHand().addCard(oldCard);
+                }
 
                 board.putCardPlayer(point, card, player);
 
@@ -243,7 +290,9 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
 
                 // Removes the card from the hand of the player.
                 caller.getClient().removeCardFromHand(selected);
-                caller.getClient().addCardToHand(c);
+                if(oldCard != null) {
+                    caller.getClient().addCardToHand(oldCard);
+                }
 
                 // Places the new card on the board of the player and enemy.
                 caller.getClient().placeCard(card, point);
@@ -366,7 +415,7 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
                     if(board.getPlayerOne().getHp() < 1) {
                         message = String.format(message, board.getPlayerTwo().getName(), board.getPlayerOne().getHp());
                     } else {
-                        message = String.format(message, board.getPlayerOne().getName(), board.getPlayerOne().getHp());
+                        message = String.format(message, board.getPlayerOne().getName(), board.getPlayerTwo().getHp());
                     }
 
                     //TODO Client needs endMatch method with String for the message.
