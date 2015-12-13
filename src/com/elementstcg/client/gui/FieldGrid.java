@@ -40,28 +40,6 @@ public class FieldGrid extends Pane {
                 FieldPane pane = new FieldPane();
                 Rectangle rec = new Rectangle((width / columns), (height / rows));
 
-                //TODO: DEBUG
-                /*
-                if(i == 0) {
-                    if(j % 2 == 0) {
-                        rec.setFill(Color.GREY);
-                    }
-                    else
-                    {
-                        rec.setFill(Color.BLACK);
-                    }
-                }
-                else{
-                    if(j % 2 == 0) {
-                        rec.setFill(Color.BLACK);
-                    }
-                    else
-                    {
-                        rec.setFill(Color.GREY);
-                    }
-                }
-                */
-                //END DEBUG
                 rec.setFill(Color.TRANSPARENT);
 
                 rec.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {

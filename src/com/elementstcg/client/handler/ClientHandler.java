@@ -55,7 +55,7 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
     }
 
     public ScreenHandler getScreenHandler() {
-        return screenHandler();
+        return screenHandler;
     }
 
     public boolean setupServerConnection () {
@@ -129,14 +129,19 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
     }
 
     public void SetupMatch(String enemyName) {
-        //TODO: have screenHandler change the screen from lobby to board
-        //TODO: create methodes to switch screen from clientHandler
+        //Check if there already is an board screen (there shouldn't)
+        if(screenHandler.getScreen(ScreensFramework.screenBoardID) != null) {
+            screenHandler.unloadScreen(ScreensFramework.screenBoardID);
+        }
+        //Create a board screen
+        screenHandler.loadScreen(ScreensFramework.screenBoardID, ScreensFramework.screenBoardPath);
 
-
+        //Load all needed data/set all needed data
         boardController.setPlayerName(Account.getInstance().getUserName());
         boardController.setEnemyName(enemyName);
 
-
+        //Display screen
+        screenHandler.setScreen(ScreensFramework.screenBoardID);
     }
 
     public void updatePlayerHP(int hp) throws RemoteException {
@@ -208,15 +213,13 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
    public void enemySetCardHp(int point, int hp) throws RemoteException {
         boardController.SetEnemyCardHP(point, hp);
 
-    }
+   }
     public void enemyRemoveCardFromHand() throws RemoteException {
         boardController.RemoveCardFromEnemyHand();
     }
-    //TODO: Maarten
+
     public void nextTurn(Boolean isThisClientsTurn) throws RemoteException {
-        if(isThisClientsTurn) {
-            boardController.nextTurn();
-        }
+        boardController.setTurn(isThisClientsTurn);
     }
 
     public void setBoardController(BoardController BoardController){
