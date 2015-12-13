@@ -23,7 +23,7 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
 
     private static ScreenHandler screenHandler;
 
-    private static String ip = "192.168.56.1";
+    private static String ip = "192.168.0.13";
     private static String port = "8112";
     private static String name = "server";
 
