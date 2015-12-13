@@ -21,6 +21,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 
 import java.io.IOException;
+import java.util.Map;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ResourceBundle;
@@ -69,15 +70,12 @@ public class BoardController implements Initializable, ControlledScreen {
 
     /**
      * Add damage to the selected point with the given card
-     * @param card The card that is attacking
-     * @param point The point that is getting attacked
+     * @param playerPoint The card that is attacking
+     * @param enemyPoint The point that is getting attacked
      */
-    public void attackCard(Card card, int point){
-        CardPane cardPane = (CardPane)enemyField.getChildren().get(point);
-        //TODO: Catch exception like there is no card in that pos
-        if(cardPane != null) {
-            cardPane.getCard().modifyHP(card.getAttack());
-        }
+    public void attackCard(int playerPoint, int enemyPoint){
+            ClientHandler.AttackCard(playerPoint , enemyPoint);
+
     }
 
     /**
@@ -188,6 +186,10 @@ public class BoardController implements Initializable, ControlledScreen {
                 pane.translateYProperty().set(40);
             }
         });
+    }
+
+    public void showCardButtonAction(CardPane cardPane) {
+        showGhostPane(cardPane.getGhostObject());
     }
 
     /**
@@ -310,7 +312,13 @@ public class BoardController implements Initializable, ControlledScreen {
         //TODO: Finish this methode
 
         if (selectedCard != null && selectedCard.isSelected() && selectedCard.onField()) {
-
+            int playerPoint = -1;
+            for (Map.Entry<Integer, Card> entry : board.getPlayerField().entrySet())
+                if (entry.getValue().equals(selectedCard.getCard()))
+                    playerPoint = entry.getKey();
+            if (playerPoint != -1) {
+                ClientHandler.AttackEnemy(playerPoint);
+            }
         }
 
     }
@@ -502,12 +510,31 @@ public class BoardController implements Initializable, ControlledScreen {
      */
     public void attackEnemyCardButtonAction(CardPane cardPane) throws IOException {
         if (!board.isGameOver()) {
-            //TODO: Implement RMI
-            if (selectedCard != null && selectedCard.isSelected() && selectedCard.onField()) {
-                // Check if the card is in a defend position.
+            int playerPoint = -1;
+            int enemyPoint = -1;
+            for (Map.Entry<Integer, Card> entry : board.getPlayerField().entrySet())
+                if (entry.getValue().equals(selectedCard.getCard()))
+                    playerPoint = entry.getKey();
+
+            for (Map.Entry<Integer, Card> entry : board.getEnemyField().entrySet())
+                if (entry.getValue().equals(cardPane.getCard()))
+                    enemyPoint = entry.getKey();
+            if (playerPoint == -1 || enemyPoint == -1) {
+                DialogUtility.newDialog("Een ongeldige actie, selecteer de juiste kaart");
+                return;
+            }
+
+                try {
+                    ClientHandler.AttackCard(playerPoint, enemyPoint);
+
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
             }
         }
-    }
+
 
     /**
      * Add the provided card to the hand of the player and show the card in the game
