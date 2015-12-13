@@ -146,6 +146,10 @@ public class BoardController implements Initializable, ControlledScreen {
         board.getEnemyField().put(point, card);
     }
 
+    public void showCardButtonAction(CardPane cardPane) {
+        showGhostPane(cardPane.getGhostObject());
+    }
+
     /**
      * Decreases the value HP of the enemy object by the provided value
      * @param hp the value by with HP needs to be lowered
