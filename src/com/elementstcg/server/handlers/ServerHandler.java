@@ -2,7 +2,7 @@ package com.elementstcg.server.handlers;
 
 import com.elementstcg.server.game.Account;
 import com.elementstcg.server.game.Board;
-import com.elementstcg.server.game.Card;
+import com.elementstcg.shared.trait.Card;
 import com.elementstcg.server.game.util.CustomException.ExceedCapacityException;
 import com.elementstcg.server.game.util.CustomException.OccupiedFieldException;
 import com.elementstcg.server.game.Player;
@@ -129,18 +129,22 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
     }
 
     public IResponse placeCard(String key, int selected, int point) throws RemoteException {
-        //TODO: RICK
         //Key is the player that places the card, int is the selected card in the hand, and point is where it gets placed
         //First, find the right board to place the card on, then place the card
         Session caller = clients.get(key);
         Board board = games.get(caller.getBoardKey());
         Player player = (board.getPlayerOne().getSession().equals(caller) ? board.getPlayerOne() : board.getPlayerTwo());
+        Player enemy = (board.getPlayerOne().getSession().equals(caller) ? board.getPlayerTwo() : board.getPlayerOne());
 
         //Place the card at the right spot
         //It first gets the right board, then gets the needed card and needed player to place the right card.
         try {
             board.putCardPlayer(point, player.getHand().getCard(selected), player);
-            //TODO Call ClientHandler of both players to place the cards on their fields visually.
+
+            System.out.println(player.getName() + " placed card " + player.getHand().getCard(selected).getName());
+
+            caller.getClient().placeCard(player.getHand().getCard(selected), point);
+            enemy.getSession().getClient().enemyPlaceCard(player.getHand().getCard(selected), point);
         } catch (OccupiedFieldException e) {
             e.printStackTrace();
         } catch (ExceedCapacityException e) {
@@ -313,11 +317,8 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
 
         //TODO Schedule to check every second for a new match.
 
-        if(matchSession != null) {
-            System.out.println("MATCH FOUND BITCHES");
+        if(matchSession != null)
             createBoardSession(playerSession, matchSession);
-        } else
-            System.out.println("MATCH NOT FOUND!");
         
         return new Response(true);
     }
@@ -328,7 +329,6 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
      * @param ses2 Session object of the second searching player.
      */
     private void createBoardSession(Session ses1, Session ses2) throws RemoteException {
-        System.out.println("Setting up the board [server]");
         try {
             String key = MessageDigest.getInstance("MD5").digest((ses1.getAccount().getUserName() + String.valueOf(System.currentTimeMillis()) + ses2.getAccount().getUserName()).getBytes()).toString();
             ses1.setBoardKey(key);

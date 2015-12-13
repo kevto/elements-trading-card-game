@@ -1,7 +1,7 @@
 package com.elementstcg.client.handler;
 
 import com.elementstcg.client.Account;
-import com.elementstcg.client.Card;
+import com.elementstcg.shared.trait.Card;
 import com.elementstcg.client.gui.Controllers.BoardController;
 import com.elementstcg.client.gui.ScreenHandler;
 import com.elementstcg.client.gui.ScreensFramework;
@@ -9,8 +9,6 @@ import com.elementstcg.shared.trait.ICard;
 import com.elementstcg.shared.trait.IClientHandler;
 import com.elementstcg.shared.trait.IResponse;
 import com.elementstcg.shared.trait.IServerHandler;
-import com.sun.deploy.util.SessionState;
-import javafx.stage.Screen;
 
 import java.net.MalformedURLException;
 import java.rmi.Naming;
@@ -169,11 +167,6 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
         boardController.PutCardPlayer((Card) card, point);
     }
 
-
-    public void placeCard(Card card, int point) throws RemoteException {
-        boardController.PutCardPlayer(card, point);
-    }
-
     public void removeCard(int pointer) throws RemoteException {
         boardController.removeCardPlayer(pointer);
     }
@@ -195,7 +188,7 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
         boardController.updateEnemyHp(hp);
     }
     public void enemyUpdateDeckCount(int count) throws RemoteException {
-        boardController.UpdateEnemyDeckCount(count);
+        boardController.updateEnemyDeckCount(count);
     }
     public void enemyAddCardToHand() throws RemoteException {
         //TODO: This is a placeholder until I have discussed this issue
@@ -207,14 +200,10 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
     public void enemyRemoveCard(int point) throws RemoteException {
         boardController.removeCardEnemy(point);
     }
-    @Override
+
+
     public void enemyPlaceCard(ICard card, int point) throws RemoteException {
         boardController.putCardEnemy((Card) card, point);
-    }
-
-    public void enemyPlaceCard(Card card, int point) throws RemoteException {
-        boardController.putCardEnemy(card, point);
-
     }
 
    public void enemySetCardHp(int point, int hp) throws RemoteException {
@@ -234,6 +223,7 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
     }
 
     public void endMatch(String message) throws RemoteException {
-
+        //TODO Find a better way to end the match.
+        System.exit(1);
     }
 }

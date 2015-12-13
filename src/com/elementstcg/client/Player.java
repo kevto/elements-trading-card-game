@@ -1,5 +1,7 @@
 package com.elementstcg.client;
 
+import com.elementstcg.shared.trait.Card;
+
 public class Player {
 
     private int hp;

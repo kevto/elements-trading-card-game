@@ -5,6 +5,7 @@ import com.elementstcg.client.util.CalculateMultiplier;
 import com.elementstcg.client.util.CustomException.EmptyFieldException;
 import com.elementstcg.client.util.CustomException.ExceedCapacityException;
 import com.elementstcg.client.util.CustomException.OccupiedFieldException;
+import com.elementstcg.shared.trait.Card;
 import javafx.application.Platform;
 
 import java.util.*;
@@ -117,26 +118,10 @@ public class Board {
      * @param point Location of the card on the board where it gets placed.
      * @param card Which card gets placed.
      */
-    public void putCardPlayer(int point, Card card) throws OccupiedFieldException, ExceedCapacityException {
-        int cap = 0;
-
-        for (Card c : playerField.values()) {
-            if(c != null) {
-                cap += c.getCapacityPoints();
-            }
-        }
-
-        if(cap + card.getCapacityPoints() <= MAX_CAP_POINTS) {
-            Card fieldCard = playerField.get(point);
-
-            if(fieldCard == null){
-                playerField.put(point, card);
-            } else {
-                throw new OccupiedFieldException("There is already a card on this field");
-            }
-        } else {
-            throw new ExceedCapacityException("Card cannot be played, total capacity points exceed the maximum (" + (cap + card.getCapacityPoints()) + "/" + MAX_CAP_POINTS + ")");
-        }
+    public void putCardPlayer(int point, Card card) {
+        if(playerField.containsKey(point))
+            playerField.remove(point);
+        playerField.put(point, card);
     }
 
     /**

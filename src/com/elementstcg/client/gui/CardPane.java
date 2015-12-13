@@ -1,7 +1,7 @@
 package com.elementstcg.client.gui;
 
-import com.elementstcg.client.Card;
 import com.elementstcg.client.gui.Controllers.BoardController;
+import com.elementstcg.shared.trait.Card;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
