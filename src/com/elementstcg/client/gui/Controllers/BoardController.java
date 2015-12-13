@@ -19,6 +19,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 
 import java.io.IOException;
+import java.util.Map;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -469,12 +470,31 @@ public class BoardController implements Initializable, ControlledScreen {
      */
     public void AttackEnemyCardButtonAction(CardPane cardPane) throws IOException {
         if (!board.isGameOver()) {
-            //TODO: Implement RMI
-            if (selectedCard != null && selectedCard.isSelected() && selectedCard.onField()) {
-                // Check if the card is in a defend position.
+            int playerPoint = -1;
+            int enemyPoint = -1;
+            for (Map.Entry<Integer, Card> entry : board.getPlayerField().entrySet())
+                if (entry.getValue().equals(selectedCard.getCard()))
+                    playerPoint = entry.getKey();
+
+            for (Map.Entry<Integer, Card> entry : board.getEnemyField().entrySet())
+                if (entry.getValue().equals(cardPane.getCard()))
+                    enemyPoint = entry.getKey();
+            if (playerPoint == -1 || enemyPoint == -1) {
+                DialogUtility.newDialog("Een ongeldige actie, selecteer de juiste kaart");
+                return;
+            }
+
+                try {
+                    ClientHandler.AttackCard(playerPoint, enemyPoint);
+
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
             }
         }
-    }
+
 
     /**
      * Add the provided card to the hand of the player and show the card in the game
