@@ -197,8 +197,54 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
     }
 
     public IResponse replaceCard(String key, int selected, int point) throws RemoteException {
-        //TODO: RICK
-        return null;
+         //First bring the card that's currently there back to the hand, then place the given card there.
+         Session caller = clients.get(key);
+         Board board = games.get(caller.getBoardKey());
+
+
+         //Get the right card and remove it from the board.
+         //check which players turn it is, and replace the correct card.
+         Card c = null;
+         //Check the board to see whose turn it is; if it's the caller: proceed.
+        if((board.getTurn() && board.getPlayerOne().getSession().equals(caller)) ||
+                (!board.getTurn() && board.getPlayerTwo().getSession().equals(caller))) {
+
+            Player player = (board.getPlayerOne().getSession().equals(caller) ? board.getPlayerOne() : board.getPlayerTwo());
+            Player enemy = (board.getPlayerOne().getSession().equals(caller) ? board.getPlayerTwo() : board.getPlayerOne());
+
+            c = board.getPlayerOne().equals(player) ? board.getPlayerOneField().get(selected) : board.getPlayerTwoField().get(selected);
+
+            if (player != board.getPlayerOne()) {
+                board.removePlayerTwoCard(point);
+            } else {
+                board.removePlayerOneCard(point);
+            }
+
+            //Add the card to the hand.
+            player.getHand().addCard(c);
+
+            //Play the card that replaces the old one.
+            try {
+                Card card = player.getHand().playCard(selected);
+
+                board.putCardPlayer(point, card, player);
+
+                //Call ClientHandler of both players to place the cards on their fields visually.
+                caller.getClient().removeCardFromHand(selected);
+                caller.getClient().placeCard(card, point);
+                enemy.getSession().getClient().enemyPlaceCard(card, point);
+                //TODO Display new card in the hand of the enemy player.
+                // notPlayer.getSession().getClient().enemyAddCardToHand();
+
+            } catch (OccupiedFieldException e) {
+                e.printStackTrace();
+            } catch (ExceedCapacityException e) {
+                e.printStackTrace();
+            }
+            return new Response(true);
+        } else {
+            return new Response(false, "It's not your turn");
+        }
     }
 
 
