@@ -7,6 +7,7 @@ import com.elementstcg.client.util.CustomException.ExceedCapacityException;
 import com.elementstcg.client.util.CustomException.OccupiedFieldException;
 import com.elementstcg.client.util.DialogUtility;
 import com.elementstcg.shared.trait.Card;
+import com.elementstcg.shared.trait.IResponse;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -74,7 +75,7 @@ public class BoardController implements Initializable, ControlledScreen {
      * @param enemyPoint The point that is getting attacked
      */
     public void attackCard(int playerPoint, int enemyPoint){
-            ClientHandler.AttackCard(playerPoint , enemyPoint);
+            ClientHandler.AttackCard(playerPoint, enemyPoint);
 
     }
 
@@ -257,7 +258,12 @@ public class BoardController implements Initializable, ControlledScreen {
      * @param turn the value to wich turn has to be set
      */
     public void setTurn(boolean turn) {
-        board.setTurn(turn);
+        Platform.runLater(() -> {
+            if (turn) {
+                DialogUtility.newDialog("Het is nu jouw beurt!");
+            }
+            board.setTurn(turn);
+        });
     }
 
     /**
@@ -491,8 +497,21 @@ public class BoardController implements Initializable, ControlledScreen {
      * Called when the player clicks on the next turn button
      */
     public void nextTurnButtonAction() {
-        //TODO Implement RMI action
-        updateUI();
+
+        try {
+            final IResponse response = ClientHandler.getInstance().getServerHandler().nextTurn(ClientHandler.getInstance().getSessionKey());
+            if(!response.wasSuccessful()) {
+                Platform.runLater(() -> {
+                    try {
+                        DialogUtility.newDialog(response.getMessage());
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                });
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -544,8 +563,10 @@ public class BoardController implements Initializable, ControlledScreen {
     public void AddCardToPlayerHand(Card card){
         board.getPlayer().getHand().addCard(card);
 
-        hboxPlayerHand.getChildren().add(new CardPane(card, ghostPane, this));
-        //TODO: Add the card to the hboxPlayerHand or find an alternative that uses the board.player.hand to automaticly do this
+        Platform.runLater(() -> {
+            hboxPlayerHand.getChildren().add(new CardPane(card, ghostPane, this));
+            //TODO: Add the card to the hboxPlayerHand or find an alternative that uses the board.player.hand to automaticly do this
+        });
     }
 
     /**
