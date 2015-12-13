@@ -147,6 +147,13 @@ public class BoardController implements Initializable, ControlledScreen {
      */
     public void removeCardPlayer(int point){
         board.getPlayerField().remove(point);
+
+        int fieldPointer = (point > 5 ? point - 4 : point);
+        FieldPane pane = (FieldPane) playerField.getChildren().get(fieldPointer);
+
+        Platform.runLater(() -> {
+            pane.removeCard();
+        });
     }
 
     /**
@@ -157,34 +164,18 @@ public class BoardController implements Initializable, ControlledScreen {
     public void putCardEnemy(Card card, int point){
         //TODO Optimize method
         Platform.runLater(() -> {
-            int fieldpointer;
-
-            if (point >= 6) {
-                fieldpointer = (point - 4);
-            } else {
-                fieldpointer = point;
-            }
+            int fieldpointer = (point > 5 ? point - 4 : point);
+            //fieldpointer = (fieldpointer > 5 ? fieldpointer - 6 : fieldpointer + 6);
 
 
             FieldPane pane = (FieldPane) enemyField.getChildren().get(fieldpointer);
             CardPane cardPane = new CardPane(card, ghostPane, this);
             pane.setCard(cardPane);
             cardPane.setCardState(CardState.EnemyField);
-
-
-            for (int i = 0; i < ((FieldGrid) pane.getParent()).getChildren().size(); i++) {
-                if (pane.equals(((FieldGrid) pane.getParent()).getChildren().get(i))) {
-                    try {
-                        board.putCardEnemy((i < 6 ? i : i - 6 + 10), card);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
+            board.putCardEnemy(point, card);
 
             // TODO Apparently I'd need this property to set the cards right. Find a better way to fix this.
-            if (point < 9) {
+            if (point > 9) {
                 pane.translateYProperty().set(-70);
             } else {
                 pane.translateYProperty().set(40);
@@ -214,6 +205,13 @@ public class BoardController implements Initializable, ControlledScreen {
      */
     public void removeCardEnemy(int point){
         board.getEnemyField().remove(point);
+
+        int fieldPointer = (point > 5 ? point - 4 : point);
+        FieldPane pane = (FieldPane) enemyField.getChildren().get(fieldPointer);
+
+        Platform.runLater(() -> {
+            pane.removeCard();
+        });
     }
 
     /**
@@ -597,7 +595,15 @@ public class BoardController implements Initializable, ControlledScreen {
      * @param hp The value by which it needs to be lowered
      */
     public void SetPlayerCardHp(int point, int hp){
-        board.getPlayerField().get(point).modifyHP(hp);
+        board.getPlayerField().get(point).modifyHP(board.getPlayerField().get(point).getHP() - hp);
+
+        int fieldPointer = (point > 5 ? point - 4 : point);
+        FieldPane pane = (FieldPane) playerField.getChildren().get(fieldPointer);
+
+        Platform.runLater(() -> {
+            //pane.getCard().getCard().modifyHP(pane.getCard().getCard().getHP() - hp);
+            pane.getCard().updateUi();
+        });
 
     }
 
@@ -625,7 +631,15 @@ public class BoardController implements Initializable, ControlledScreen {
      * @param hp The value by which it needs to be lowered
      */
     public void SetEnemyCardHP(int point, int hp){
-        board.getEnemyField().get(point).modifyHP(hp);
+        board.getEnemyField().get(point).modifyHP(board.getEnemyField().get(point).getHP() - hp);
+
+        int fieldPointer = (point > 5 ? point - 4 : point);
+        FieldPane pane = (FieldPane) enemyField.getChildren().get(fieldPointer);
+
+        Platform.runLater(() -> {
+            //pane.getCard().getCard().modifyHP(pane.getCard().getCard().getHP() - hp);
+            pane.getCard().updateUi();
+        });
     }
 
     /**

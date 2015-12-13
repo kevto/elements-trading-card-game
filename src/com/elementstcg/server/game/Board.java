@@ -256,7 +256,7 @@ public class Board {
                 if(keyToRemove != -1)
                     defender.remove(keyToRemove);
                 if(removeCard != null) {
-                    Platform.runLater(removeCard);
+                    removeCard.run();
                 }
             }
         }

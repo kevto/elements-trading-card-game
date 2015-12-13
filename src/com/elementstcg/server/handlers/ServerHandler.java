@@ -252,6 +252,7 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
         Session caller = clients.get(key);
         Board board = games.get(caller.getBoardKey());
 
+
         if((board.getTurn() && board.getPlayerOne().getSession().equals(caller)) ||
                 (!board.getTurn() && board.getPlayerTwo().getSession().equals(caller))) {
 
@@ -395,8 +396,8 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
             ses2.setBoardKey(key);
             Board board = new Board(key, ses1, ses2);
             games.put(key, board);
-            searchingPlayers.remove(ses1);
-            searchingPlayers.remove(ses2);
+            searchingPlayers.remove(ses1.getSessionKey());
+            searchingPlayers.remove(ses2.getSessionKey());
 
             if(ses1.getClient().setupMatch(ses2.getAccount().getUserName())) {
                 ses1.getClient().addCardToHand(board.getPlayerOne().drawCard());

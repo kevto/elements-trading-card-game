@@ -226,9 +226,20 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
 
     public static void AttackCard(int playerPoint, int enemyPoint){
         try {
-            serverHandler.attackCard(sessionKey ,playerPoint, enemyPoint);
-        } catch (RemoteException e) {
-            e.printStackTrace();
+            IResponse response = serverHandler.attackCard(sessionKey, playerPoint, enemyPoint);
+            if (!response.wasSuccessful()) {
+                Platform.runLater(() -> {
+                    try {
+                        DialogUtility.newDialog(response.getMessage());
+                    } catch (RemoteException ex) {
+                        ex.printStackTrace();
+                    }
+                });
+            }
+        } catch (RemoteException ex) {
+            ex.printStackTrace();
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 
