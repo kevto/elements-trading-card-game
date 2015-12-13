@@ -1,7 +1,8 @@
 package com.elementstcg.client.handler;
 
 import com.elementstcg.client.Account;
-import com.elementstcg.client.Card;
+import com.elementstcg.client.util.DialogUtility;
+import com.elementstcg.shared.trait.Card;
 import com.elementstcg.client.gui.Controllers.BoardController;
 import com.elementstcg.client.gui.ScreenHandler;
 import com.elementstcg.client.gui.ScreensFramework;
@@ -9,9 +10,9 @@ import com.elementstcg.shared.trait.ICard;
 import com.elementstcg.shared.trait.IClientHandler;
 import com.elementstcg.shared.trait.IResponse;
 import com.elementstcg.shared.trait.IServerHandler;
-import com.sun.deploy.util.SessionState;
-import javafx.stage.Screen;
+import javafx.application.Platform;
 
+import java.lang.management.PlatformLoggingMXBean;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
@@ -25,12 +26,11 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
 
     private static ScreenHandler screenHandler;
 
-    private static String ip = "145.93.61.44";
+    private static String ip = "127.0.0.1";
     private static String port = "8112";
     private static String name = "server";
 
     private static BoardController boardController;
-
     private static String sessionKey;
 
     private ClientHandler() throws RemoteException {
@@ -90,10 +90,16 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
         }
     }
 
-    public boolean loginUser(String username, String password) {
+    public IResponse loginUser(String username, String password) {
+        IResponse response = null;
+
         try {
-            IResponse response = serverHandler.login(this, username, password);
-            return response.wasSuccessful();
+            response = serverHandler.login(this, username, password);
+            if(response.wasSuccessful()) {
+                setSessionKey(response.getMessage());
+                System.out.println("Session:" + getSessionKey());
+            }
+            return response;
         }
         catch(RemoteException ex) {
             System.out.println(ex.getMessage());
@@ -103,7 +109,7 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
             System.out.println(ex.getStackTrace());
         }
 
-        return false;
+        return response;
     }
 
     public boolean registerUser(String username, String password, String email) {
@@ -128,7 +134,8 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
         return serverHandler;
     }
 
-    public void SetupMatch(String enemyName) {
+    public boolean setupMatch(String enemyName) throws RemoteException{
+        System.out.println("Setting up the board..");
         //Check if there already is an board screen (there shouldn't)
         if(screenHandler.getScreen(ScreensFramework.screenBoardID) != null) {
             screenHandler.unloadScreen(ScreensFramework.screenBoardID);
@@ -142,6 +149,8 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
 
         //Display screen
         screenHandler.setScreen(ScreensFramework.screenBoardID);
+
+        return true;
     }
 
     public void updatePlayerHP(int hp) throws RemoteException {
@@ -160,11 +169,6 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
     @Override
     public void placeCard(ICard card, int point) throws RemoteException {
         boardController.PutCardPlayer((Card) card, point);
-    }
-
-
-    public void placeCard(Card card, int point) throws RemoteException {
-        boardController.PutCardPlayer(card, point);
     }
 
     public void removeCard(int pointer) throws RemoteException {
@@ -188,7 +192,7 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
         boardController.updateEnemyHp(hp);
     }
     public void enemyUpdateDeckCount(int count) throws RemoteException {
-        boardController.UpdateEnemyDeckCount(count);
+        boardController.updateEnemyDeckCount(count);
     }
     public void enemyAddCardToHand() throws RemoteException {
         //TODO: This is a placeholder until I have discussed this issue
@@ -200,14 +204,10 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
     public void enemyRemoveCard(int point) throws RemoteException {
         boardController.removeCardEnemy(point);
     }
-    @Override
+
+
     public void enemyPlaceCard(ICard card, int point) throws RemoteException {
         boardController.putCardEnemy((Card) card, point);
-    }
-
-    public void enemyPlaceCard(Card card, int point) throws RemoteException {
-        boardController.putCardEnemy(card, point);
-
     }
 
    public void enemySetCardHp(int point, int hp) throws RemoteException {
@@ -226,8 +226,62 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
         boardController = BoardController;
     }
 
-    public void endMatch(String message)
-    {
+    public static void AttackCard(int playerPoint, int enemyPoint){
+        try {
+            IResponse response = serverHandler.attackCard(sessionKey, playerPoint, enemyPoint);
+            if (!response.wasSuccessful()) {
+                Platform.runLater(() -> {
+                    try {
+                        DialogUtility.newDialog(response.getMessage());
+                    } catch (RemoteException ex) {
+                        ex.printStackTrace();
+                    }
+                });
+            }
+        } catch (RemoteException ex) {
+            ex.printStackTrace();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
 
+    public static void AttackEnemy(int playerPoint) {
+        try {
+            serverHandler.attackEnemy(sessionKey, playerPoint);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+    public void endMatch(String message) throws RemoteException {
+        Platform.runLater(() -> {
+            DialogUtility.newDialog(message);
+        });
+
+        returnLobby();
+    }
+
+    /**
+     * Will change the current screen to the lobby and create a thread to kill this board after a second
+     */
+    private void returnLobby() {
+
+        //Go to lobby
+        screenHandler.setScreen(ScreensFramework.screenLobbyID);
+
+        //Create a thread that will delete this board after 1 second
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(1000);
+                    screenHandler.unloadScreen(ScreensFramework.screenBoardID);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        //Start thread
+        thread.start();
     }
 }

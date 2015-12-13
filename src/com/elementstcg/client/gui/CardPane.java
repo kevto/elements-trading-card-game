@@ -1,7 +1,7 @@
 package com.elementstcg.client.gui;
 
-import com.elementstcg.client.Card;
 import com.elementstcg.client.gui.Controllers.BoardController;
+import com.elementstcg.shared.trait.Card;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -94,8 +94,9 @@ public class CardPane extends StackPane {
                         controller.selectCardButtonAction(instance);
                     } else if (cardState == CardState.EnemyField) {
                         try {
+                            //Zat eerst een (instance) parameter bij
                             controller.attackEnemyCardButtonAction(instance);
-                        } catch (IOException e) {
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }

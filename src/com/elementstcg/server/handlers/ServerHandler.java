@@ -2,7 +2,7 @@ package com.elementstcg.server.handlers;
 
 import com.elementstcg.server.game.Account;
 import com.elementstcg.server.game.Board;
-import com.elementstcg.server.game.Card;
+import com.elementstcg.shared.trait.Card;
 import com.elementstcg.server.game.util.CustomException.ExceedCapacityException;
 import com.elementstcg.server.game.util.CustomException.OccupiedFieldException;
 import com.elementstcg.server.game.Player;
@@ -31,6 +31,7 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class ServerHandler extends UnicastRemoteObject implements IServerHandler {
 
+    //TODO: add a list/HashMapfor players who are searching for a match
     private Lock lock;
     private Condition boardsBusy;
     private Condition databaseBusy;
@@ -96,7 +97,7 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
 
                 // Creating new session.
                 clients.put(key, new Session(key, client, acc));
-                return new Response(true, 1, "Account found, client added");
+                return new Response(true, 1, key);
             } else {
                 return new Response(false, 2, "Couldn't generate session key.");
             }
@@ -132,23 +133,59 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
         //First, find the right board to place the card on, then place the card
         Session caller = clients.get(key);
         Board board = games.get(caller.getBoardKey());
-        Player player = (board.getPlayerOne().getSession().equals(caller) ? board.getPlayerOne() : board.getPlayerTwo());
-        Player notPlayer = (!board.getTurn() ? board.getPlayerOne() : board.getPlayerTwo());
 
-        //Place the card at the right spot
-        //It first gets the right board, then gets the needed card and needed player to place the right card.
-        try {
-            board.putCardPlayer(point, player.getHand().getCard(selected), player);
-            //Call ClientHandler of both players to place the cards on their fields visually.
-            caller.getClient().placeCard(player.getHand().getCard(selected), point);
-            notPlayer.getSession().getClient().placeCard(notPlayer.getHand().getCard(selected), point);
-        } catch (OccupiedFieldException e) {
-            e.printStackTrace();
-        } catch (ExceedCapacityException e) {
-            e.printStackTrace();
+        if((board.getTurn() && board.getPlayerOne().getSession().equals(caller)) ||
+                (!board.getTurn() && board.getPlayerTwo().getSession().equals(caller))) {
+
+            Player player = (board.getPlayerOne().getSession().equals(caller) ? board.getPlayerOne() : board.getPlayerTwo());
+            Player enemy = (board.getPlayerOne().getSession().equals(caller) ? board.getPlayerTwo() : board.getPlayerOne());
+
+            //Place the card at the right spot
+                //It first gets the right board, then gets the needed card and needed player to place the right card.
+            try {
+
+                Card card = player.getHand().getCard(selected);
+
+                // Checking CAP points.
+                int cap = 0;
+                if(player == board.getPlayerOne()) {
+                    for (Card cc : board.getPlayerOneField().values()) {
+                        if (cc != null) {
+                            cap += cc.getCapacityPoints();
+                        }
+                    }
+                } else {
+                    for (Card cc : board.getPlayerTwoField().values()) {
+                        if (cc != null) {
+                            cap += cc.getCapacityPoints();
+                        }
+                    }
+                }
+                cap += card.getCapacityPoints();
+
+                if(cap > Board.MAX_CAP_POINTS) {
+                    return new Response(false, "Can not place that card because it would exceed the maximum amount of CAP points.");
+                }
+
+                card = player.getHand().playCard(selected); // Actual plays the card on the field (removing from the hand etc...)
+                board.putCardPlayer(point, card, player);
+                //System.out.println(player.getName() + " placed card " + player.getHand().getCard(selected).getName());
+
+                caller.getClient().removeCardFromHand(selected);
+                caller.getClient().placeCard(card, point);
+                enemy.getSession().getClient().enemyPlaceCard(card, point);
+            } catch (OccupiedFieldException e) {
+                e.printStackTrace();
+                return new Response(false, e.getMessage());
+            } catch (ExceedCapacityException e) {
+                e.printStackTrace();
+                return new Response(false, e.getMessage());
+            }
+
+            return new Response(true);
+        } else {
+            return new Response(false, "It's not your turn to place a card!");
         }
-
-        return new Response(true);
     }
 
     public IResponse nextTurn(String key) throws RemoteException {
@@ -165,8 +202,11 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
 
             // Drawing cards for the next turn player.
             if(turn.getAmountCardsInDeck() > 0) {
-                ICard drawnCard = turn.drawCard();
-                turn.getSession().getClient().addCardToHand(drawnCard);
+                ICard drawedCard = turn.drawCard();
+                turn.getSession().getClient().addCardToHand(drawedCard);
+
+                // Updating deck counts.
+                turn.getSession().getClient().updateDeckCount(turn.getAmountCardsInDeck());
                 notTurn.getSession().getClient().enemyUpdateDeckCount(turn.getAmountCardsInDeck());
                 //TODO Display new card in the hand of the enemy player.
                 //notTurn.getSession().getClient().enemyAddCardToHand();
@@ -182,36 +222,93 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
     }
 
     public IResponse replaceCard(String key, int selected, int point) throws RemoteException {
-        //TODO: RICK
-        //First bring the card that's currently there back to the hand, then place the given card there.
-        Session caller = clients.get(key);
-        Board board = games.get(caller.getBoardKey());
-        Player player = (board.getPlayerOne().getSession().equals(caller) ? board.getPlayerOne() : board.getPlayerTwo());
-        Player notPlayer = (!board.getTurn() ? board.getPlayerOne() : board.getPlayerTwo());
+         //First bring the card that's currently there back to the hand, then place the given card there.
+         Session caller = clients.get(key);
+         Board board = games.get(caller.getBoardKey());
 
-        //Get the right card and remove it from the board.
-        Card c = board.getCard(point);
-        board.removePlayerOneCard(point);
 
-        //Add the card to the hand.
-        player.getHand().addCard(c);
+         //Get the right card and remove it from the board.
+         //check which players turn it is, and replace the correct card.
 
-        //Play the card that replaces the old one.
-        try {
-            board.putCardPlayer(point, player.getHand().getCard(selected), player);
-            //Call ClientHandler of both players to place the cards on their fields visually.
-            caller.getClient().placeCard(player.getHand().getCard(selected), point);
-            notPlayer.getSession().getClient().placeCard(notPlayer.getHand().getCard(selected), point);
-            //TODO Display new card in the hand of the enemy player.
-            //notPlayer.getSession().getClient().enemyAddCardToHand();
-        } catch (OccupiedFieldException e) {
-            e.printStackTrace();
-        } catch (ExceedCapacityException e) {
-            e.printStackTrace();
+         //Check the board to see whose turn it is; if it's the caller: proceed.
+        if((board.getTurn() && board.getPlayerOne().getSession().equals(caller)) ||
+                (!board.getTurn() && board.getPlayerTwo().getSession().equals(caller))) {
+
+            Player player = (board.getPlayerOne().getSession().equals(caller) ? board.getPlayerOne() : board.getPlayerTwo());
+            Player enemy = (board.getPlayerOne().getSession().equals(caller) ? board.getPlayerTwo() : board.getPlayerOne());
+
+            Card oldCard = board.getPlayerOne().equals(player) ? board.getPlayerOneField().get(point) : board.getPlayerTwoField().get(point);
+            Card card = player.getHand().getCard(selected);
+
+            // Checking CAP points.
+            int cap = 0;
+            if(player == board.getPlayerOne()) {
+                for (Card cc : board.getPlayerOneField().values()) {
+                    if (cc != null) {
+                        cap += cc.getCapacityPoints();
+                    }
+                }
+            } else {
+                for (Card cc : board.getPlayerTwoField().values()) {
+                    if (cc != null) {
+                        cap += cc.getCapacityPoints();
+                    }
+                }
+            }
+            cap -= oldCard.getCapacityPoints();
+            cap += card.getCapacityPoints();
+
+            if(cap > Board.MAX_CAP_POINTS) {
+                return new Response(false, "Can not place that card because it would exceed the maximum amount of CAP points.");
+            }
+
+            // Removing card from the field.
+            if (player != board.getPlayerOne()) {
+                board.removePlayerTwoCard(point);
+            } else {
+                board.removePlayerOneCard(point);
+            }
+
+            //Play the card that replaces the old one.
+            try {
+                card = player.getHand().playCard(selected); // Actual plays the card on the field (removing from the hand etc...)
+
+                if(card.getAttacked()) {
+                    return new Response(false, "Card can't be removed from the field due to it already attacked this turn.");
+                }
+
+                //Add the card to the hand.
+                if(oldCard != null) {
+                    player.getHand().addCard(oldCard);
+                }
+
+                board.putCardPlayer(point, card, player);
+
+                //Removing cards visually
+                caller.getClient().removeCard(point);
+                enemy.getSession().getClient().enemyRemoveCard(point);
+
+                // Removes the card from the hand of the player.
+                caller.getClient().removeCardFromHand(selected);
+                if(oldCard != null) {
+                    caller.getClient().addCardToHand(oldCard);
+                }
+
+                // Places the new card on the board of the player and enemy.
+                caller.getClient().placeCard(card, point);
+                enemy.getSession().getClient().enemyPlaceCard(card, point);
+                //TODO Display new card in the hand of the enemy player.
+                // notPlayer.getSession().getClient().enemyAddCardToHand();
+
+            } catch (OccupiedFieldException e) {
+                e.printStackTrace();
+            } catch (ExceedCapacityException e) {
+                e.printStackTrace();
+            }
+            return new Response(true);
+        } else {
+            return new Response(false, "It's not your turn");
         }
-
-        return new Response(true);
-
     }
 
 
@@ -219,8 +316,14 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
         Session caller = clients.get(key);
         Board board = games.get(caller.getBoardKey());
 
+
         if((board.getTurn() && board.getPlayerOne().getSession().equals(caller)) ||
                 (!board.getTurn() && board.getPlayerTwo().getSession().equals(caller))) {
+
+            // Defender cards are not allowed to attack. Any point below 6 is a defender card.
+            if(point < 6) {
+                return new Response(false, "This is a defender card. You can't attack with this card!");
+            }
 
             // Getting the right variables (player).
             Player attacker = (board.getPlayerOne().getSession().equals(caller) ? board.getPlayerOne() : board.getPlayerTwo());
@@ -265,6 +368,11 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
         if((board.getTurn() && board.getPlayerOne().getSession().equals(caller)) ||
                 (!board.getTurn() && board.getPlayerTwo().getSession().equals(caller))) {
 
+            // Defender cards are not allowed to attack. Any point below 6 is a defender card.
+            if(point < 6) {
+                return new Response(false, "This is a defender card. You can't attack with this card!");
+            }
+
             // Getting the right variables (player).
             Player attacker = (board.getPlayerOne().getSession().equals(caller) ? board.getPlayerOne() : board.getPlayerTwo());
             boolean isPlayerOne = (board.getPlayerOne().equals(attacker) ? true : false);
@@ -299,13 +407,15 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
                     board.getPlayerOne().getSession().getClient().updatePlayerHP(board.getPlayerOne().getHp());
                 }
 
+                selectedCard.setAttacked(true);
+
                 // Game over.
                 if(board.isGameOver()) {
                     String message = "%s has won the match with %d HP left!";
                     if(board.getPlayerOne().getHp() < 1) {
                         message = String.format(message, board.getPlayerTwo().getName(), board.getPlayerOne().getHp());
                     } else {
-                        message = String.format(message, board.getPlayerOne().getName(), board.getPlayerOne().getHp());
+                        message = String.format(message, board.getPlayerOne().getName(), board.getPlayerTwo().getHp());
                     }
 
                     //TODO Client needs endMatch method with String for the message.
@@ -325,59 +435,25 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
 
     public IResponse findMatch(String key) throws RemoteException {
         //TODO: make sure this is thread-safe.
-        String givenKey = key;
         Session playerSession = clients.get(key);
-        int playerElo = playerSession.getAccount().getElo();
-        int itElo;
-        int tempScore;
-        int score = 10000;
-        Account match = null;
         Session matchSession = null;
-        Iterator it = searchingPlayers.entrySet().iterator();
 
-        while (it.hasNext())
-        {
-            HashMap.Entry pair = (HashMap.Entry)it.next();
-            matchSession = (Session)pair.getValue();
-            itElo = matchSession.getAccount().getElo();
+        searchingPlayers.put(key, playerSession);
 
-            if (itElo == playerElo) //Need a check to see if player(s) are in a match already
-            {
-                createBoardSession(playerSession, matchSession);
-                return new Response(true);
-            }
+        for(Map.Entry<String, Session> entry : searchingPlayers.entrySet()) {
+            if(!entry.getValue().equals(playerSession)) {
 
-            if (itElo < playerElo)
-            {
-                tempScore = playerElo - itElo;
-                if (tempScore < score)
-                {
-                    match = matchSession.getAccount();
-                    score = tempScore;
-                }
-            }
+                //TODO Implement the elo system thingy.
 
-            if (itElo > playerElo)
-            {
-                tempScore = itElo - playerElo;
-                if (tempScore < score)
-                {
-                    match = matchSession.getAccount();
-                    score = tempScore;
-                }
+                matchSession = entry.getValue();
+                break;
             }
         }
 
-        //check if a match has been found, if not then keep searching
-        if (match == null && matchSession == null)
-        {
-            //TODO Let thread sleep for 1000ms.
-            findMatch(givenKey);
-        }
+        //TODO Schedule to check every second for a new match.
 
-        //Not sure what to return as match, will return to later.
-        createBoardSession(playerSession, matchSession);
-
+        if(matchSession != null)
+            createBoardSession(playerSession, matchSession);
         
         return new Response(true);
     }
@@ -394,8 +470,8 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
             ses2.setBoardKey(key);
             Board board = new Board(key, ses1, ses2);
             games.put(key, board);
-            searchingPlayers.remove(ses1);
-            searchingPlayers.remove(ses2);
+            searchingPlayers.remove(ses1.getSessionKey());
+            searchingPlayers.remove(ses2.getSessionKey());
 
             if(ses1.getClient().setupMatch(ses2.getAccount().getUserName())) {
                 ses1.getClient().addCardToHand(board.getPlayerOne().drawCard());
@@ -412,6 +488,12 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
                 ses2.getClient().addCardToHand(board.getPlayerTwo().drawCard());
                 ses2.getClient().addCardToHand(board.getPlayerTwo().drawCard());
             }
+
+            // Updating deck counts.
+            ses1.getClient().updateDeckCount(board.getPlayerOne().getAmountCardsInDeck());
+            ses2.getClient().updateDeckCount(board.getPlayerTwo().getAmountCardsInDeck());
+            ses1.getClient().enemyUpdateDeckCount(board.getPlayerTwo().getAmountCardsInDeck());
+            ses2.getClient().enemyUpdateDeckCount(board.getPlayerOne().getAmountCardsInDeck());
 
             //TODO Update enemy amount of cards in deck.
         } catch (NoSuchAlgorithmException e) {

@@ -1,7 +1,7 @@
-package com.elementstcg.client;
+package com.elementstcg.shared.trait;
 
-import com.elementstcg.shared.trait.Element;
 import com.elementstcg.shared.trait.ICard;
+import com.elementstcg.shared.trait.Element;
 
 /**
  * Created by Mick on 28-9-2015.

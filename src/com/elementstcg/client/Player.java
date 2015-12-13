@@ -1,5 +1,7 @@
 package com.elementstcg.client;
 
+import com.elementstcg.shared.trait.Card;
+
 public class Player {
 
     private int hp;
@@ -30,7 +32,12 @@ public class Player {
     public Player(int hp, String name, Deck deck){
         this.hp = hp;
         this.name = name;
-        this.deck = deck;
+
+        if(deck == null) {
+            this.deck = new Deck();
+        } else {
+            this.deck = deck;
+        }
 
         hand = new Hand();
     }
@@ -68,7 +75,7 @@ public class Player {
      * @param hp the amount by wich the player hp should be changed
      */
     public void modifyHp(int hp){
-        this.hp -= hp;
+        this.hp = hp;
         if(this.hp <= 0)
             this.hp = 0;
     }

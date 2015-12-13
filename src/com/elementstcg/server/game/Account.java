@@ -9,6 +9,7 @@ package com.elementstcg.server.game;
 import com.avaje.ebean.Model;
 
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.*;
 
@@ -16,6 +17,8 @@ import java.io.*;
 @Table(name="player")
 public class Account extends Model implements Serializable {
 
+    @Id
+    private int id;
     private String username;
     private String password;
     private transient String ip;

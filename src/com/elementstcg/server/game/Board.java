@@ -5,6 +5,7 @@ import com.elementstcg.server.game.util.CustomException.ExceedCapacityException;
 import com.elementstcg.server.game.util.CustomException.EmptyFieldException;
 import com.elementstcg.server.game.util.CustomException.OccupiedFieldException;
 import com.elementstcg.server.handlers.Session;
+import com.elementstcg.shared.trait.Card;
 import javafx.application.Platform;
 
 import java.util.HashMap;
@@ -252,7 +253,7 @@ public class Board {
                 if(keyToRemove != -1)
                     defender.remove(keyToRemove);
                 if(removeCard != null) {
-                    Platform.runLater(removeCard);
+                    removeCard.run();
                 }
             }
         }

@@ -26,6 +26,10 @@ public class Session {
         return handler;
     }
 
+    public String getSessionKey() {
+        return key;
+    }
+
     public Account getAccount()
     {
         return account;
@@ -38,14 +42,7 @@ public class Session {
 
     public void setBoardKey(String boardKey)
     {
-        if (!boardKey.isEmpty() && boardKey != null)
-        {
-            this.boardKey = boardKey;
-        }
-        else
-        {
-            throw new IllegalArgumentException();
-        }
+        this.boardKey = boardKey;
     }
 
 }

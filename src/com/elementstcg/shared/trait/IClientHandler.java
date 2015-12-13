@@ -18,7 +18,7 @@ public interface IClientHandler extends Remote {
      * When the player is matched to another player this methoded is called to make the client ready for the match
      * @param enemyName The name of the enemyPlayer
      */
-    public void SetupMatch(String enemyName);
+    public boolean setupMatch(String enemyName) throws RemoteException;
     /**
      * Updates the player HP in the GUI at the request of the server
      * @param hp The new HP total of the player
@@ -116,7 +116,6 @@ public interface IClientHandler extends Remote {
 
     /**
      * Removes a ICard from the enemy hand Represents the spot or place where the card is placed.
-     * @param index Specifies which card to remove from the enemy hand
      */
     public void enemyRemoveCardFromHand() throws RemoteException;
 
@@ -126,12 +125,5 @@ public interface IClientHandler extends Remote {
      */
     public void nextTurn(Boolean isThisClientsTurn) throws RemoteException;
 
-    /**
-     * Ends the match and returns the players to the main screen.
-     * @param message shows who won.
-     * @throws RemoteException
-     */
     public void endMatch(String message) throws RemoteException;
-
-
 }

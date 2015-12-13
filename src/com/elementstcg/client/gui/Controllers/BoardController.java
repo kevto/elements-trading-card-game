@@ -6,6 +6,9 @@ import com.elementstcg.client.handler.ClientHandler;
 import com.elementstcg.client.util.CustomException.ExceedCapacityException;
 import com.elementstcg.client.util.CustomException.OccupiedFieldException;
 import com.elementstcg.client.util.DialogUtility;
+import com.elementstcg.shared.trait.Card;
+import com.elementstcg.shared.trait.IResponse;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -18,8 +21,11 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 
+import java.awt.*;
 import java.io.IOException;
+import java.util.Map;
 import java.net.URL;
+import java.rmi.RemoteException;
 import java.util.ResourceBundle;
 
 public class BoardController implements Initializable, ControlledScreen {
@@ -66,15 +72,12 @@ public class BoardController implements Initializable, ControlledScreen {
 
     /**
      * Add damage to the selected point with the given card
-     * @param card The card that is attacking
-     * @param point The point that is getting attacked
+     * @param playerPoint The card that is attacking
+     * @param enemyPoint The point that is getting attacked
      */
-    public void attackCard(Card card, int point){
-        CardPane cardPane = (CardPane)enemyField.getChildren().get(point);
-        //TODO: Catch exception like there is no card in that pos
-        if(cardPane != null) {
-            cardPane.getCard().modifyHP(card.getAttack());
-        }
+    public void attackCard(int playerPoint, int enemyPoint){
+            ClientHandler.AttackCard(playerPoint, enemyPoint);
+
     }
 
     /**
@@ -115,12 +118,17 @@ public class BoardController implements Initializable, ControlledScreen {
      * @param point The point on the playing field it has to be placed on
      */
     public void PutCardPlayer(Card card, int point){
-        if(board.getPlayerField().get(point) == null) {
-            board.getPlayerField().put(point, card);
-        } else {
-            //TODO: handle if there is already a card on that point
-        }
+        //TODO Show the card visually.
+        Platform.runLater(() -> {
+            FieldPane field = (FieldPane) playerField.getChildren().get((point > 5 ? point - 10 + 6 : point));
+            board.putCardPlayer(point, card);
+            CardPane cardPane = new CardPane(card, ghostPane, this);
+            field.setCard(cardPane);
 
+            cardPane.setTranslateY(-70);
+
+            updateUI();
+        });
     }
 
     /**
@@ -129,6 +137,9 @@ public class BoardController implements Initializable, ControlledScreen {
      */
     public void updatePlayerHP(int hp){
         board.getPlayer().modifyHp(hp);
+        Platform.runLater(() -> {
+            labelPlayerHP.setText("" + board.getPlayer().getHp());
+        });
     }
 
     /**
@@ -137,6 +148,13 @@ public class BoardController implements Initializable, ControlledScreen {
      */
     public void removeCardPlayer(int point){
         board.getPlayerField().remove(point);
+
+        int fieldPointer = (point > 5 ? point - 4 : point);
+        FieldPane pane = (FieldPane) playerField.getChildren().get(fieldPointer);
+
+        Platform.runLater(() -> {
+            pane.removeCard();
+        });
     }
 
     /**
@@ -145,8 +163,31 @@ public class BoardController implements Initializable, ControlledScreen {
      * @param point The point on the playing field it has to be placed on
      */
     public void putCardEnemy(Card card, int point){
-        board.getEnemyField().put(point, card);
+        //TODO Optimize method
+        Platform.runLater(() -> {
+            int fieldpointer = (point > 5 ? point - 4 : point);
+            //fieldpointer = (fieldpointer > 5 ? fieldpointer - 6 : fieldpointer + 6);
+
+
+            FieldPane pane = (FieldPane) enemyField.getChildren().get(fieldpointer);
+            CardPane cardPane = new CardPane(card, ghostPane, this);
+            pane.setCard(cardPane);
+            cardPane.setCardState(CardState.EnemyField);
+            board.putCardEnemy(point, card);
+
+            // TODO Apparently I'd need this property to set the cards right. Find a better way to fix this.
+            if (point > 9) {
+                pane.translateYProperty().set(-70);
+            } else {
+                pane.translateYProperty().set(40);
+            }
+        });
     }
+/*
+    public void showCardButtonAction(CardPane cardPane) {
+        showGhostPane(cardPane.getGhostObject());
+    }
+    */
 
     /**
      * Decreases the value HP of the enemy object by the provided value
@@ -154,6 +195,9 @@ public class BoardController implements Initializable, ControlledScreen {
      */
     public void updateEnemyHp(int hp){
         board.getEnemy().modifyHp(hp);
+        Platform.runLater(() -> {
+            labelEnemyHP.setText("" + board.getEnemy().getHp());
+        });
     }
 
     /**
@@ -162,6 +206,13 @@ public class BoardController implements Initializable, ControlledScreen {
      */
     public void removeCardEnemy(int point){
         board.getEnemyField().remove(point);
+
+        int fieldPointer = (point > 5 ? point - 4 : point);
+        FieldPane pane = (FieldPane) enemyField.getChildren().get(fieldPointer);
+
+        Platform.runLater(() -> {
+            pane.removeCard();
+        });
     }
 
     /**
@@ -182,11 +233,8 @@ public class BoardController implements Initializable, ControlledScreen {
         labelEnemyCAP.setText(String.valueOf(enemyField.getCapPoints()));
         labelPlayerCAP.setText(String.valueOf(playerField.getCapPoints()));
 
-        labelEnemyDeckSize.setText(String.valueOf(board.getEnemy().getAmountCardsInDeck()));
-        labelPlayerDeckSize.setText(String.valueOf(board.getPlayer().getAmountCardsInDeck()));
-
-        labelEnemyHP.setText(String.valueOf(board.getEnemy().getHp()));
-        labelPlayerHP.setText(String.valueOf(board.getPlayer().getHp()));
+        labelEnemyHP.setText(String.valueOf(board.getEnemy().getHp()));     // Only useful when the player hasn't attacked the enemy yet.
+        labelPlayerHP.setText(String.valueOf(board.getPlayer().getHp()));   // Only useful when the player hasn't attacked the enemy yet.
 
         for (Node pane : playerField.getChildren()) {
             if (((FieldPane) pane).getCard() != null)
@@ -212,7 +260,12 @@ public class BoardController implements Initializable, ControlledScreen {
      * @param turn the value to wich turn has to be set
      */
     public void setTurn(boolean turn) {
-        board.setTurn(turn);
+        Platform.runLater(() -> {
+            if (turn) {
+                DialogUtility.newDialog("It's now your turn!");
+            }
+            board.setTurn(turn);
+        });
     }
 
     /**
@@ -268,7 +321,13 @@ public class BoardController implements Initializable, ControlledScreen {
         //TODO: Finish this methode
 
         if (selectedCard != null && selectedCard.isSelected() && selectedCard.onField()) {
-
+            int playerPoint = -1;
+            for (Map.Entry<Integer, Card> entry : board.getPlayerField().entrySet())
+                if (entry.getValue().equals(selectedCard.getCard()))
+                    playerPoint = entry.getKey();
+            if (playerPoint != -1) {
+                ClientHandler.AttackEnemy(playerPoint);
+            }
         }
 
     }
@@ -350,49 +409,34 @@ public class BoardController implements Initializable, ControlledScreen {
 
             if (grid.getFieldType() == FieldType.Player) {
                 if (selectedCard != null && selectedCard != cardPane && selectedCard.onField() == false) {
-                    // Check if the card already attacked.
-                    if (cardPane.getCard().getAttacked()) {
-                        DialogUtility.newDialog("Card on the field already has attacked this turn and can not be swapped!");
-                        return;
-                    }
-
                     CardPane fieldCard = cardPane;
                     CardPane handCard = selectedCard;
 
                     // Try to put the new card onto the field. Checking for limitations.
                     int point = board.getPlayerCardPoint(fieldCard.getCard());
-                    Card cardRemoved = board.getPlayerField().get(point);
-                    board.removePlayerCard(point);
+                    int selectedIndex = hboxPlayerHand.getChildren().indexOf(handCard);
+
                     try {
-                        board.putCardPlayer(point, handCard.getCard());
-                    } catch (OccupiedFieldException e) {
-                        DialogUtility.newDialog(e.getMessage());
-                        //TODO: Why is there a forcefull way of putting a card?
-                        board.forcePutCardPlayer(point, cardRemoved);
-                        return;
-                    } catch (ExceedCapacityException e) {
-                        DialogUtility.newDialog(e.getMessage());
-                        //TODO: Why is there a forcefull way of putting a card?
-                        board.forcePutCardPlayer(point, cardRemoved);
-                        return;
+                        IResponse response = ClientHandler.getInstance().getServerHandler().replaceCard(
+                                ClientHandler.getInstance().getSessionKey(),
+                                selectedIndex,
+                                point);
+                        Platform.runLater(() -> {
+                            try {
+                                if(!response.wasSuccessful()) {
+                                    DialogUtility.newDialog(response.getMessage());
+                                }
+                            } catch (RemoteException ex) {
+                                ex.printStackTrace();
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
+                            }
+                        });
+                    } catch (RemoteException ex) {
+                        ex.printStackTrace();
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
                     }
-
-                    // Go on with swapping cards.
-                    fieldCard.resetCardPos();
-                    handCard.resetCardPos();
-                    FieldPane field = (FieldPane) fieldCard.getParent();
-
-                    field.setCard(handCard);
-                    handCard.setCardState(CardState.PlayerField);
-                    handCard.resizeCard();
-
-                    field.getChildren().remove(fieldCard);
-                    hboxPlayerHand.getChildren().add(fieldCard);
-                    fieldCard.setCardState(CardState.PlayerHand);
-                    fieldCard.resizeCard();
-
-                    selectCard(fieldCard);
-                    updateUI();
                 }
                 selectCard(cardPane);
             }
@@ -420,16 +464,17 @@ public class BoardController implements Initializable, ControlledScreen {
 
                         for (int i = 0; i < ((FieldGrid) field.getParent()).getChildren().size(); i++) {
                             if (field.equals(((FieldGrid) field.getParent()).getChildren().get(i))) {
+                                //TODO Send request to the server to place the card on the selected field pane.
+
                                 try {
-                                    board.putCardPlayer((i < 6 ? i : i - 6 + 10), selectedCard.getCard());
-                                    field.setCard(selectedCard);
-                                } catch (OccupiedFieldException e) {
-                                    DialogUtility.newDialog(e.getMessage());
-                                    return;
-                                } catch (ExceedCapacityException e) {
-                                    DialogUtility.newDialog(e.getMessage());
-                                    return;
+                                    ClientHandler.getInstance().getServerHandler().placeCard(ClientHandler.getInstance().getSessionKey(),
+                                            hboxPlayerHand.getChildren().indexOf(selectedCard),
+                                            (i < 6 ? i : i - 6 + 10));
+                                } catch (RemoteException e) {
+                                    e.printStackTrace();
                                 }
+                                //board.putCardPlayer((i < 6 ? i : i - 6 + 10), selectedCard.getCard());
+                                //field.setCard(selectedCard);
                             }
                         }
 
@@ -448,9 +493,22 @@ public class BoardController implements Initializable, ControlledScreen {
     /**
      * Called when the player clicks on the next turn button
      */
-    public void NextTurnButtonAction() {
-        //Implement RMI action
-        updateUI();
+    public void nextTurnButtonAction() {
+
+        try {
+            final IResponse response = ClientHandler.getInstance().getServerHandler().nextTurn(ClientHandler.getInstance().getSessionKey());
+            if(!response.wasSuccessful()) {
+                Platform.runLater(() -> {
+                    try {
+                        DialogUtility.newDialog(response.getMessage());
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                });
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -458,7 +516,7 @@ public class BoardController implements Initializable, ControlledScreen {
      * This methode is called when a player right clicks on an card on the field
      * @param cardPane that's been selected.
      */
-    public void ShowCardButtonAction(CardPane cardPane) {
+    public void showCardButtonAction(CardPane cardPane) {
         showGhostPane(cardPane.getGhostObject());
     }
 
@@ -467,14 +525,33 @@ public class BoardController implements Initializable, ControlledScreen {
      * @param cardPane
      * @throws IOException
      */
-    public void AttackEnemyCardButtonAction(CardPane cardPane) throws IOException {
+    public void attackEnemyCardButtonAction(CardPane cardPane) throws IOException {
         if (!board.isGameOver()) {
-            //TODO: Implement RMI
-            if (selectedCard != null && selectedCard.isSelected() && selectedCard.onField()) {
-                // Check if the card is in a defend position.
+            int playerPoint = -1;
+            int enemyPoint = -1;
+            for (Map.Entry<Integer, Card> entry : board.getPlayerField().entrySet())
+                if (entry.getValue().equals(selectedCard.getCard()))
+                    playerPoint = entry.getKey();
+
+            for (Map.Entry<Integer, Card> entry : board.getEnemyField().entrySet())
+                if (entry.getValue().equals(cardPane.getCard()))
+                    enemyPoint = entry.getKey();
+            if (playerPoint == -1 || enemyPoint == -1) {
+                DialogUtility.newDialog("Een ongeldige actie, selecteer de juiste kaart");
+                return;
+            }
+
+                try {
+                    ClientHandler.AttackCard(playerPoint, enemyPoint);
+
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
             }
         }
-    }
+
 
     /**
      * Add the provided card to the hand of the player and show the card in the game
@@ -483,7 +560,10 @@ public class BoardController implements Initializable, ControlledScreen {
     public void AddCardToPlayerHand(Card card){
         board.getPlayer().getHand().addCard(card);
 
-        //TODO: Add the card to the hboxPlayerHand or find an alternative that uses the board.player.hand to automaticly do this
+        Platform.runLater(() -> {
+            hboxPlayerHand.getChildren().add(new CardPane(card, ghostPane, this));
+            //TODO: Add the card to the hboxPlayerHand or find an alternative that uses the board.player.hand to automaticly do this
+        });
     }
 
     /**
@@ -491,15 +571,23 @@ public class BoardController implements Initializable, ControlledScreen {
      * @param amount the total size of the deck
      */
     public void UpdatePlayerDeckCount(int amount){
-        board.getPlayer().getDeck().setRemainingCards(amount);
+        board.getPlayer().getDeck().setRemainingCards(amount); // What good does this???
+
+        Platform.runLater(() -> {
+            labelPlayerDeckSize.setText(String.valueOf(amount));
+        });
     }
 
     /**
      * Sets the enemy deck size to the provided value. The value has to be the total size
      * @param amount the total size of the deck
      */
-    public void UpdateEnemyDeckCount(int amount){
-        board.getEnemy().getDeck().setRemainingCards(amount);
+    public void updateEnemyDeckCount(int amount){
+        board.getEnemy().getDeck().setRemainingCards(amount); // What good does this???
+
+        Platform.runLater(() -> {
+            labelEnemyDeckSize.setText(String.valueOf(amount));
+        });
     }
 
     /**
@@ -508,7 +596,15 @@ public class BoardController implements Initializable, ControlledScreen {
      * @param hp The value by which it needs to be lowered
      */
     public void SetPlayerCardHp(int point, int hp){
-        board.getPlayerField().get(point).modifyHP(hp);
+        board.getPlayerField().get(point).modifyHP(board.getPlayerField().get(point).getHP() - hp);
+
+        int fieldPointer = (point > 5 ? point - 4 : point);
+        FieldPane pane = (FieldPane) playerField.getChildren().get(fieldPointer);
+
+        Platform.runLater(() -> {
+            //pane.getCard().getCard().modifyHP(pane.getCard().getCard().getHP() - hp);
+            pane.getCard().updateUi();
+        });
 
     }
 
@@ -517,7 +613,10 @@ public class BoardController implements Initializable, ControlledScreen {
      * @param index the index of the card that needs to be removed
      */
     public void RemoveCardFromHandPlayer(int index){
-        board.getPlayer().getHand().RemoveCard(index);
+        Platform.runLater(() -> {
+            board.getPlayer().getHand().RemoveCard(index);
+            hboxPlayerHand.getChildren().remove(index);
+        });
     }
 
     /**
@@ -533,7 +632,15 @@ public class BoardController implements Initializable, ControlledScreen {
      * @param hp The value by which it needs to be lowered
      */
     public void SetEnemyCardHP(int point, int hp){
-        board.getEnemyField().get(point).modifyHP(hp);
+        board.getEnemyField().get(point).modifyHP(board.getEnemyField().get(point).getHP() - hp);
+
+        int fieldPointer = (point > 5 ? point - 4 : point);
+        FieldPane pane = (FieldPane) enemyField.getChildren().get(fieldPointer);
+
+        Platform.runLater(() -> {
+            //pane.getCard().getCard().modifyHP(pane.getCard().getCard().getHP() - hp);
+            pane.getCard().updateUi();
+        });
     }
 
     /**

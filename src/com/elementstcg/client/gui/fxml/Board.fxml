@@ -9,7 +9,7 @@
 <?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
-<Pane id="main" maxHeight="768.0" maxWidth="1408.0" minHeight="768.0" minWidth="1280.0" prefHeight="768.0" prefWidth="1280.0" stylesheets="@../stylesheets/boardview.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.elementstcg.client.gui.BoardController">
+<Pane id="main" maxHeight="768.0" maxWidth="1408.0" minHeight="768.0" minWidth="1280.0" prefHeight="768.0" prefWidth="1280.0" stylesheets="@../stylesheets/boardview.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.elementstcg.client.gui.Controllers.BoardController">
    <children>
       <Pane fx:id="mainPane" prefHeight="768.0" prefWidth="1280.0">
          <children>
