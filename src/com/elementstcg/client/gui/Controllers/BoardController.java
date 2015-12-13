@@ -122,7 +122,10 @@ public class BoardController implements Initializable, ControlledScreen {
         Platform.runLater(() -> {
             FieldPane field = (FieldPane) playerField.getChildren().get((point > 5 ? point - 5 : point));
             board.putCardPlayer(point, card);
-            field.setCard(new CardPane(card, ghostPane, this));
+            CardPane cardPane = new CardPane(card, ghostPane, this);
+            field.setCard(cardPane);
+
+            cardPane.setTranslateY(-70);
 
             updateUI();
         });
