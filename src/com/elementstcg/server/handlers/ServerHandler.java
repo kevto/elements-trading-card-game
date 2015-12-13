@@ -252,6 +252,7 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
         Session caller = clients.get(key);
         Board board = games.get(caller.getBoardKey());
 
+
         if((board.getTurn() && board.getPlayerOne().getSession().equals(caller)) ||
                 (!board.getTurn() && board.getPlayerTwo().getSession().equals(caller))) {
 
