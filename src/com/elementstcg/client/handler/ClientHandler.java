@@ -184,4 +184,9 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
     public void setBoardController(BoardController BoardController){
         boardController = BoardController;
     }
+
+    public void endMatch(String message)
+    {
+
+    }
 }
