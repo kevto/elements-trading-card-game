@@ -332,6 +332,8 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
                     board.getPlayerOne().getSession().getClient().updatePlayerHP(board.getPlayerOne().getHp());
                 }
 
+                selectedCard.setAttacked(true);
+
                 // Game over.
                 if(board.isGameOver()) {
                     String message = "%s has won the match with %d HP left!";
