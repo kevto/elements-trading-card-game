@@ -119,7 +119,7 @@ public class BoardController implements Initializable, ControlledScreen {
     public void PutCardPlayer(Card card, int point){
         //TODO Show the card visually.
         Platform.runLater(() -> {
-            FieldPane field = (FieldPane) playerField.getChildren().get((point > 5 ? point - 5 : point));
+            FieldPane field = (FieldPane) playerField.getChildren().get((point > 5 ? point - 10 + 6 : point));
             board.putCardPlayer(point, card);
             CardPane cardPane = new CardPane(card, ghostPane, this);
             field.setCard(cardPane);
@@ -136,6 +136,9 @@ public class BoardController implements Initializable, ControlledScreen {
      */
     public void updatePlayerHP(int hp){
         board.getPlayer().modifyHp(hp);
+        Platform.runLater(() -> {
+            labelPlayerHP.setText("" + board.getPlayer().getHp());
+        });
     }
 
     /**
@@ -200,6 +203,9 @@ public class BoardController implements Initializable, ControlledScreen {
      */
     public void updateEnemyHp(int hp){
         board.getEnemy().modifyHp(hp);
+        Platform.runLater(() -> {
+            labelEnemyHP.setText("" + board.getEnemy().getHp());
+        });
     }
 
     /**
@@ -260,7 +266,7 @@ public class BoardController implements Initializable, ControlledScreen {
     public void setTurn(boolean turn) {
         Platform.runLater(() -> {
             if (turn) {
-                DialogUtility.newDialog("Het is nu jouw beurt!");
+                DialogUtility.newDialog("It's now your turn!");
             }
             board.setTurn(turn);
         });
