@@ -26,6 +26,10 @@ public class Session {
         return handler;
     }
 
+    public String getSessionKey() {
+        return key;
+    }
+
     public Account getAccount()
     {
         return account;

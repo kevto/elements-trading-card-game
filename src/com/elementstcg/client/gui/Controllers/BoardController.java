@@ -147,6 +147,13 @@ public class BoardController implements Initializable, ControlledScreen {
      */
     public void removeCardPlayer(int point){
         board.getPlayerField().remove(point);
+
+        int fieldPointer = (point > 5 ? point - 4 : point);
+        FieldPane pane = (FieldPane) playerField.getChildren().get(fieldPointer);
+
+        Platform.runLater(() -> {
+            pane.removeCard();
+        });
     }
 
     /**
@@ -198,6 +205,13 @@ public class BoardController implements Initializable, ControlledScreen {
      */
     public void removeCardEnemy(int point){
         board.getEnemyField().remove(point);
+
+        int fieldPointer = (point > 5 ? point - 4 : point);
+        FieldPane pane = (FieldPane) enemyField.getChildren().get(fieldPointer);
+
+        Platform.runLater(() -> {
+            pane.removeCard();
+        });
     }
 
     /**
@@ -581,7 +595,15 @@ public class BoardController implements Initializable, ControlledScreen {
      * @param hp The value by which it needs to be lowered
      */
     public void SetPlayerCardHp(int point, int hp){
-        board.getPlayerField().get(point).modifyHP(hp);
+        board.getPlayerField().get(point).modifyHP(board.getPlayerField().get(point).getHP() - hp);
+
+        int fieldPointer = (point > 5 ? point - 4 : point);
+        FieldPane pane = (FieldPane) playerField.getChildren().get(fieldPointer);
+
+        Platform.runLater(() -> {
+            //pane.getCard().getCard().modifyHP(pane.getCard().getCard().getHP() - hp);
+            pane.getCard().updateUi();
+        });
 
     }
 
@@ -609,7 +631,15 @@ public class BoardController implements Initializable, ControlledScreen {
      * @param hp The value by which it needs to be lowered
      */
     public void SetEnemyCardHP(int point, int hp){
-        board.getEnemyField().get(point).modifyHP(hp);
+        board.getEnemyField().get(point).modifyHP(board.getEnemyField().get(point).getHP() - hp);
+
+        int fieldPointer = (point > 5 ? point - 4 : point);
+        FieldPane pane = (FieldPane) enemyField.getChildren().get(fieldPointer);
+
+        Platform.runLater(() -> {
+            //pane.getCard().getCard().modifyHP(pane.getCard().getCard().getHP() - hp);
+            pane.getCard().updateUi();
+        });
     }
 
     /**
