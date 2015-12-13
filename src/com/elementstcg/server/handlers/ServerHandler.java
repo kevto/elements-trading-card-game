@@ -225,15 +225,12 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
 
             //Play the card that replaces the old one.
             try {
-                board.putCardPlayer(point, player.getHand().playCard(selected), player);
                 Card card = player.getHand().playCard(selected);
 
                 board.putCardPlayer(point, card, player);
 
                 //Call ClientHandler of both players to place the cards on their fields visually.
                 caller.getClient().removeCardFromHand(selected);
-                caller.getClient().placeCard(player.getHand().getCard(selected), point);
-                enemy.getSession().getClient().enemyPlaceCard(player.getHand().getCard(selected), point);
                 caller.getClient().placeCard(card, point);
                 enemy.getSession().getClient().enemyPlaceCard(card, point);
                 //TODO Display new card in the hand of the enemy player.
