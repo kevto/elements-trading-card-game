@@ -5,7 +5,7 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="561.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.elementstcg.client.gui.LoginController">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="561.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.elementstcg.client.gui.Controllers.LoginController">
    <children>
       <TextField fx:id="tbUsername" layoutX="205.0" layoutY="125.0" prefHeight="33.0" prefWidth="149.0" promptText="Username" />
       <PasswordField fx:id="tbPassword" layoutX="205.0" layoutY="165.0" prefHeight="33.0" prefWidth="149.0" promptText="Password" />

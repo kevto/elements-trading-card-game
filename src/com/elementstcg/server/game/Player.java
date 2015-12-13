@@ -1,6 +1,7 @@
 package com.elementstcg.server.game;
 
 import com.elementstcg.server.handlers.Session;
+import com.elementstcg.shared.trait.Card;
 
 public class Player {
 

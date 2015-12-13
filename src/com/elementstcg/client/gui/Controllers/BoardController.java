@@ -6,6 +6,8 @@ import com.elementstcg.client.handler.ClientHandler;
 import com.elementstcg.client.util.CustomException.ExceedCapacityException;
 import com.elementstcg.client.util.CustomException.OccupiedFieldException;
 import com.elementstcg.client.util.DialogUtility;
+import com.elementstcg.shared.trait.Card;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -21,6 +23,7 @@ import javafx.scene.layout.Pane;
 import java.io.IOException;
 import java.util.Map;
 import java.net.URL;
+import java.rmi.RemoteException;
 import java.util.ResourceBundle;
 
 public class BoardController implements Initializable, ControlledScreen {
@@ -113,12 +116,17 @@ public class BoardController implements Initializable, ControlledScreen {
      * @param point The point on the playing field it has to be placed on
      */
     public void PutCardPlayer(Card card, int point){
-        if(board.getPlayerField().get(point) == null) {
-            board.getPlayerField().put(point, card);
-        } else {
-            //TODO: handle if there is already a card on that point
-        }
+        //TODO Show the card visually.
+        Platform.runLater(() -> {
+            FieldPane field = (FieldPane) playerField.getChildren().get((point > 5 ? point - 5 : point));
+            board.putCardPlayer(point, card);
+            CardPane cardPane = new CardPane(card, ghostPane, this);
+            field.setCard(cardPane);
 
+            cardPane.setTranslateY(-70);
+
+            updateUI();
+        });
     }
 
     /**
@@ -143,7 +151,41 @@ public class BoardController implements Initializable, ControlledScreen {
      * @param point The point on the playing field it has to be placed on
      */
     public void putCardEnemy(Card card, int point){
-        board.getEnemyField().put(point, card);
+        //TODO Optimize method
+        Platform.runLater(() -> {
+            int fieldpointer;
+
+            if (point >= 6) {
+                fieldpointer = (point - 4);
+            } else {
+                fieldpointer = point;
+            }
+
+
+            FieldPane pane = (FieldPane) enemyField.getChildren().get(fieldpointer);
+            CardPane cardPane = new CardPane(card, ghostPane, this);
+            pane.setCard(cardPane);
+            cardPane.setCardState(CardState.EnemyField);
+
+
+            for (int i = 0; i < ((FieldGrid) pane.getParent()).getChildren().size(); i++) {
+                if (pane.equals(((FieldGrid) pane.getParent()).getChildren().get(i))) {
+                    try {
+                        board.putCardEnemy((i < 6 ? i : i - 6 + 10), card);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+
+            // TODO Apparently I'd need this property to set the cards right. Find a better way to fix this.
+            if (point < 9) {
+                pane.translateYProperty().set(-70);
+            } else {
+                pane.translateYProperty().set(40);
+            }
+        });
     }
 
     public void showCardButtonAction(CardPane cardPane) {
@@ -371,19 +413,9 @@ public class BoardController implements Initializable, ControlledScreen {
                     int point = board.getPlayerCardPoint(fieldCard.getCard());
                     Card cardRemoved = board.getPlayerField().get(point);
                     board.removePlayerCard(point);
-                    try {
-                        board.putCardPlayer(point, handCard.getCard());
-                    } catch (OccupiedFieldException e) {
-                        DialogUtility.newDialog(e.getMessage());
-                        //TODO: Why is there a forcefull way of putting a card?
-                        board.forcePutCardPlayer(point, cardRemoved);
-                        return;
-                    } catch (ExceedCapacityException e) {
-                        DialogUtility.newDialog(e.getMessage());
-                        //TODO: Why is there a forcefull way of putting a card?
-                        board.forcePutCardPlayer(point, cardRemoved);
-                        return;
-                    }
+
+                    //TODO Replace card by sending a request to the server
+                    //board.putCardPlayer(point, handCard.getCard());
 
                     // Go on with swapping cards.
                     fieldCard.resetCardPos();
@@ -428,16 +460,17 @@ public class BoardController implements Initializable, ControlledScreen {
 
                         for (int i = 0; i < ((FieldGrid) field.getParent()).getChildren().size(); i++) {
                             if (field.equals(((FieldGrid) field.getParent()).getChildren().get(i))) {
+                                //TODO Send request to the server to place the card on the selected field pane.
+
                                 try {
-                                    board.putCardPlayer((i < 6 ? i : i - 6 + 10), selectedCard.getCard());
-                                    field.setCard(selectedCard);
-                                } catch (OccupiedFieldException e) {
-                                    DialogUtility.newDialog(e.getMessage());
-                                    return;
-                                } catch (ExceedCapacityException e) {
-                                    DialogUtility.newDialog(e.getMessage());
-                                    return;
+                                    ClientHandler.getInstance().getServerHandler().placeCard(ClientHandler.getInstance().getSessionKey(),
+                                            hboxPlayerHand.getChildren().indexOf(selectedCard),
+                                            (i < 6 ? i : i - 6 + 10));
+                                } catch (RemoteException e) {
+                                    e.printStackTrace();
                                 }
+                                //board.putCardPlayer((i < 6 ? i : i - 6 + 10), selectedCard.getCard());
+                                //field.setCard(selectedCard);
                             }
                         }
 
@@ -456,8 +489,8 @@ public class BoardController implements Initializable, ControlledScreen {
     /**
      * Called when the player clicks on the next turn button
      */
-    public void NextTurnButtonAction() {
-        //Implement RMI action
+    public void nextTurnButtonAction() {
+        //TODO Implement RMI action
         updateUI();
     }
 
@@ -466,7 +499,7 @@ public class BoardController implements Initializable, ControlledScreen {
      * This methode is called when a player right clicks on an card on the field
      * @param cardPane that's been selected.
      */
-    public void ShowCardButtonAction(CardPane cardPane) {
+    public void showCardButtonAction(CardPane cardPane) {
         showGhostPane(cardPane.getGhostObject());
     }
 
@@ -475,7 +508,7 @@ public class BoardController implements Initializable, ControlledScreen {
      * @param cardPane
      * @throws IOException
      */
-    public void AttackEnemyCardButtonAction(CardPane cardPane) throws IOException {
+    public void attackEnemyCardButtonAction(CardPane cardPane) throws IOException {
         if (!board.isGameOver()) {
             int playerPoint = -1;
             int enemyPoint = -1;
@@ -510,6 +543,7 @@ public class BoardController implements Initializable, ControlledScreen {
     public void AddCardToPlayerHand(Card card){
         board.getPlayer().getHand().addCard(card);
 
+        hboxPlayerHand.getChildren().add(new CardPane(card, ghostPane, this));
         //TODO: Add the card to the hboxPlayerHand or find an alternative that uses the board.player.hand to automaticly do this
     }
 
@@ -525,7 +559,7 @@ public class BoardController implements Initializable, ControlledScreen {
      * Sets the enemy deck size to the provided value. The value has to be the total size
      * @param amount the total size of the deck
      */
-    public void UpdateEnemyDeckCount(int amount){
+    public void updateEnemyDeckCount(int amount){
         board.getEnemy().getDeck().setRemainingCards(amount);
     }
 
@@ -544,7 +578,10 @@ public class BoardController implements Initializable, ControlledScreen {
      * @param index the index of the card that needs to be removed
      */
     public void RemoveCardFromHandPlayer(int index){
-        board.getPlayer().getHand().RemoveCard(index);
+        Platform.runLater(() -> {
+            board.getPlayer().getHand().RemoveCard(index);
+            hboxPlayerHand.getChildren().remove(index);
+        });
     }
 
     /**

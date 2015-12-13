@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+
+import com.elementstcg.shared.trait.Card;
 import com.elementstcg.shared.trait.Element;
 
 public class Deck {

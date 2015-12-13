@@ -1,5 +1,7 @@
 package com.elementstcg.client;
 
+import com.elementstcg.shared.trait.Card;
+
 import java.util.ArrayList;
 import java.util.List;
 
