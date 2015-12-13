@@ -75,7 +75,7 @@ public class Player {
      * @param hp the amount by wich the player hp should be changed
      */
     public void modifyHp(int hp){
-        this.hp -= hp;
+        this.hp = hp;
         if(this.hp <= 0)
             this.hp = 0;
     }
