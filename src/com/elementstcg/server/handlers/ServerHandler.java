@@ -2,7 +2,7 @@ package com.elementstcg.server.handlers;
 
 import com.elementstcg.server.game.Account;
 import com.elementstcg.server.game.Board;
-import com.elementstcg.server.game.Card;
+import com.elementstcg.shared.trait.Card;
 import com.elementstcg.server.game.util.CustomException.ExceedCapacityException;
 import com.elementstcg.server.game.util.CustomException.OccupiedFieldException;
 import com.elementstcg.server.game.Player;
@@ -96,7 +96,7 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
 
                 // Creating new session.
                 clients.put(key, new Session(key, client, acc));
-                return new Response(true, 1, "Account found, client added");
+                return new Response(true, 1, key);
             } else {
                 return new Response(false, 2, "Couldn't generate session key.");
             }
@@ -134,14 +134,21 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
         Board board = games.get(caller.getBoardKey());
         Player player = (board.getPlayerOne().getSession().equals(caller) ? board.getPlayerOne() : board.getPlayerTwo());
         Player notPlayer = (!board.getTurn() ? board.getPlayerOne() : board.getPlayerTwo());
+        Player enemy = (board.getPlayerOne().getSession().equals(caller) ? board.getPlayerTwo() : board.getPlayerOne());
 
         //Place the card at the right spot
         //It first gets the right board, then gets the needed card and needed player to place the right card.
         try {
             board.putCardPlayer(point, player.getHand().getCard(selected), player);
+
             //Call ClientHandler of both players to place the cards on their fields visually.
             caller.getClient().placeCard(player.getHand().getCard(selected), point);
             notPlayer.getSession().getClient().placeCard(notPlayer.getHand().getCard(selected), point);
+
+            System.out.println(player.getName() + " placed card " + player.getHand().getCard(selected).getName());
+
+            caller.getClient().placeCard(player.getHand().getCard(selected), point);
+            enemy.getSession().getClient().enemyPlaceCard(player.getHand().getCard(selected), point);
         } catch (OccupiedFieldException e) {
             e.printStackTrace();
         } catch (ExceedCapacityException e) {
@@ -182,7 +189,6 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
     }
 
     public IResponse replaceCard(String key, int selected, int point) throws RemoteException {
-        //TODO: RICK
         //First bring the card that's currently there back to the hand, then place the given card there.
         Session caller = clients.get(key);
         Board board = games.get(caller.getBoardKey());
@@ -190,8 +196,15 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
         Player notPlayer = (!board.getTurn() ? board.getPlayerOne() : board.getPlayerTwo());
 
         //Get the right card and remove it from the board.
-        Card c = board.getCard(point);
-        board.removePlayerOneCard(point);
+        //TODO: check which players turn it is, and replace the correct card.
+        Card c;
+        c = player == board.getPlayerOne() ? board.getPlayerOneField().get(selected) : board.getPlayerTwoField().get(selected);
+
+        if (player != board.getPlayerOne()) {
+            board.removePlayerTwoCard(point);
+        } else {
+            board.removePlayerOneCard(point);
+        }
 
         //Add the card to the hand.
         player.getHand().addCard(c);
@@ -325,59 +338,25 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
 
     public IResponse findMatch(String key) throws RemoteException {
         //TODO: make sure this is thread-safe.
-        String givenKey = key;
         Session playerSession = clients.get(key);
-        int playerElo = playerSession.getAccount().getElo();
-        int itElo;
-        int tempScore;
-        int score = 10000;
-        Account match = null;
         Session matchSession = null;
-        Iterator it = searchingPlayers.entrySet().iterator();
 
-        while (it.hasNext())
-        {
-            HashMap.Entry pair = (HashMap.Entry)it.next();
-            matchSession = (Session)pair.getValue();
-            itElo = matchSession.getAccount().getElo();
+        searchingPlayers.put(key, playerSession);
 
-            if (itElo == playerElo) //Need a check to see if player(s) are in a match already
-            {
-                createBoardSession(playerSession, matchSession);
-                return new Response(true);
-            }
+        for(Map.Entry<String, Session> entry : searchingPlayers.entrySet()) {
+            if(!entry.getValue().equals(playerSession)) {
 
-            if (itElo < playerElo)
-            {
-                tempScore = playerElo - itElo;
-                if (tempScore < score)
-                {
-                    match = matchSession.getAccount();
-                    score = tempScore;
-                }
-            }
+                //TODO Implement the elo system thingy.
 
-            if (itElo > playerElo)
-            {
-                tempScore = itElo - playerElo;
-                if (tempScore < score)
-                {
-                    match = matchSession.getAccount();
-                    score = tempScore;
-                }
+                matchSession = entry.getValue();
+                break;
             }
         }
 
-        //check if a match has been found, if not then keep searching
-        if (match == null && matchSession == null)
-        {
-            //TODO Let thread sleep for 1000ms.
-            findMatch(givenKey);
-        }
+        //TODO Schedule to check every second for a new match.
 
-        //Not sure what to return as match, will return to later.
-        createBoardSession(playerSession, matchSession);
-
+        if(matchSession != null)
+            createBoardSession(playerSession, matchSession);
         
         return new Response(true);
     }
