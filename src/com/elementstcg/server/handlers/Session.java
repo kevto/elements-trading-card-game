@@ -38,14 +38,7 @@ public class Session {
 
     public void setBoardKey(String boardKey)
     {
-        if (!boardKey.isEmpty() && boardKey != null)
-        {
-            this.boardKey = boardKey;
-        }
-        else
-        {
-            throw new IllegalArgumentException();
-        }
+        this.boardKey = boardKey;
     }
 
 }

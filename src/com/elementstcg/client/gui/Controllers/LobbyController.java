@@ -32,16 +32,14 @@ public class LobbyController implements Initializable, ControlledScreen {
     @FXML Button ButtonNormalGame;
     @FXML Label lblSearchText;
 
-
-
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        //String playerName = Account.getInstance().getUserName();
-        //lblPlayerWelcome.setText("Welcome, " + playerName + "!");
+//        String playerName = Account.getInstance().getUserName();
+//        lblPlayerWelcome.setText("Welcome, " + playerName + "!");
     }
 
 
-    /*
+    /**
      * Request finding match to the server.
      */
     public void findMatch() {
@@ -54,7 +52,6 @@ public class LobbyController implements Initializable, ControlledScreen {
                 searchingmatch = true;
                 clientHandler.getServerHandler().findMatch(clientHandler.getSessionKey());
             }
-
         } catch (Exception ex) {
             System.out.print(ex.getMessage());
             ex.printStackTrace();
@@ -77,6 +74,11 @@ public class LobbyController implements Initializable, ControlledScreen {
             if(waitTime > 30) {
                 if(matchmakingTimer != null)
                     matchmakingTimer.cancel();
+
+                //TODO: IMPLEMENT PROPER WAY TO SET SEARCHING FALSE
+                searchingmatch = false;
+                waitTime = 0;
+                lblSearchText.setText("");
             }
         }
     }

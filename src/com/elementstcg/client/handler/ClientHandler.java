@@ -1,6 +1,7 @@
 package com.elementstcg.client.handler;
 
 import com.elementstcg.client.Account;
+import com.elementstcg.client.util.DialogUtility;
 import com.elementstcg.shared.trait.Card;
 import com.elementstcg.client.gui.Controllers.BoardController;
 import com.elementstcg.client.gui.ScreenHandler;
@@ -9,7 +10,9 @@ import com.elementstcg.shared.trait.ICard;
 import com.elementstcg.shared.trait.IClientHandler;
 import com.elementstcg.shared.trait.IResponse;
 import com.elementstcg.shared.trait.IServerHandler;
+import javafx.application.Platform;
 
+import java.lang.management.PlatformLoggingMXBean;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
@@ -23,12 +26,11 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
 
     private static ScreenHandler screenHandler;
 
-    private static String ip = "192.168.0.185";
+    private static String ip = "127.0.0.1";
     private static String port = "8112";
     private static String name = "server";
 
     private static BoardController boardController;
-
     private static String sessionKey;
 
     private ClientHandler() throws RemoteException {
@@ -238,7 +240,35 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
         }
     }
     public void endMatch(String message) throws RemoteException {
-        //TODO Find a better way to end the match.
-        System.exit(1);
+        Platform.runLater(() -> {
+            DialogUtility.newDialog(message);
+        });
+
+        returnLobby();
+    }
+
+    /**
+     * Will change the current screen to the lobby and create a thread to kill this board after a second
+     */
+    private void returnLobby() {
+
+        //Go to lobby
+        screenHandler.setScreen(ScreensFramework.screenLobbyID);
+
+        //Create a thread that will delete this board after 1 second
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(1000);
+                    screenHandler.unloadScreen(ScreensFramework.screenBoardID);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        //Start thread
+        thread.start();
     }
 }
