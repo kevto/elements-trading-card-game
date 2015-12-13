@@ -133,25 +133,34 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
         //First, find the right board to place the card on, then place the card
         Session caller = clients.get(key);
         Board board = games.get(caller.getBoardKey());
-        Player player = (board.getPlayerOne().getSession().equals(caller) ? board.getPlayerOne() : board.getPlayerTwo());
-        Player enemy = (board.getPlayerOne().getSession().equals(caller) ? board.getPlayerTwo() : board.getPlayerOne());
 
-        //Place the card at the right spot
-        //It first gets the right board, then gets the needed card and needed player to place the right card.
-        try {
-            board.putCardPlayer(point, player.getHand().getCard(selected), player);
+        if((board.getTurn() && board.getPlayerOne().getSession().equals(caller)) ||
+                (!board.getTurn() && board.getPlayerTwo().getSession().equals(caller))) {
 
-            System.out.println(player.getName() + " placed card " + player.getHand().getCard(selected).getName());
+            Player player = (board.getPlayerOne().getSession().equals(caller) ? board.getPlayerOne() : board.getPlayerTwo());
+            Player enemy = (board.getPlayerOne().getSession().equals(caller) ? board.getPlayerTwo() : board.getPlayerOne());
 
-            caller.getClient().placeCard(player.getHand().getCard(selected), point);
-            enemy.getSession().getClient().enemyPlaceCard(player.getHand().getCard(selected), point);
-        } catch (OccupiedFieldException e) {
-            e.printStackTrace();
-        } catch (ExceedCapacityException e) {
-            e.printStackTrace();
+            //Place the card at the right spot
+                //It first gets the right board, then gets the needed card and needed player to place the right card.
+            try {
+                board.putCardPlayer(point, player.getHand().playCard(selected), player);
+                //System.out.println(player.getName() + " placed card " + player.getHand().getCard(selected).getName());
+
+                caller.getClient().removeCardFromHand(selected);
+                caller.getClient().placeCard(player.getHand().getCard(selected), point);
+                enemy.getSession().getClient().enemyPlaceCard(player.getHand().getCard(selected), point);
+            } catch (OccupiedFieldException e) {
+                e.printStackTrace();
+                return new Response(false, e.getMessage());
+            } catch (ExceedCapacityException e) {
+                e.printStackTrace();
+                return new Response(false, e.getMessage());
+            }
+
+            return new Response(true);
+        } else {
+            return new Response(false, "It's not your turn to place a card!");
         }
-
-        return new Response(true);
     }
 
     public IResponse nextTurn(String key) throws RemoteException {
