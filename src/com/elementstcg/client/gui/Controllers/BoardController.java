@@ -551,7 +551,10 @@ public class BoardController implements Initializable, ControlledScreen {
      * @param index the index of the card that needs to be removed
      */
     public void RemoveCardFromHandPlayer(int index){
-        board.getPlayer().getHand().RemoveCard(index);
+        Platform.runLater(() -> {
+            board.getPlayer().getHand().RemoveCard(index);
+            hboxPlayerHand.getChildren().remove(index);
+        });
     }
 
     /**
