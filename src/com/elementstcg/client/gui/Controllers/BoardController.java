@@ -67,15 +67,12 @@ public class BoardController implements Initializable, ControlledScreen {
 
     /**
      * Add damage to the selected point with the given card
-     * @param card The card that is attacking
-     * @param point The point that is getting attacked
+     * @param playerPoint The card that is attacking
+     * @param enemyPoint The point that is getting attacked
      */
-    public void attackCard(Card card, int point){
-        CardPane cardPane = (CardPane)enemyField.getChildren().get(point);
-        //TODO: Catch exception like there is no card in that pos
-        if(cardPane != null) {
-            cardPane.getCard().modifyHP(card.getAttack());
-        }
+    public void attackCard(int playerPoint, int enemyPoint){
+            ClientHandler.AttackCard(playerPoint , enemyPoint);
+
     }
 
     /**
@@ -269,7 +266,13 @@ public class BoardController implements Initializable, ControlledScreen {
         //TODO: Finish this methode
 
         if (selectedCard != null && selectedCard.isSelected() && selectedCard.onField()) {
-
+            int playerPoint = -1;
+            for (Map.Entry<Integer, Card> entry : board.getPlayerField().entrySet())
+                if (entry.getValue().equals(selectedCard.getCard()))
+                    playerPoint = entry.getKey();
+            if (playerPoint != -1) {
+                ClientHandler.AttackEnemy(playerPoint);
+            }
         }
 
     }
