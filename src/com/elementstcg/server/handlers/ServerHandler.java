@@ -128,7 +128,6 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
     }
 
     public IResponse placeCard(String key, int selected, int point) throws RemoteException {
-        //TODO: RICK
         //Key is the player that places the card, int is the selected card in the hand, and point is where it gets placed
         //First, find the right board to place the card on, then place the card
         Session caller = clients.get(key);
@@ -203,11 +202,15 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
             //Call ClientHandler of both players to place the cards on their fields visually.
             caller.getClient().placeCard(player.getHand().getCard(selected), point);
             notPlayer.getSession().getClient().placeCard(notPlayer.getHand().getCard(selected), point);
+            //TODO Display new card in the hand of the enemy player.
+            //notPlayer.getSession().getClient().enemyAddCardToHand();
         } catch (OccupiedFieldException e) {
             e.printStackTrace();
         } catch (ExceedCapacityException e) {
             e.printStackTrace();
         }
+
+        return new Response(true);
 
     }
 

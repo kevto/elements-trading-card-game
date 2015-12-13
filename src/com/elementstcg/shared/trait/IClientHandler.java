@@ -126,5 +126,12 @@ public interface IClientHandler extends Remote {
      */
     public void nextTurn(Boolean isThisClientsTurn) throws RemoteException;
 
+    /**
+     * Ends the match and returns the players to the main screen.
+     * @param message shows who won.
+     * @throws RemoteException
+     */
+    public void endMatch(String message) throws RemoteException;
+
 
 }
