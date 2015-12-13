@@ -233,4 +233,12 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
             e.printStackTrace();
         }
     }
+
+    public static void AttackEnemy(int playerPoint){
+        try {
+            serverHandler.attackEnemy(sessionKey, playerPoint);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
 }
