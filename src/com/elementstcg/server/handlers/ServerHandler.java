@@ -143,12 +143,15 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
             //Place the card at the right spot
                 //It first gets the right board, then gets the needed card and needed player to place the right card.
             try {
-                board.putCardPlayer(point, player.getHand().playCard(selected), player);
+
+                Card card = player.getHand().playCard(selected);
+
+                board.putCardPlayer(point, card, player);
                 //System.out.println(player.getName() + " placed card " + player.getHand().getCard(selected).getName());
 
                 caller.getClient().removeCardFromHand(selected);
-                caller.getClient().placeCard(player.getHand().getCard(selected), point);
-                enemy.getSession().getClient().enemyPlaceCard(player.getHand().getCard(selected), point);
+                caller.getClient().placeCard(card, point);
+                enemy.getSession().getClient().enemyPlaceCard(card, point);
             } catch (OccupiedFieldException e) {
                 e.printStackTrace();
                 return new Response(false, e.getMessage());
