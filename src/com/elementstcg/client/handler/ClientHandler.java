@@ -1,6 +1,7 @@
 package com.elementstcg.client.handler;
 
 import com.elementstcg.client.Account;
+import com.elementstcg.client.util.DialogUtility;
 import com.elementstcg.shared.trait.Card;
 import com.elementstcg.client.gui.Controllers.BoardController;
 import com.elementstcg.client.gui.ScreenHandler;
@@ -9,6 +10,7 @@ import com.elementstcg.shared.trait.ICard;
 import com.elementstcg.shared.trait.IClientHandler;
 import com.elementstcg.shared.trait.IResponse;
 import com.elementstcg.shared.trait.IServerHandler;
+import javafx.application.Platform;
 
 import java.net.MalformedURLException;
 import java.rmi.Naming;
@@ -224,9 +226,20 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
 
     public static void AttackCard(int playerPoint, int enemyPoint){
         try {
-            serverHandler.attackCard(sessionKey ,playerPoint, enemyPoint);
-        } catch (RemoteException e) {
-            e.printStackTrace();
+            IResponse response = serverHandler.attackCard(sessionKey, playerPoint, enemyPoint);
+            if (!response.wasSuccessful()) {
+                Platform.runLater(() -> {
+                    try {
+                        DialogUtility.newDialog(response.getMessage());
+                    } catch (RemoteException ex) {
+                        ex.printStackTrace();
+                    }
+                });
+            }
+        } catch (RemoteException ex) {
+            ex.printStackTrace();
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 
