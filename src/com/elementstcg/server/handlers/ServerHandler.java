@@ -203,7 +203,7 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
 
 
          //Get the right card and remove it from the board.
-         //TODO: check which players turn it is, and replace the correct card.
+         //check which players turn it is, and replace the correct card.
          Card c = null;
          //Check the board to see whose turn it is; if it's the caller: proceed.
         if((board.getTurn() && board.getPlayerOne().getSession().equals(caller)) ||
@@ -225,10 +225,10 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
 
             //Play the card that replaces the old one.
             try {
-                board.putCardPlayer(point, player.getHand().getCard(selected), player);
+                board.putCardPlayer(point, player.getHand().playCard(selected), player);
                 //Call ClientHandler of both players to place the cards on their fields visually.
-                caller.getClient().placeCard(player.getHand().getCard(selected), point);
-                enemy.getSession().getClient().placeCard(enemy.getHand().getCard(selected), point);
+                caller.getClient().placeCard(player.getHand().playCard(selected), point);
+                enemy.getSession().getClient().placeCard(enemy.getHand().playCard(selected), point);
                 //TODO Display new card in the hand of the enemy player.
                 // notPlayer.getSession().getClient().enemyAddCardToHand();
 
