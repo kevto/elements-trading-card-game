@@ -1,6 +1,7 @@
 package com.elementstcg.server.game;
 
 import com.elementstcg.shared.trait.Card;
+import com.elementstcg.shared.trait.Element;
 import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,7 +24,8 @@ public class PlayerTest extends TestCase {
         cards.add(new Card(Element.Thunder, 1, 1,"ThunderCard" , 1));
         cards.add(new Card(Element.Water, 1, 1,"WaterCard" , 1));
         Deck deck = new Deck(cards);
-        player = new Player(20, "player", deck);
+        //TODO: don't give a null session
+        player = new Player(20, "player", null);
     }
 
     @Test
@@ -33,9 +35,9 @@ public class PlayerTest extends TestCase {
 
     @Test
     public void testModifyHp() throws Exception {
-        Player playerOne = new Player(20, "player");
-        Player playerTwo = new Player(20, "player");
-        Player playerThree = new Player(10, "player");
+        Player playerOne = new Player(20, "player", null);
+        Player playerTwo = new Player(20, "player", null);
+        Player playerThree = new Player(10, "player", null);
 
         playerOne.modifyHp(5);
         playerTwo.modifyHp(-5);
@@ -69,7 +71,7 @@ public class PlayerTest extends TestCase {
         cards.add(new Card(Element.Air, 1, 1, "asdf", 1));
 
         Deck deck = new Deck(cards);
-        Player p = new Player(10, "asdf");
+        Player p = new Player(10, "asdf", null);
         p.setDeck(deck);
 
         assertEquals("Wrong deck returned", deck.getAmountCards(), p.getDeck().getAmountCards());

@@ -1,6 +1,7 @@
 package com.elementstcg.server.game;
 
 import com.elementstcg.shared.trait.Card;
+import com.elementstcg.shared.trait.Element;
 import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
