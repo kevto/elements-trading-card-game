@@ -503,7 +503,7 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
             searchingPlayers.remove(ses1.getSessionKey());
             searchingPlayers.remove(ses2.getSessionKey());
 
-            if(ses1.getClient().setupMatch(ses2.getAccount().getUserName())) {
+            if(ses1.getClient().setupMatch(ses2.getAccount().getUserName(), true)) {
                 ses1.getClient().addCardToHand(board.getPlayerOne().drawCard());
                 ses1.getClient().addCardToHand(board.getPlayerOne().drawCard());
                 ses1.getClient().addCardToHand(board.getPlayerOne().drawCard());
@@ -511,7 +511,7 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
                 ses1.getClient().addCardToHand(board.getPlayerOne().drawCard());
             }
 
-            if(ses2.getClient().setupMatch(ses1.getAccount().getUserName())) {
+            if(ses2.getClient().setupMatch(ses1.getAccount().getUserName(), false)) {
                 ses2.getClient().addCardToHand(board.getPlayerTwo().drawCard());
                 ses2.getClient().addCardToHand(board.getPlayerTwo().drawCard());
                 ses2.getClient().addCardToHand(board.getPlayerTwo().drawCard());

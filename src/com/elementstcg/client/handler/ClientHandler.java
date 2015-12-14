@@ -134,7 +134,7 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
         return serverHandler;
     }
 
-    public boolean setupMatch(String enemyName) throws RemoteException{
+    public boolean setupMatch(String enemyName, boolean startTurn) throws RemoteException{
         System.out.println("Setting up the board..");
         //Check if there already is an board screen (there shouldn't)
         if(screenHandler.getScreen(ScreensFramework.screenBoardID) != null) {
@@ -149,6 +149,10 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
 
         //Display screen
         screenHandler.setScreen(ScreensFramework.screenBoardID);
+
+        Platform.runLater(() -> {
+            DialogUtility.newDialog((startTurn ? "You start first!" : "Your opponent starts first!"));
+        });
 
         return true;
     }
@@ -247,7 +251,18 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
 
     public static void AttackEnemy(int playerPoint) {
         try {
-            serverHandler.attackEnemy(sessionKey, playerPoint);
+            IResponse response = serverHandler.attackEnemy(sessionKey, playerPoint);
+            Platform.runLater(() -> {
+                try {
+                    if (!response.wasSuccessful()) {
+                        DialogUtility.newDialog(response.getMessage());
+                    }
+                } catch (RemoteException ex) {
+                    ex.printStackTrace();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            });
         } catch (RemoteException e) {
             e.printStackTrace();
         }
