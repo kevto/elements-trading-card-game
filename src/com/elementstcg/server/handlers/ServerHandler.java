@@ -524,8 +524,6 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
             ses2.getClient().updateDeckCount(board.getPlayerTwo().getAmountCardsInDeck());
             ses1.getClient().enemyUpdateDeckCount(board.getPlayerTwo().getAmountCardsInDeck());
             ses2.getClient().enemyUpdateDeckCount(board.getPlayerOne().getAmountCardsInDeck());
-
-            //TODO Update enemy amount of cards in deck.
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
