@@ -1,0 +1,16 @@
+/.idea/
+/dist/
+/builds/
+/build/
+/bin/
+
+.idea/
+dist/
+builds/
+build/
+bin/
+
+*.class
+target/
+savedaccount.ser
+Game.iml

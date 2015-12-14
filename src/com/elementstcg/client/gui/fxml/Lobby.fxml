@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<Pane maxHeight="400.0" maxWidth="637.0" minHeight="400.0" minWidth="600.0" prefHeight="400.0" prefWidth="602.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.elementstcg.client.gui.Controllers.LobbyController">
+   <children>
+      <ImageView fitHeight="465.0" fitWidth="619.0" layoutX="-8.0" layoutY="-8.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../images/lobby_background.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="ElementsLogo" fitHeight="278.0" fitWidth="764.0" layoutX="27.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../images/elements_lobby_logo.png" />
+         </image>
+      </ImageView>
+      <Label fx:id="lblSearchText" layoutX="302.0" layoutY="346.0" text="SEARCHING FOR 0 SECONDS..." textFill="#bcbcbc" visible="false">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <ImageView fx:id="ButtonPlayNormal" disable="true" fitHeight="74.0" fitWidth="335.0" layoutX="302.0" layoutY="263.0" onMouseClicked="#clickedNormalGame" onMouseEntered="#clickedNormalGame" onMouseReleased="#clickedNormalGame" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../images/button_2.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="ButtonPlayAi" fitHeight="72.0" fitWidth="288.0" layoutX="2.0" layoutY="263.0" onMouseClicked="#clickedVsAi" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../images/button_1.png" />
+         </image>
+      </ImageView>
+      <Button fx:id="ButtonPlayVsAi" layoutX="1.0" layoutY="264.0" mnemonicParsing="false" onMouseClicked="#clickedVsAi" prefHeight="74.0" prefWidth="288.0" style="-fx-opacity: 0.1;" textFill="TRANSPARENT" />
+      <Button fx:id="ButtonNormalGame" layoutX="302.0" layoutY="263.0" mnemonicParsing="false" onMouseClicked="#clickedNormalGame" prefHeight="74.0" prefWidth="296.0" style="-fx-opacity: 0.1;" textFill="TRANSPARENT" />
+      <Label fx:id="lblNormalGame" contentDisplay="CENTER" layoutX="322.0" layoutY="275.0" onMouseClicked="#clickedNormalGame" text="NORMAL GAME" textAlignment="CENTER" textFill="#e46dff">
+         <font>
+            <Font name="BebasNeueBold" size="36.0" />
+         </font>
+      </Label>
+      <Label fx:id="lblPlayVsAi" contentDisplay="CENTER" layoutX="59.0" layoutY="275.0" onMouseClicked="#clickedVsAi" text="PLAY VS AI" textAlignment="CENTER" textFill="#40bcff">
+         <font>
+            <Font name="BebasNeueBold" size="36.0" />
+         </font>
+      </Label>
+      <Label fx:id="lblPlayerWelcome" layoutX="350.0" layoutY="14.0" prefHeight="17.0" prefWidth="212.0" textFill="#dadada" />
+   </children>
+</Pane>
