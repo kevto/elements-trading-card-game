@@ -368,6 +368,11 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
         if((board.getTurn() && board.getPlayerOne().getSession().equals(caller)) ||
                 (!board.getTurn() && board.getPlayerTwo().getSession().equals(caller))) {
 
+            // Check if it's the first turn.
+            if(board.isFirstTurn()) {
+                return new Response(false, "You can't attack the enemy the first round!");
+            }
+
             // Defender cards are not allowed to attack. Any point below 6 is a defender card.
             if(point < 6) {
                 return new Response(false, "This is a defender card. You can't attack with this card!");
