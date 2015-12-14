@@ -15,8 +15,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
-import java.io.IOException;
-
 public class CardPane extends StackPane {
 
     private Card card;
@@ -209,11 +207,11 @@ public class CardPane extends StackPane {
 
         //Center element icon to card
         elementImageView.setX((cardImage.getWidth() / 2) - (elementImage.getWidth() / 2));
-        elementImageView.setY(50);
+        elementImageView.setY(35);
 
         //Set capacityLabel pos
-        capacityLabel.setTranslateX(25);
-        capacityLabel.setTranslateY(5);
+        capacityLabel.setTranslateX(28);
+        capacityLabel.setTranslateY(8);
 
         //Set attackLabel pos
         attackLabel.setTranslateX(30);
@@ -225,7 +223,7 @@ public class CardPane extends StackPane {
 
         //Set nameLabel pos
         nameLabel.setTranslateX(20);
-        nameLabel.setTranslateY(285);
+        nameLabel.setTranslateY(290);
 
         return cardContainer;
     }

@@ -39,7 +39,7 @@
                         <Image url="@../images/deck_view.png" />
                      </image>
                   </ImageView>
-                  <Label fx:id="labelEnemyDeckSize" alignment="CENTER" layoutY="89.0" prefHeight="49.0" prefWidth="136.0" text="0">
+                  <Label fx:id="labelEnemyDeckSize" alignment="CENTER" layoutY="19.0" prefHeight="49.0" prefWidth="136.0" text="0">
                      <font>
                         <Font size="26.0" />
                      </font>
@@ -53,7 +53,7 @@
                         <Image url="@../images/deck_view.png" />
                      </image>
                   </ImageView>
-                  <Label fx:id="labelPlayerDeckSize" alignment="CENTER" layoutY="89.0" prefHeight="49.0" prefWidth="136.0" text="0">
+                  <Label fx:id="labelPlayerDeckSize" alignment="CENTER" layoutY="19.0" prefHeight="49.0" prefWidth="136.0" text="0">
                      <font>
                         <Font size="26.0" />
                      </font>
