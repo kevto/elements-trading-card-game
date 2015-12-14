@@ -4,6 +4,7 @@
 
 package com.elementstcg.client;
 
+import com.elementstcg.shared.trait.Card;
 import com.elementstcg.shared.trait.Element;
 import com.elementstcg.client.util.CustomException.EmptyFieldException;
 import com.elementstcg.client.util.CustomException.ExceedCapacityException;
@@ -27,6 +28,7 @@ public class BoardTest extends TestCase {
     @Before
     public void setUp()
     {
+
         player = new Player(20, "Rick");
         enemy = new Player(20, "Maarten");
         board = new Board(enemy.getName());
@@ -79,9 +81,7 @@ public class BoardTest extends TestCase {
     public void testPutCardPlayer(){
         try {
             board.putCardPlayer(1, card);
-        } catch (OccupiedFieldException e) {
-            System.out.println(e.toString());
-        } catch (ExceedCapacityException e) {
+        } catch (Exception e) {
             System.out.println(e.toString());
         }
 
@@ -141,7 +141,7 @@ public class BoardTest extends TestCase {
     @Test
     public void testConstructor()
     {
-        Board b = new Board("testName");
+        Board b = new Board("TestPlayer");
         assertEquals("Board failed to create", b.getEnemy().getName(), "testName");
 
         try {

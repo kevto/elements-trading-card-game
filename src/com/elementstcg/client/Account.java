@@ -24,7 +24,7 @@ public class Account implements Serializable {
      * @author Mick Wonnink
      * @param username
      */
-    private Account(String username){
+    public Account(String username){
         this.username = username;
     }
 
