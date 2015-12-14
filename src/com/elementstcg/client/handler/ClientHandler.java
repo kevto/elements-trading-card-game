@@ -12,12 +12,14 @@ import com.elementstcg.shared.trait.IResponse;
 import com.elementstcg.shared.trait.IServerHandler;
 import javafx.application.Platform;
 
+import java.io.*;
 import java.lang.management.PlatformLoggingMXBean;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.Properties;
 
 public class ClientHandler extends UnicastRemoteObject implements IClientHandler {
 
@@ -25,10 +27,6 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
     private static IServerHandler serverHandler;
 
     private static ScreenHandler screenHandler;
-
-    private static String ip = "127.0.0.1";
-    private static String port = "8112";
-    private static String name = "server";
 
     private static BoardController boardController;
     private static String sessionKey;
@@ -59,6 +57,30 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
     }
 
     public boolean setupServerConnection () {
+        File propsFile = new File("netconf.properties");
+
+        String ip = "";
+        int port = 0;
+        String name = "";
+
+        if(!propsFile.exists()) {
+            System.err.println("[Critical] netconf.properties file doesn't exist.");
+            return false;
+        }
+
+        Properties props = new Properties();
+        try {
+            props.load(new FileInputStream(propsFile));
+            ip = props.getProperty("server.ip");
+            port = Integer.valueOf(props.getProperty("server.port"));
+            name = props.getProperty("server.name");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
         if(!"".equals(ip) && !"".equals(port) && !"".equals(name) )
         {
             try {
