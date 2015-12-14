@@ -8,6 +8,7 @@ package com.elementstcg.server.game;
 
 import com.avaje.ebean.Model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -19,12 +20,23 @@ public class Account extends Model implements Serializable {
 
     @Id
     private int id;
+
+    @Column(name = "username")
     private String username;
+
+    @Column(name = "password")
     private String password;
     private transient String ip;
     private transient int port;
+
+    @Column(name = "email")
     private String email;
-    private transient int elo;
+
+    @Column(name = "elo")
+    private int elo;
+
+    @Column(name = "gold")
+    private int gold;
 
     /**
      * Checks if the given username and password combination exist,
@@ -179,6 +191,30 @@ public class Account extends Model implements Serializable {
      * @return an int that is the elo.
      */
     public int getElo() { return elo; }
+
+    /**
+     * Sets the elo of the player.
+     * @param elo will be added on top of the existing elo.
+     */
+    public void setElo(int elo) {
+        this.elo = elo;
+    }
+
+    /**
+     * Sets the amount of gold of the player. gold will be added on top of the player gold.
+     * @param gold
+     */
+    public void setGold(int gold) {
+        this.gold += gold;
+    }
+
+    /**
+     * Returns the amount of gold of the player.
+     * @return gold in int.
+     */
+    public int getGold() {
+        return this.gold;
+    }
 
     /**
      * Sets the ip and port field.

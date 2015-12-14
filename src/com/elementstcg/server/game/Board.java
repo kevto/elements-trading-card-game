@@ -14,6 +14,7 @@ import java.util.Map;
 public class Board {
 
     private boolean playerOneTurn = true;
+    private boolean firstTurn = true;
     public static final int MAX_CAP_POINTS = 15;
     public static final int INITIAL_HP = 45;
     private Player playerOne;
@@ -88,6 +89,9 @@ public class Board {
      */
     public void nextTurn(){
         playerOneTurn ^= true;
+        if(firstTurn) {
+            firstTurn = false;
+        }
 
         for(Map.Entry<Integer, Card> entry : playerOneField.entrySet())
             entry.getValue().setAttacked(false);
@@ -305,6 +309,14 @@ public class Board {
      */
     public String getSessionKey() {
         return sessionKey;
+    }
+
+    /**
+     * Returns boolean whether it's the board's first turn.
+     * @return boolean.
+     */
+    public boolean isFirstTurn() {
+        return firstTurn;
     }
 
     public Card getCard(int point) { return playerOneField.get(point); }
