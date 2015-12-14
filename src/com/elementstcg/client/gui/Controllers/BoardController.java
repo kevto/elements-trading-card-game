@@ -118,7 +118,6 @@ public class BoardController implements Initializable, ControlledScreen {
      * @param point The point on the playing field it has to be placed on
      */
     public void PutCardPlayer(Card card, int point){
-        //TODO Show the card visually.
         Platform.runLater(() -> {
             FieldPane field = (FieldPane) playerField.getChildren().get((point > 5 ? point - 10 + 6 : point));
             board.putCardPlayer(point, card);
@@ -154,6 +153,7 @@ public class BoardController implements Initializable, ControlledScreen {
 
         Platform.runLater(() -> {
             pane.removeCard();
+            updateUI();
         });
     }
 
@@ -181,6 +181,8 @@ public class BoardController implements Initializable, ControlledScreen {
             } else {
                 pane.translateYProperty().set(40);
             }
+
+            updateUI();
         });
     }
 /*
@@ -212,6 +214,7 @@ public class BoardController implements Initializable, ControlledScreen {
 
         Platform.runLater(() -> {
             pane.removeCard();
+            updateUI();
         });
     }
 
@@ -230,8 +233,8 @@ public class BoardController implements Initializable, ControlledScreen {
      * - HP of all player cards
      */
     public void updateUI(){
-        labelEnemyCAP.setText(String.valueOf(enemyField.getCapPoints()));
-        labelPlayerCAP.setText(String.valueOf(playerField.getCapPoints()));
+        labelEnemyCAP.setText(String.valueOf(Board.MAX_CAP_POINTS - enemyField.getCapPoints()));
+        labelPlayerCAP.setText(String.valueOf(Board.MAX_CAP_POINTS - playerField.getCapPoints()));
 
         labelEnemyHP.setText(String.valueOf(board.getEnemy().getHp()));     // Only useful when the player hasn't attacked the enemy yet.
         labelPlayerHP.setText(String.valueOf(board.getPlayer().getHp()));   // Only useful when the player hasn't attacked the enemy yet.
@@ -460,16 +463,28 @@ public class BoardController implements Initializable, ControlledScreen {
             if (grid.getFieldType() == FieldType.Player) {
                 if (selectedCard != null) {
                     if (selectedCard.getCardState() == CardState.PlayerHand) {
-                        //TODO: Notify Board object that an card has been placed on the playing field
+                        //Notify Board object that an card has been placed on the playing field
 
                         for (int i = 0; i < ((FieldGrid) field.getParent()).getChildren().size(); i++) {
                             if (field.equals(((FieldGrid) field.getParent()).getChildren().get(i))) {
-                                //TODO Send request to the server to place the card on the selected field pane.
+                                //Send request to the server to place the card on the selected field pane.
 
                                 try {
-                                    ClientHandler.getInstance().getServerHandler().placeCard(ClientHandler.getInstance().getSessionKey(),
+                                    IResponse response = ClientHandler.getInstance().getServerHandler().placeCard(ClientHandler.getInstance().getSessionKey(),
                                             hboxPlayerHand.getChildren().indexOf(selectedCard),
                                             (i < 6 ? i : i - 6 + 10));
+
+                                    Platform.runLater(() -> {
+                                        try {
+                                            if(!response.wasSuccessful()) {
+                                                DialogUtility.newDialog(response.getMessage());
+                                            }
+                                        } catch (RemoteException ex) {
+                                            ex.printStackTrace();
+                                        } catch (Exception ex) {
+                                            ex.printStackTrace();
+                                        }
+                                    });
                                 } catch (RemoteException e) {
                                     e.printStackTrace();
                                 }
