@@ -1,6 +1,8 @@
 package com.elementstcg.server.game;
 
 import com.elementstcg.server.game.util.CalculateMultiplier;
+import com.elementstcg.shared.trait.Card;
+import com.elementstcg.shared.trait.Element;
 import junit.framework.TestCase;
 import org.junit.Test;
 

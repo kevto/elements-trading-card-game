@@ -5,7 +5,9 @@
 package com.elementstcg.server.game;
 
 
+import com.elementstcg.server.handlers.Session;
 import com.elementstcg.shared.trait.Card;
+import com.elementstcg.shared.trait.Element;
 import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,46 +26,43 @@ public class BoardTest extends TestCase {
     Board board;
     Player enemy;
     Card card;
+    Session s1;
+    Session s2;
 
     @Before
     public void setUp()
     {
-        player = new Player(20, "Rick");
-        enemy = new Player(20, "Maarten");
-        board = new Board(player.getName(), enemy.getName());
+        //TODO: make actual sessions to test with.
+        player = new Player(20, "Rick", null);
+        enemy = new Player(20, "Maarten", null);
+        board = new Board("Rick", null, null);
         card = new Card(Element.Air, 3, 10, "TestCard", 2);
+        s1 = new Session("Rick", null, null);
     }
 
     @Test
-    public void testSetupPlayer() {
-        Board b = new Board("Rick", "Lol");
-        b.setupPlayer("Kevin");
-        assertEquals("Enemy didn't match", b.getEnemy().getName(), "Kevin");
-    }
-
-    @Test
-    public void testUpdatePlayerHP(){
-        board.updatePlayerHP(10);
-        assertEquals("HP wasn't 35", board.getPlayer().getHp(), 35);
-        board.updatePlayerHP(-20);
-        assertEquals("HP should be 55 now.", board.getPlayer().getHp(), 55);
+    public void testUpdatePlayerOneHP(){
+        board.updatePlayerOneHP(10);
+        assertEquals("HP wasn't 35", board.getPlayerOne().getHp(), 35);
+        board.updatePlayerOneHP(-20);
+        assertEquals("HP should be 55 now.", board.getPlayerOne().getHp(), 55);
     }
 
     @Test
     public void testUpdateEnemyHP(){
-        board.updateEnemyHP(10);
-        assertEquals("HP wasn't 35", board.getEnemy().getHp(), 35);
-        board.updateEnemyHP(-20);
-        assertEquals("HP should be 55 now.", board.getEnemy().getHp(), 55);
+        board.updatePlayerTwoHP(10);
+        assertEquals("HP wasn't 35", board.getPlayerTwo().getHp(), 35);
+        board.updatePlayerTwoHP(-20);
+        assertEquals("HP should be 55 now.", board.getPlayerTwo().getHp(), 55);
     }
 
     @Test
     public void testIsGameOver(){
         assertFalse("Game should not be over.", board.isGameOver());
-        board.updatePlayerHP(100);
+        board.updatePlayerOneHP(100);
         assertTrue("Should return true, player hp", board.isGameOver());
-        board.updatePlayerHP(-100);
-        board.updateEnemyHP(100);
+        board.updatePlayerOneHP(-100);
+        board.updatePlayerTwoHP(100);
         assertTrue("Should be true, enemy hp", board.isGameOver());
     }
 
@@ -77,14 +76,14 @@ public class BoardTest extends TestCase {
     @Test
     public void testPutCardPlayer(){
         try {
-            board.putCardPlayer(1, card);
+            board.putCardPlayer(1, card, player);
         } catch (OccupiedFieldException e) {
             System.out.println(e.toString());
         } catch (ExceedCapacityException e) {
             System.out.println(e.toString());
         }
 
-        HashMap<Integer, Card> testCards = board.getPlayerField();
+        HashMap<Integer, Card> testCards = board.getPlayerOneField();
 
         if (testCards.isEmpty()) {
             fail("Card was not entered into player field");
@@ -101,8 +100,8 @@ public class BoardTest extends TestCase {
 
     @Test
     public void testPutCardEnemy() throws Exception {
-        board.putCardEnemy(1, card);
-        HashMap<Integer, Card> testCards = board.getEnemyField();
+        board.putCardPlayerTwo(1, card);
+        HashMap<Integer, Card> testCards = board.getPlayerTwoField();
 
         if (testCards.isEmpty()) {
             fail("Card was not entered into player field");
@@ -119,10 +118,11 @@ public class BoardTest extends TestCase {
 
     @Test
     public void testAttackCard() throws EmptyFieldException {
-        board.putCardEnemy(1, card);
+        //TODO: add runnable for attackCard
+        board.putCardPlayerTwo(1, card);
         Card testCard = new Card(Element.Air, 4, 10, "alakazam", 3);
-        board.attackCard(testCard, 1, board.getEnemyField(), null);
-        HashMap<Integer, Card> testcards = board.getEnemyField();
+        board.attackCard(player, 1, 1, null);
+        HashMap<Integer, Card> testcards = board.getPlayerTwoField();
 
         if (testcards == null) {
             fail("No cards found");
@@ -140,11 +140,11 @@ public class BoardTest extends TestCase {
     @Test
     public void testConstructor()
     {
-        Board b = new Board("testName", "enemy");
-        assertEquals("Board failed to create", b.getEnemy().getName(), "enemy");
+        Board b = new Board("testName", null, null);
+        assertEquals("Board failed to create", b.getPlayerTwo().getName(), "enemy");
 
         try {
-            Board failBoard = new Board("", "");
+            Board failBoard = new Board("", null, null);
             fail("EnemyName in the board constructor can NOT be empty!");
         } catch(IllegalArgumentException ex) {}
     }
