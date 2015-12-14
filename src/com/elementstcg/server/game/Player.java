@@ -11,6 +11,7 @@ public class Player {
     private Deck deck;
     private final Session session;
 
+
     /**
      * Initilizes the Player class with the given hp and name
      * @author Maarten Verboogen
@@ -29,7 +30,7 @@ public class Player {
     * @param deck the deck that the player will be playing with
     * @param session session of the player.
     */
-    public Player(int hp, String name, Deck deck, Session session){
+ public Player(int hp, String name, Deck deck, Session session){
         this.hp = hp;
         this.name = name;
         this.deck = deck;
