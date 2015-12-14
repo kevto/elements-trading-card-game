@@ -409,19 +409,44 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
 
                 selectedCard.setAttacked(true);
 
-                // Game over.
+                // Game over
                 if(board.isGameOver()) {
-                    String message = "%s has won the match with %d HP left!";
+                    String winMessage = "%s has won the match with %d HP left! You won 3 Gold!";
+                    String loseMessage = "%s has won the match with %d HP left! You lost 1 Gold!";
+
+                    Account playerOne = board.getPlayerOne().getSession().getAccount();
+                    Account playerTwo = board.getPlayerTwo().getSession().getAccount();
+
                     if(board.getPlayerOne().getHp() < 1) {
-                        message = String.format(message, board.getPlayerTwo().getName(), board.getPlayerOne().getHp());
+                        winMessage = String.format(winMessage, board.getPlayerTwo().getName(), board.getPlayerTwo().getHp());
+                        loseMessage = String.format(loseMessage, board.getPlayerOne().getName(), board.getPlayerOne().getHp());
+                        playerOne.setElo(-50);
+                        playerTwo.setElo(75);
+                        playerOne.setGold(3);
+                        playerTwo.setGold(-1);
                     } else {
-                        message = String.format(message, board.getPlayerOne().getName(), board.getPlayerTwo().getHp());
+                        winMessage = String.format(winMessage, board.getPlayerOne().getName(), board.getPlayerOne().getHp());
+                        loseMessage = String.format(loseMessage, board.getPlayerTwo().getName(), board.getPlayerTwo().getHp());
+                        playerTwo.setElo(-50);
+                        playerOne.setElo(75);
+                        playerTwo.setGold(3);
+                        playerOne.setGold(-1);
                     }
 
-                    //TODO Client needs endMatch method with String for the message.
-                    board.getPlayerOne().getSession().getClient().endMatch(message);
-                    board.getPlayerTwo().getSession().getClient().endMatch(message);
+                    // Saving the new gold value and elo.
+                    playerOne.save();
+                    playerTwo.save();
 
+                    // Sending the endMatch message.
+                    if(board.getPlayerOne().getHp() < 1) {
+                        board.getPlayerOne().getSession().getClient().endMatch(loseMessage);
+                        board.getPlayerTwo().getSession().getClient().endMatch(winMessage);
+                    } else {
+                        board.getPlayerOne().getSession().getClient().endMatch(winMessage);
+                        board.getPlayerTwo().getSession().getClient().endMatch(loseMessage);
+                    }
+
+                    // Removing the board session.
                     removeBoardSession(board);
                 }
             }
