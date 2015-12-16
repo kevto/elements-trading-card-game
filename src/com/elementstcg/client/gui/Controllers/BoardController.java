@@ -27,6 +27,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.net.URL;
 import java.rmi.RemoteException;
@@ -386,8 +387,9 @@ public class BoardController implements Initializable, ControlledScreen {
         });
 
         btSendMessage.setOnAction((event) -> {
-            // Button was clicked, do something...
-            ClientHandler.sendMessage(chatField.getText());
+            // Send a message
+            String newChatMessage = "[" + board.getPlayer().getName() + "]"  + LocalDateTime.now().getHour() + ":" + LocalDateTime.now().getMinute() + " :" + chatField.getText();
+            ClientHandler.sendMessage(newChatMessage);
         });
 
         // Set on click listener to enemy info box (pane).
