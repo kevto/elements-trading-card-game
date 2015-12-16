@@ -9,10 +9,15 @@ import com.elementstcg.client.util.DialogUtility;
 import com.elementstcg.shared.trait.Card;
 import com.elementstcg.shared.trait.IResponse;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseButton;
@@ -21,12 +26,10 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 
-import java.awt.*;
 import java.io.IOException;
-import java.util.Map;
+import java.util.*;
 import java.net.URL;
 import java.rmi.RemoteException;
-import java.util.ResourceBundle;
 
 public class BoardController implements Initializable, ControlledScreen {
 
@@ -48,8 +51,13 @@ public class BoardController implements Initializable, ControlledScreen {
     @FXML Label labelEnemyHP;
     @FXML Label labelPlayerHP;
 
+    @FXML Button btSendMessage;
+    @FXML ListView chatBox;
+    @FXML TextField chatField;
+
     @FXML Label labelEnemyName;
     @FXML Label labelPlayerName;
+
 
     @FXML Pane enemyInfo;
 
@@ -57,6 +65,7 @@ public class BoardController implements Initializable, ControlledScreen {
     private FieldGrid enemyField;
     private CardPane selectedCard;
     private ScreenHandler screenHandler;
+    private ObservableList<String> chatMessages = FXCollections.observableArrayList();
 
     /**
      * Methode for the server to call if the game is over
@@ -343,6 +352,8 @@ public class BoardController implements Initializable, ControlledScreen {
         //Create a board object
         board = new Board();
 
+        chatBox.setItems(chatMessages);
+
         //Setup the player hands
         hboxPlayerHand.getParent().prefWidth(hboxPlayerHand.getPrefWidth());
         hboxPlayerHand.getParent().prefHeight(hboxPlayerHand.getPrefHeight());
@@ -374,6 +385,11 @@ public class BoardController implements Initializable, ControlledScreen {
             }
         });
 
+        btSendMessage.setOnAction((event) -> {
+            // Button was clicked, do something...
+            ClientHandler.sendMessage(chatField.getText());
+        });
+
         // Set on click listener to enemy info box (pane).
         enemyInfo.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
             attackEnemyDirectButtonAction();
@@ -382,6 +398,8 @@ public class BoardController implements Initializable, ControlledScreen {
         // Update the UI
         updateUI();
     }
+
+
 
     /**
      * Registers the boardController with clientHandler
@@ -656,6 +674,10 @@ public class BoardController implements Initializable, ControlledScreen {
             //pane.getCard().getCard().modifyHP(pane.getCard().getCard().getHP() - hp);
             pane.getCard().updateUi();
         });
+    }
+
+    public void recieveMessage(String message){
+        chatMessages.add(message);
     }
 
     /**
