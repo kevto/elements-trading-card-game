@@ -126,5 +126,21 @@ public interface IClientHandler extends Remote {
      */
     public void nextTurn(Boolean isThisClientsTurn) throws RemoteException;
 
+    /**
+     * This method is used to end a match, for example if a player quits or wins
+     * @param message This parameter is the message the server sends to the client
+     * @throws RemoteException RMI
+     */
+
     public void endMatch(String message) throws RemoteException;
+
+
+    /**
+     * This method is used by the server to send a client a chat message.
+     *
+     * @param message The chat message
+     * @throws RemoteException
+     */
+    public void recieveMessage(String message) throws RemoteException;
+
 }

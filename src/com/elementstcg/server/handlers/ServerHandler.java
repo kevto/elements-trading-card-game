@@ -549,6 +549,15 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
         return new Response(true);
     }
 
+    public IResponse sendMessage(String key, String message) throws RemoteException {
+        Session caller = clients.get(key);
+        Board board = games.get(caller.getBoardKey());
+
+        board.getPlayerOne().getSession().getClient().recieveMessage(message);
+        board.getPlayerTwo().getSession().getClient().recieveMessage(message);
+        return new Response(true);
+    }
+
     private void removeBoardSession(Board board) {
         board.getPlayerOne().getSession().setBoardKey(null);
         board.getPlayerTwo().getSession().setBoardKey(null);

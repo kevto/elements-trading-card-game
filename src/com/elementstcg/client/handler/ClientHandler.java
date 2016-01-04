@@ -297,6 +297,19 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
         returnLobby();
     }
 
+    public void recieveMessage(String message) throws RemoteException {
+        boardController.recieveMessage(message);
+
+    }
+
+    public static void sendMessage(String message){
+        try {
+            serverHandler.sendMessage(sessionKey ,message);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Will change the current screen to the lobby and create a thread to kill this board after a second
      */
