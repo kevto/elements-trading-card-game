@@ -11,9 +11,6 @@ import com.elementstcg.shared.trait.Element;
  */
 public class CalculateMultiplier {
 
-
-
-
     public static double calculatedMultplier(Card Enemy_c, Card Player_c) {
 
         double multiplier = 0;
@@ -63,9 +60,6 @@ public class CalculateMultiplier {
                 }
                 break;
         }
-
-
-
 
         return multiplier;
     }

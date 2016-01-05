@@ -65,8 +65,15 @@ public class BoardController implements Initializable, ControlledScreen {
     private FieldGrid playerField;
     private FieldGrid enemyField;
     private CardPane selectedCard;
+    private AttackUI attackUI;
     private ScreenHandler screenHandler;
     private ObservableList<String> chatMessages = FXCollections.observableArrayList();
+
+    private double lastX;
+    private double lastY;
+
+    private double posX;
+    private double posY;
 
     /**
      * Methode for the server to call if the game is over
@@ -397,6 +404,8 @@ public class BoardController implements Initializable, ControlledScreen {
             attackEnemyDirectButtonAction();
         });
 
+        attackUI = new AttackUI();
+
         // Update the UI
         updateUI();
     }
@@ -696,5 +705,35 @@ public class BoardController implements Initializable, ControlledScreen {
     @Override
     public void setScreenParent(ScreenHandler screenParent) {
         screenHandler = screenParent;
+    }
+
+    /**
+     * Called when the mouse enters the node of an card placed on the enemy field
+     * Shows the AttackUI helper
+     *
+     * If there is currently a card selected, the game wil show the damage this card will do against
+     * the enemy card
+     */
+    public void enemyCardOnEnter(CardPane hoverCard) {
+        if(selectedCard != null) {
+            attackUI.onHoverEnter(selectedCard.getCard(), hoverCard.getCard(), mainPane);
+        }
+    }
+
+    /**
+     * Called when the mouse exits the node of an card placed on the enemy field
+     * Hides the AttackUI helper
+     */
+    public void enemyCardOnExit() {
+        attackUI.onHoverExit();
+    }
+
+    /**
+     * Called when the mouse moves in the node of an card placed on the enemy field
+     * Moves the AttackUI next to the mouse
+     */
+    public void enemyCardOnMove(double x, double y) {
+        attackUI.setTranslateX(x + 50);
+        attackUI.setTranslateY(y);
     }
 }

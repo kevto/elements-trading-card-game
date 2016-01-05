@@ -121,6 +121,9 @@ public class CardPane extends StackPane {
                 if (cardState == CardState.PlayerHand) {
                     showCard(true);
                 }
+                if(cardState == CardState.EnemyField) {
+                    controller.enemyCardOnEnter(instance);
+                }
             }
         });
 
@@ -130,6 +133,19 @@ public class CardPane extends StackPane {
             public void handle(MouseEvent event) {
                 if (cardState == CardState.PlayerHand) {
                     showCard(false);
+                }
+                if(cardState == CardState.EnemyField) {
+                    controller.enemyCardOnExit();
+                }
+            }
+        });
+
+        //MOUSE HOVER WHILE
+        instance.addEventHandler(MouseEvent.MOUSE_MOVED, new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if(cardState == CardState.EnemyField) {
+                    controller.enemyCardOnMove(event.getX(), event.getY());
                 }
             }
         });
