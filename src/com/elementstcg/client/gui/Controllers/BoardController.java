@@ -20,6 +20,8 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -80,11 +82,37 @@ public class BoardController implements Initializable, ControlledScreen {
      * Forces the player turn to be false so he cant issue an commands to the server
      * Removes this boardController from the clientHandler
      */
-    public void SetGameOver(){
-        ClientHandler.getInstance().setBoardController(null);
+    public void SetGameOver(boolean won){
         board.setTurn(false);
 
         //TODO: Have a screen show with the result (win/lose) and a button to return to the lobby
+
+        Platform.runLater(() -> {
+            Image resultImage;
+
+            if(won) {
+                resultImage = new Image("com/elementstcg/client/gui/images/endgame_banner_victory.png");
+            }
+            else {
+                resultImage = new Image("com/elementstcg/client/gui/images/endgame_banner_defeat.png");
+            }
+
+            ImageView resultImageView = new ImageView(resultImage);
+
+            mainPane.getChildren().add(resultImageView);
+
+            resultImageView.setTranslateX((mainPane.getWidth() / 2) - 250);
+            resultImageView.setTranslateY((mainPane.getHeight() / 2) - 100);
+
+            resultImageView.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    if (event.getButton() == MouseButton.PRIMARY) {
+                        ClientHandler.getInstance().returnLobby();
+                    }
+                }
+            });
+        });
     }
 
     /**
