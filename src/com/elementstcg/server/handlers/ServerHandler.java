@@ -444,11 +444,11 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
 
                     // Sending the endMatch message.
                     if(board.getPlayerOne().getHp() < 1) {
-                        board.getPlayerOne().getSession().getClient().endMatch(loseMessage);
-                        board.getPlayerTwo().getSession().getClient().endMatch(winMessage);
+                        board.getPlayerOne().getSession().getClient().endMatch(loseMessage, false);
+                        board.getPlayerTwo().getSession().getClient().endMatch(winMessage, true);
                     } else {
-                        board.getPlayerOne().getSession().getClient().endMatch(winMessage);
-                        board.getPlayerTwo().getSession().getClient().endMatch(loseMessage);
+                        board.getPlayerOne().getSession().getClient().endMatch(winMessage, true);
+                        board.getPlayerTwo().getSession().getClient().endMatch(loseMessage, false);
                     }
 
                     // Removing the board session.
@@ -538,10 +538,10 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
 
         if(isPlayerOne) {
             message = String.format(message, board.getPlayerOne().getName());
-            board.getPlayerTwo().getSession().getClient().endMatch(message);
+            board.getPlayerTwo().getSession().getClient().endMatch(message, true);
         } else {
             message = String.format(message, board.getPlayerTwo().getName());
-            board.getPlayerOne().getSession().getClient().endMatch(message);
+            board.getPlayerOne().getSession().getClient().endMatch(message, true);
         }
 
         removeBoardSession(board);

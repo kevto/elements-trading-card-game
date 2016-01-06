@@ -129,10 +129,10 @@ public interface IClientHandler extends Remote {
     /**
      * This method is used to end a match, for example if a player quits or wins
      * @param message This parameter is the message the server sends to the client
-     * @throws RemoteException RMI
+     * @param won This parameter is if the player won or lost
+     * @throws RemoteException
      */
-
-    public void endMatch(String message) throws RemoteException;
+    public void endMatch(String message, boolean won) throws RemoteException;
 
 
     /**

@@ -172,6 +172,8 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
         //Display screen
         screenHandler.setScreen(ScreensFramework.screenBoardID);
 
+        System.out.println(Account.getInstance().getUserName());
+
         Platform.runLater(() -> {
             DialogUtility.newDialog((startTurn ? "You start first!" : "Your opponent starts first!"));
         });
@@ -289,12 +291,12 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
             e.printStackTrace();
         }
     }
-    public void endMatch(String message) throws RemoteException {
+    public void endMatch(String message, boolean won) throws RemoteException {
         Platform.runLater(() -> {
             DialogUtility.newDialog(message);
         });
 
-        returnLobby();
+        boardController.SetGameOver(won);
     }
 
     public void recieveMessage(String message) throws RemoteException {
@@ -313,7 +315,9 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
     /**
      * Will change the current screen to the lobby and create a thread to kill this board after a second
      */
-    private void returnLobby() {
+    public void returnLobby() {
+
+        boardController = null;
 
         //Go to lobby
         screenHandler.setScreen(ScreensFramework.screenLobbyID);
