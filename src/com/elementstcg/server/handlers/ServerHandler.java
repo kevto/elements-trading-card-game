@@ -208,6 +208,11 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
 
                 card = player.getHand().playCard(selected); // Actual plays the card on the field (removing from the hand etc...)
                 board.putCardPlayer(point, card, player);
+
+
+                String messageX;
+                messageX = player.getName() + " Places " + card.getName();
+                sendMessage(key, messageX);
                 //System.out.println(player.getName() + " placed card " + player.getHand().getCard(selected).getName());
 
                 caller.getClient().removeCardFromHand(selected);
@@ -344,6 +349,7 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
             } catch (ExceedCapacityException e) {
                 e.printStackTrace();
             }
+            sendMessage(key, player.getName() + " Replaced " + oldCard.getName() + "with " + card.getName());
             return new Response(true);
         } else {
             return new Response(false, "It's not your turn");
@@ -354,6 +360,10 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
     public IResponse attackCard(String key, int point, int enemyPoint) throws RemoteException {
         Session caller = clients.get(key);
         Board board = games.get(caller.getBoardKey());
+        Card selectedCard;
+        Card enemyCard;
+        Player attacker;
+        Player defender;
 
 
         if((board.getTurn() && board.getPlayerOne().getSession().equals(caller)) ||
@@ -365,11 +375,12 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
             }
 
             // Getting the right variables (player).
-            Player attacker = (board.getPlayerOne().getSession().equals(caller) ? board.getPlayerOne() : board.getPlayerTwo());
-            Player defender = (board.getPlayerOne().getSession().equals(caller) ? board.getPlayerTwo() : board.getPlayerOne());
+            attacker = (board.getPlayerOne().getSession().equals(caller) ? board.getPlayerOne() : board.getPlayerTwo());
+            defender = (board.getPlayerOne().getSession().equals(caller) ? board.getPlayerTwo() : board.getPlayerOne());
             boolean isPlayerOne = (board.getPlayerOne().equals(attacker) ? true : false);
 
-            Card selectedCard = (isPlayerOne ? board.getPlayerOneField().get(point) : board.getPlayerTwoField().get(point));
+            selectedCard = (isPlayerOne ? board.getPlayerOneField().get(point) : board.getPlayerTwoField().get(point));
+            enemyCard = (isPlayerOne ? board.getPlayerTwoField().get(enemyPoint) : board.getPlayerOneField().get(enemyPoint));
 
             if(selectedCard.getAttacked()) {
                 return new Response(false, 3, "The selected card already attacked this turn!");
@@ -396,7 +407,7 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
         } else {
             return new Response(false, 1, "This is not your turn!");
         }
-
+        sendMessage(key, attacker.getName() + " attacks with " + selectedCard.getName() + "on " + enemyCard.getName());
         return new Response(true, "You damaged your opponent!");
     }
 
@@ -574,6 +585,7 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
 
         boolean isPlayerOne = (board.getPlayerOne().getSession().equals(caller) ? true : false);
         String message = "You've won! %s chickened out!!";
+        sendMessage(key, message);
 
         if(isPlayerOne) {
             message = String.format(message, board.getPlayerOne().getName());
