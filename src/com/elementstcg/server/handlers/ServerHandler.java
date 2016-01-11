@@ -86,6 +86,7 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
                                 }
                             }
 
+                            otherPlayer.setBoardKey(null);
                             games.remove(game.getSessionKey());
                         }
 
