@@ -558,6 +558,19 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
         return new Response(true);
     }
 
+    @Override
+    public List<String> requestStats(String key) throws RemoteException {
+        if(!clients.containsKey(key))
+            throw new IllegalArgumentException("Session key doesn't exist.");
+        Session caller = clients.get(key);
+
+        List<String> output = new ArrayList<>();
+        output.add(String.valueOf(caller.getAccount().getElo()));
+        output.add("N/A"); // The server doesn't keep track of the ratio, yet.
+        output.add(String.valueOf(caller.getAccount().getGold()));
+        return output;
+    }
+
     private void removeBoardSession(Board board) {
         board.getPlayerOne().getSession().setBoardKey(null);
         board.getPlayerTwo().getSession().setBoardKey(null);

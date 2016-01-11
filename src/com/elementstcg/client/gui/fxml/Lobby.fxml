@@ -55,9 +55,14 @@
             <Image url="@../images/atk_icon.png" />
          </image>
       </ImageView>
-      <Label fx:id="lbElo" alignment="CENTER_RIGHT" contentDisplay="CENTER" layoutX="503.0" layoutY="575.0" prefHeight="29.0" prefWidth="152.0" text="1337" textFill="#404040">
+      <Label fx:id="lbRatio" alignment="CENTER_RIGHT" contentDisplay="CENTER" layoutX="503.0" layoutY="575.0" prefHeight="29.0" prefWidth="152.0" text="1337" textFill="#404040">
          <font>
             <Font name="BebasNeueRegular" size="24.0" />
+         </font>
+      </Label>
+      <Label fx:id="lbElo" alignment="CENTER" contentDisplay="CENTER" layoutX="434.0" layoutY="555.0" prefHeight="29.0" prefWidth="152.0" text="&lt;ELO&gt;" textFill="#9641ff">
+         <font>
+            <Font name="BebasNeueRegular" size="18.0" />
          </font>
       </Label>
    </children>
