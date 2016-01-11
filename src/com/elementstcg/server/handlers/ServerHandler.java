@@ -61,18 +61,24 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
         TimerTask checkAlive = new TimerTask() {
             @Override
             public void run() {
+                String currentSession;
+
                 for(Map.Entry<String, Session> entry : clients.entrySet()) {
-                    if(entry.getValue().getClient() == null) {
-                        if(searchingPlayers.containsKey(entry.getKey())) {
+                    try {
+                        currentSession = entry.getKey();
+
+                        entry.getValue().getClient().ping();
+                    } catch(RemoteException ex) {
+                        if (searchingPlayers.containsKey(entry.getKey())) {
                             searchingPlayers.remove(entry.getKey());
                         }
 
                         // Removes the game if there's any.
-                        if(games.containsKey(entry.getValue().getBoardKey())) {
+                        if (games.containsKey(entry.getValue().getBoardKey())) {
                             Board game = games.get(entry.getValue().getBoardKey());
 
                             Session otherPlayer = (!entry.getValue().equals(game.getPlayerOne().getSession()) ? game.getPlayerOne().getSession() : game.getPlayerTwo().getSession());
-                            if(otherPlayer.getClient() != null) {
+                            if (otherPlayer.getClient() != null) {
                                 try {
                                     otherPlayer.getClient().endMatch("Enemy forfeited!", true);
                                 } catch (RemoteException e) {
