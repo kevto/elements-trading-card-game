@@ -338,4 +338,8 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
         //Start thread
         thread.start();
     }
+
+    public boolean ping() {
+        return true;
+    }
 }
