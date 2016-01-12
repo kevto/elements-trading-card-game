@@ -62,13 +62,15 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
             @Override
             public void run() {
                 String currentSession;
-
+                List<String> sessionToDelete = new ArrayList<>();
                 for(Map.Entry<String, Session> entry : clients.entrySet()) {
                     try {
                         currentSession = entry.getKey();
 
                         entry.getValue().getClient().ping();
                     } catch(RemoteException ex) {
+
+
                         if (searchingPlayers.containsKey(entry.getKey())) {
                             searchingPlayers.remove(entry.getKey());
                         }
@@ -90,8 +92,13 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
                             games.remove(game.getSessionKey());
                         }
 
-                        clients.remove(entry.getKey());
+                        sessionToDelete.add(entry.getKey());
                     }
+                }
+
+                // Removing all keys now.
+                for(String sKey : sessionToDelete) {
+                    clients.remove(sKey);
                 }
             }
         };
