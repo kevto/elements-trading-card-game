@@ -22,11 +22,17 @@ public class Multipliertest extends TestCase {
         Card playerCard2 = new Card(Element.Thunder, 100, 200, "Test Monster 1", 10);
         Card enemyCard3 = new Card(Element.Water, 100, 200, "Test Monster 1", 10);
         Card playerCard3 = new Card(Element.Thunder, 100, 200, "Test Monster 1", 10);
+        Card enemyCard4 = new Card(Element.Air, 100, 200, "Test Air 1", 10);
+        Card playerCard4 = new Card(Element.Thunder, 100, 200, "Test Thunder 1", 10);
+        Card enemyCard5 = new Card(Element.Thunder, 100, 200, "Test Enemy 5", 10);
+        Card playerCard5 = new Card(Element.Earth, 100, 200, "Test Player 5", 10);
 
 
         assertEquals(2.0, CalculateMultiplier.calculatedMultplier(enemyCard1, playerCard1));
         assertEquals(1.0, CalculateMultiplier.calculatedMultplier(enemyCard2, playerCard2));
         assertEquals(1.0, CalculateMultiplier.calculatedMultplier(enemyCard3, playerCard3));
+        assertEquals(2.0, CalculateMultiplier.calculatedMultplier(enemyCard4, playerCard4));
+        assertEquals(2.0, CalculateMultiplier.calculatedMultplier(enemyCard5, playerCard5));
 
     }
 }

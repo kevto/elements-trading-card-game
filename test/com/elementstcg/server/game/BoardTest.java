@@ -28,16 +28,42 @@ public class BoardTest extends TestCase {
     Card card;
     Session s1;
     Session s2;
+    Account acc;
+    Account acc2;
 
     @Before
     public void setUp()
     {
         //TODO: make actual sessions to test with.
-        player = new Player(20, "Rick", null);
         enemy = new Player(20, "Maarten", null);
-        board = new Board("Rick", null, null);
+        acc = new Account("rickvd", "testpw", "testmail@test.com");
+        acc2 = new Account("maarten", "nietmaarten", "test@maarten.com");
+        s1 = new Session("Rick", null, acc);
+        s2 = new Session("Maarten", null, acc2);
+        board = new Board("Rick", s1, s2);
+        player = board.getPlayerOne();
         card = new Card(Element.Air, 3, 10, "TestCard", 2);
-        s1 = new Session("Rick", null, null);
+        board.forcePutCardPlayer(5, card);
+    }
+
+    @Test
+    public void testConstructor()
+    {
+        try{
+            Board b = new Board(null, s1, s2);
+            fail("Board without key created");
+        } catch(IllegalArgumentException ex) {}
+        try{
+            Board b = new Board("testkey", null, s2);
+            fail("Board without valid session for player one created.");
+        } catch(IllegalArgumentException ex) {}
+        try{
+            Board b = new Board("testkey", s1, null);
+            fail("Board without valid session for player two created");
+        } catch(IllegalArgumentException ex) {}
+
+        Board b = new Board("testKey", s1, s2);
+
     }
 
     @Test
@@ -117,18 +143,25 @@ public class BoardTest extends TestCase {
     }
 
     @Test
-    public void testAttackCard() throws EmptyFieldException {
+    public void testAttackCard() throws EmptyFieldException, OccupiedFieldException, ExceedCapacityException {
         //TODO: add runnable for attackCard
         board.putCardPlayerTwo(1, card);
         Card testCard = new Card(Element.Air, 4, 10, "alakazam", 3);
-        board.attackCard(player, 1, 1, null);
-        HashMap<Integer, Card> testcards = board.getPlayerTwoField();
+        board.putCardPlayer(1, testCard, player);
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("Test runnable, no worries.");
+            }
+        };
+        board.attackCard(player, 1, 1, r);
+        HashMap<Integer, Card> testCards = board.getPlayerTwoField();
 
-        if (testcards == null) {
+        if (testCards == null) {
             fail("No cards found");
         }
 
-        Card c = testcards.get(1);
+        Card c = testCards.get(1);
 
         if (c == null) {
             fail("No card found");
@@ -137,15 +170,25 @@ public class BoardTest extends TestCase {
         assertEquals("Attack didn't go through.", c.getHP(), 6);
     }
 
+    /**
+     * Works exactly the same as GetPlayerTwoCardPoint, so only one requires testing.
+     */
     @Test
-    public void testConstructor()
-    {
-        Board b = new Board("testName", null, null);
-        assertEquals("Board failed to create", b.getPlayerTwo().getName(), "enemy");
-
-        try {
-            Board failBoard = new Board("", null, null);
-            fail("EnemyName in the board constructor can NOT be empty!");
-        } catch(IllegalArgumentException ex) {}
+    public void testGetPlayerOneCardPoint() {
+        Card testCard = new Card(Element.Air, 3, 3, "asdf", 1);
+        assertEquals("-1 Was not returned, even though the card shouldn't be there", -1, board.getPlayerOneCardPoint(testCard));
+        assertEquals("Wrong point was returned.", 5, board.getPlayerOneCardPoint(card));
     }
+
+    @Test
+    public void testGetCurrentPlayer() {
+        assertEquals("Wrong player returned, no turns have been had so should be playerOne.", player, board.getCurrentPlayer());
+    }
+
+    @Test
+    public void testRemovePlayerOneCard() {
+        board.removePlayerOneCard(5);
+        assertNull("Returned card/number wasn't null", board.getPlayerOneField().get(5));
+    }
+
 }

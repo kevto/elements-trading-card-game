@@ -6,6 +6,7 @@ import com.elementstcg.server.game.util.CustomException.EmptyFieldException;
 import com.elementstcg.server.game.util.CustomException.OccupiedFieldException;
 import com.elementstcg.server.handlers.Session;
 import com.elementstcg.shared.trait.Card;
+import com.sun.javaws.exceptions.InvalidArgumentException;
 import javafx.application.Platform;
 
 import java.util.HashMap;
@@ -31,6 +32,8 @@ public class Board {
      * @param playerTwo session object of the second player
      */
     public Board(String key, Session playerOne, Session playerTwo){
+        if (key == null || playerOne == null || playerTwo == null)
+            throw new IllegalArgumentException("Neither key nor one of the sessions can be null.");
         sessionKey = key;
         playerOneField = new HashMap<>();
         playerTwoField = new HashMap<>();
