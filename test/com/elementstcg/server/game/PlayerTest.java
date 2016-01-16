@@ -26,6 +26,7 @@ public class PlayerTest extends TestCase {
         Deck deck = new Deck(cards);
         //TODO: don't give a null session
         player = new Player(20, "player", null);
+        player.setDeck(deck);
     }
 
     @Test
