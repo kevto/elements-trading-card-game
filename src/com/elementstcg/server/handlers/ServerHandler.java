@@ -2,15 +2,11 @@ package com.elementstcg.server.handlers;
 
 import com.elementstcg.server.game.Account;
 import com.elementstcg.server.game.Board;
-import com.elementstcg.shared.trait.Card;
-import com.elementstcg.server.game.util.CustomException.ExceedCapacityException;
-import com.elementstcg.server.game.util.CustomException.OccupiedFieldException;
 import com.elementstcg.server.game.Player;
 import com.elementstcg.server.game.util.CustomException.EmptyFieldException;
-import com.elementstcg.shared.trait.ICard;
-import com.elementstcg.shared.trait.IClientHandler;
-import com.elementstcg.shared.trait.IResponse;
-import com.elementstcg.shared.trait.IServerHandler;
+import com.elementstcg.server.game.util.CustomException.ExceedCapacityException;
+import com.elementstcg.server.game.util.CustomException.OccupiedFieldException;
+import com.elementstcg.shared.trait.*;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -398,7 +394,9 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
                 board.attackCard(attacker, point, enemyPoint, () -> {
                     try {
                         attacker.getSession().getClient().enemyRemoveCard(enemyPoint);
+                        attacker.getSession().getClient().playSound(getElementSound(selectedCard.getElement()));
                         defender.getSession().getClient().removeCard(enemyPoint);
+                        defender.getSession().getClient().playSound(getElementSound(selectedCard.getElement()));
                     } catch (RemoteException e) {
                         e.printStackTrace();
                     }
@@ -410,7 +408,9 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
             Card defenderCard = (isPlayerOne ? board.getPlayerTwoField().get(enemyPoint) : board.getPlayerOneField().get(enemyPoint));
             if(defenderCard != null) {
                 attacker.getSession().getClient().enemySetCardHp(enemyPoint, defenderCard.getHP());
+                attacker.getSession().getClient().playSound(getElementSound(selectedCard.getElement()));
                 defender.getSession().getClient().setCardHp(enemyPoint, defenderCard.getHP());
+                defender.getSession().getClient().playSound(getElementSound(selectedCard.getElement()));
             }
         } else {
             return new Response(false, 1, "This is not your turn!");
@@ -622,5 +622,22 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
         board.getPlayerTwo().getSession().setBoardKey(null);
 
         games.remove(board.getSessionKey());
+    }
+
+    private Sounds getElementSound(Element element) {
+        switch (element) {
+            case Fire:
+                return Sounds.fireSound;
+            case Air:
+                return Sounds.airSound;
+            case Water:
+                return Sounds.waterSound;
+            case Earth:
+                return Sounds.earthSound;
+            case Thunder:
+                return Sounds.electricSound;
+        }
+
+        return Sounds.airSound;
     }
 }
