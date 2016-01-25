@@ -60,7 +60,7 @@ public class AttackUI extends Pane {
         this.getChildren().add(sword);
         this.getChildren().add(damageText);
 
-        scale = 0.35;
+        scale = 0.25;
         setScale(scale);
     }
 
