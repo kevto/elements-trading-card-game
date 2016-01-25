@@ -17,6 +17,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -27,6 +28,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -765,5 +767,19 @@ public class BoardController implements Initializable, ControlledScreen {
     public void enemyCardOnMove(double x, double y) {
         attackUI.setTranslateX(x - 400);
         attackUI.setTranslateY(y - 50);
+    }
+
+    public void onHelpClicked(Event event) {
+        Stage helpStage = new Stage();
+        helpStage.setTitle("Help");
+        Pane stagePane = new Pane();
+        Image image = new Image("com/elementstcg/client/gui/images/RULES.png");
+        ImageView imageView = new ImageView(image);
+
+        stagePane.getChildren().add(imageView);
+
+        helpStage.setScene(new Scene(stagePane));
+
+        helpStage.show();
     }
 }
