@@ -96,6 +96,11 @@
                </children>
             </Pane>
             <Button fx:id="nextTurnButton" layoutX="48.0" layoutY="360.0" mnemonicParsing="false" onAction="#nextTurnButtonAction" prefHeight="25.0" prefWidth="175.0" text="Next Turn" />
+            <ImageView fitHeight="48.0" fitWidth="100.0" layoutX="1180.0" onMouseClicked="#onHelpClicked" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../images/helpButton.png" />
+               </image>
+            </ImageView>
          </children>
       </Pane>
       <ListView fx:id="chatBox" layoutX="1280.0" prefHeight="728.0" prefWidth="399.0" />

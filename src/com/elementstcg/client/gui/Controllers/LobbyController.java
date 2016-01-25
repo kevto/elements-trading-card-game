@@ -120,7 +120,6 @@ public class LobbyController implements Initializable, ControlledScreen {
     public void clickedNormalGame(Event event) {
         findMatch();
         lblSearchText.setVisible(true);
-
     }
 
     /**
