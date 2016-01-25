@@ -2,6 +2,7 @@ package com.elementstcg.shared.trait;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.List;
 
 /**
  * Interface used by the clients to communicate with the server using RMI.
@@ -105,5 +106,18 @@ public interface IServerHandler extends Remote {
     IResponse quitMatch(String key) throws RemoteException;
 
     IResponse sendMessage(String key, String message) throws RemoteException;
+
+
+    /**
+     *
+     * @param key mag niet leeg of null zijn
+     * @return Returned een list
+     * De waardes van de return MOETEN in de volgende volgorde returned worden
+     * Elo
+     * Ratio
+     * Gold
+     * @throws RemoteException
+     */
+    List<String> requestStats(String key) throws  RemoteException;
 
 }

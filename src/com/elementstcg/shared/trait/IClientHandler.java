@@ -5,6 +5,7 @@ import com.elementstcg.shared.trait.ICard;
 import java.lang.Boolean;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.List;
 
 /**
  * THIS INTERFACE IS USED BY THE SERVER TO COMMUNICATE WITH THE CLIENT.
@@ -150,5 +151,4 @@ public interface IClientHandler extends Remote {
      * @throws RemoteException
      */
     boolean ping() throws RemoteException;
-
 }

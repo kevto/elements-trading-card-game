@@ -12,6 +12,7 @@ import javafx.scene.control.Label;
 
 import java.net.URL;
 import java.rmi.RemoteException;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -31,6 +32,10 @@ public class LobbyController implements Initializable, ControlledScreen {
     @FXML Button ButtonPlayVsAi;
     @FXML Button ButtonNormalGame;
     @FXML Label lblSearchText;
+    @FXML Label lbGold;
+    @FXML Label lbElo;
+    @FXML Label lbRatio;
+
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -95,6 +100,16 @@ public class LobbyController implements Initializable, ControlledScreen {
      */
     public void clickedVsAi(Event event) {
         //TODO optinonal implementation
+    }
+
+    public void updateStats(){
+        List<String> playerStats = clientHandler.requestPlayerStats();
+        if (playerStats != null) {
+            lbElo.setText(playerStats.get(0));
+            lbRatio.setText(playerStats.get(1));
+            lbGold.setText(playerStats.get(2));
+        }
+
     }
 
     /**

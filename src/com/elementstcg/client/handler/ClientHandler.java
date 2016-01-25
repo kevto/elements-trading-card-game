@@ -19,6 +19,7 @@ import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.List;
 import java.util.Properties;
 
 public class ClientHandler extends UnicastRemoteObject implements IClientHandler {
@@ -303,6 +304,22 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
         boardController.recieveMessage(message);
 
     }
+
+
+    //lbGold
+    //LbElo
+    //lbRatio
+
+    static public List<String> requestPlayerStats(){
+        try {
+            return serverHandler.requestStats(sessionKey);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
 
     public static void sendMessage(String message){
         try {
