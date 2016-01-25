@@ -145,4 +145,10 @@ public interface IClientHandler extends Remote {
     public void recieveMessage(String message) throws RemoteException;
 
 
+    /**
+     * Pings the client to see if it's still alive.
+     * @return true or false if he could return the ping.
+     * @throws RemoteException
+     */
+    boolean ping() throws RemoteException;
 }
