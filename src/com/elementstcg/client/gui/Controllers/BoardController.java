@@ -423,16 +423,18 @@ public class BoardController implements Initializable, ControlledScreen {
             }
         });
 
-        btSendMessage.setOnAction((event) -> {
-            // Send a message
-            String newChatMessage = "[" + board.getPlayer().getName() + "]"  + LocalDateTime.now().getHour() + ":" + LocalDateTime.now().getMinute() + " :" + chatField.getText();
-            ClientHandler.sendMessage(newChatMessage);
-        });
+
 
         // Set on click listener to enemy info box (pane).
         enemyInfo.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
             attackEnemyDirectButtonAction();
         });
+
+        chatField.setOnAction((event) -> {
+            String newChatMessage = "[" + board.getPlayer().getName() + "]"  + LocalDateTime.now().getHour() + ":" + LocalDateTime.now().getMinute() + " :" + chatField.getText();
+            ClientHandler.sendMessage(newChatMessage);
+
+                });
 
         attackUI = new AttackUI();
 
@@ -583,6 +585,10 @@ public class BoardController implements Initializable, ControlledScreen {
         } catch (RemoteException e) {
             e.printStackTrace();
         }
+    }
+
+    public void onEnter(){
+
     }
 
 

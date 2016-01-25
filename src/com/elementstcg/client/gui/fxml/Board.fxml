@@ -103,8 +103,13 @@
             </ImageView>
          </children>
       </Pane>
-      <ListView fx:id="chatBox" layoutX="1280.0" prefHeight="728.0" prefWidth="399.0" />
-      <TextField fx:id="chatField" layoutX="1280.0" layoutY="708.0" prefHeight="31.0" prefWidth="319.0" />
-      <Button fx:id="btSendMessage" layoutX="1599.0" layoutY="708.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="73.0" text="Send" />
+      <BorderPane layoutX="1279.0" layoutY="2.0" prefHeight="736.0" prefWidth="402.0">
+         <center>
+            <ListView fx:id="chatBox" prefHeight="728.0" prefWidth="399.0" BorderPane.alignment="CENTER" />
+         </center>
+         <bottom>
+            <TextField fx:id="chatField" onAction="#onEnter" prefHeight="31.0" prefWidth="301.0" BorderPane.alignment="CENTER" />
+         </bottom>
+      </BorderPane>
    </children>
 </Pane>

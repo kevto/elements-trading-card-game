@@ -18,6 +18,7 @@ import java.rmi.server.UnicastRemoteObject;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -343,6 +344,10 @@ public class ServerHandlerTest extends TestCase {
 
         @Override
         public void recieveMessage(String message) throws RemoteException {
+
+        }
+        @Override
+        public void playSound(Sounds sound) throws RemoteException{
 
         }
 
@@ -836,6 +841,11 @@ public class ServerHandlerTest extends TestCase {
             board.getPlayerOne().getSession().getClient().recieveMessage(message);
             board.getPlayerTwo().getSession().getClient().recieveMessage(message);
             return new Response(true);
+        }
+
+        @Override
+        public List<String> requestStats(String key) throws RemoteException {
+            return null;
         }
 
         private void removeBoardSession(Board board) {
