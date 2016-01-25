@@ -72,8 +72,12 @@ public class Account extends Model implements Serializable {
                 + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
         java.util.regex.Pattern p = java.util.regex.Pattern.compile(pattern);
         java.util.regex.Matcher m = p.matcher(email);
+        String usernamePattern = "[a-zA-Z0-9_-]{3,}";
+        java.util.regex.Pattern usernameP = java.util.regex.Pattern.compile(usernamePattern);
+        java.util.regex.Matcher usernameM = usernameP.matcher(username);
+        java.util.regex.Matcher passwordM = usernameP.matcher(password);
 
-        if (!m.matches()) {
+        if (!m.matches() || !usernameM.matches() || !passwordM.matches()) {
             return false;
         }
 
@@ -186,6 +190,11 @@ public class Account extends Model implements Serializable {
         this.gold += gold;
     }
 
+    /**
+     * Gets the gold of this account.
+     * @return int value of the gold of this account.
+     */
+    public int getGold() { return this.gold;}
 
     public static Finder<Long, Account> find = new Finder<>(Account.class);
 
