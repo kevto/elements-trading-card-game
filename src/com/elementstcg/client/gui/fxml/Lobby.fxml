@@ -29,7 +29,7 @@
          </image>
       </ImageView>
       <Button fx:id="ButtonPlayVsAi" layoutX="324.0" layoutY="427.0" mnemonicParsing="false" onMouseClicked="#clickedVsAi" prefHeight="93.0" prefWidth="373.0" style="-fx-opacity: 0.1;" textFill="TRANSPARENT" />
-      <Label fx:id="lblNormalGame" contentDisplay="CENTER" layoutX="439.0" layoutY="440.0" onMouseClicked="#clickedNormalGame" prefHeight="70.0" prefWidth="257.0" text="NORMAL GAME" textAlignment="CENTER" textFill="WHITE">
+      <Label fx:id="lblNormalGame" contentDisplay="CENTER" layoutX="386.0" layoutY="439.0" onMouseClicked="#clickedNormalGame" prefHeight="70.0" prefWidth="257.0" text="NORMAL GAME" textAlignment="CENTER" textFill="WHITE">
          <font>
             <Font name="BebasNeueBold" size="36.0" />
          </font>
