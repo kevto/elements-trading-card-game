@@ -716,7 +716,9 @@ public class BoardController implements Initializable, ControlledScreen {
     }
 
     public void recieveMessage(String message){
-        chatMessages.add(message);
+        Platform.runLater(() -> {
+            chatMessages.add(message);
+        });
     }
 
     /**
@@ -761,7 +763,7 @@ public class BoardController implements Initializable, ControlledScreen {
      * Moves the AttackUI next to the mouse
      */
     public void enemyCardOnMove(double x, double y) {
-        attackUI.setTranslateX(x + 50);
-        attackUI.setTranslateY(y);
+        attackUI.setTranslateX(x - 400);
+        attackUI.setTranslateY(y - 50);
     }
 }

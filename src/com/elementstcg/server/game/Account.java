@@ -186,6 +186,9 @@ public class Account extends Model implements Serializable {
         this.gold += gold;
     }
 
+    public int getGold() {
+        return gold;
+    }
 
     public static Finder<Long, Account> find = new Finder<>(Account.class);
 

@@ -3,6 +3,7 @@ package com.elementstcg.client.gui;
 import com.elementstcg.client.gui.Controllers.BoardController;
 import com.elementstcg.shared.trait.Card;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
@@ -10,8 +11,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
@@ -79,7 +79,7 @@ public class CardPane extends StackPane {
      */
     private void addEventListeners() {
         //MOUSE CLICK
-        instance.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+        cardObject.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
                 //LEFT CLICK
@@ -145,7 +145,7 @@ public class CardPane extends StackPane {
             @Override
             public void handle(MouseEvent event) {
                 if(cardState == CardState.EnemyField) {
-                    controller.enemyCardOnMove(event.getX(), event.getY());
+                    controller.enemyCardOnMove(event.getSceneX(), event.getSceneY());
                 }
             }
         });
@@ -387,9 +387,6 @@ public class CardPane extends StackPane {
         healthLabel.setText(String.valueOf(card.getHP()));
         Node n = cardObject.getChildren().get(4);
         ((Label) n).setText(String.valueOf(card.getHP()));
-
     }
-
-
 }
 
