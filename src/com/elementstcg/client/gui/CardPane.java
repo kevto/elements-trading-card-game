@@ -72,9 +72,6 @@ public class CardPane extends StackPane {
 
         resizeCard();
         addEventListeners();
-
-        //TODO: DEBUG
-        this.backgroundProperty().set(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
     }
 
     /**
