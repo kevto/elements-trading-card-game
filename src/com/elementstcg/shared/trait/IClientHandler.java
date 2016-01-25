@@ -1,8 +1,5 @@
 package com.elementstcg.shared.trait;
 
-import com.elementstcg.shared.trait.ICard;
-
-import java.lang.Boolean;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
@@ -144,6 +141,7 @@ public interface IClientHandler extends Remote {
      */
     public void recieveMessage(String message) throws RemoteException;
 
+    public void playSound(Sounds sound) throws RemoteException;
 
     /**
      * Pings the client to see if it's still alive.

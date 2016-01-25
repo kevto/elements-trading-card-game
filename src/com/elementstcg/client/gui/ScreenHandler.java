@@ -41,6 +41,7 @@
 package com.elementstcg.client.gui;
 
 import com.elementstcg.client.handler.ClientHandler;
+import com.elementstcg.client.handler.SoundHandler;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -138,6 +139,15 @@ public class ScreenHandler extends StackPane {
                         new KeyFrame(new Duration(2500), new KeyValue(opacity, 1.0)));
                 fadeIn.play();
             }
+
+            switch(name) {
+                case "board":
+                    SoundHandler.getInstance().playMusic("/src/com/elementstcg/client/music/battle.wav", true, true);
+                    break;
+                case "lobby":
+                    SoundHandler.getInstance().playMusic("/src/com/elementstcg/client/music/lobby.wav", true, true);
+            }
+
             return true;
         } else {
             System.out.println("screen hasn't been loaded [" + name + "]");
