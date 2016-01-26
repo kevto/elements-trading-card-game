@@ -433,6 +433,7 @@ public class BoardController implements Initializable, ControlledScreen {
         chatField.setOnAction((event) -> {
             String newChatMessage = "[" + board.getPlayer().getName() + "]"  + LocalDateTime.now().getHour() + ":" + LocalDateTime.now().getMinute() + " :" + chatField.getText();
             ClientHandler.sendMessage(newChatMessage);
+            chatField.setText("");
 
                 });
 
