@@ -9,24 +9,32 @@ import com.elementstcg.client.util.DialogUtility;
 import com.elementstcg.shared.trait.Card;
 import com.elementstcg.shared.trait.IResponse;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
 
-import java.awt.*;
 import java.io.IOException;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.net.URL;
 import java.rmi.RemoteException;
-import java.util.ResourceBundle;
 
 public class BoardController implements Initializable, ControlledScreen {
 
@@ -48,26 +56,65 @@ public class BoardController implements Initializable, ControlledScreen {
     @FXML Label labelEnemyHP;
     @FXML Label labelPlayerHP;
 
+    @FXML Button btSendMessage;
+    @FXML ListView chatBox;
+    @FXML TextField chatField;
+
     @FXML Label labelEnemyName;
     @FXML Label labelPlayerName;
+
 
     @FXML Pane enemyInfo;
 
     private FieldGrid playerField;
     private FieldGrid enemyField;
     private CardPane selectedCard;
+    private AttackUI attackUI;
     private ScreenHandler screenHandler;
+    private ObservableList<String> chatMessages = FXCollections.observableArrayList();
+
+    private double lastX;
+    private double lastY;
+
+    private double posX;
+    private double posY;
 
     /**
      * Methode for the server to call if the game is over
      * Forces the player turn to be false so he cant issue an commands to the server
      * Removes this boardController from the clientHandler
      */
-    public void SetGameOver(){
-        ClientHandler.getInstance().setBoardController(null);
+    public void SetGameOver(boolean won){
         board.setTurn(false);
 
         //TODO: Have a screen show with the result (win/lose) and a button to return to the lobby
+
+        Platform.runLater(() -> {
+            Image resultImage;
+
+            if(won) {
+                resultImage = new Image("com/elementstcg/client/gui/images/endgame_banner_victory.png");
+            }
+            else {
+                resultImage = new Image("com/elementstcg/client/gui/images/endgame_banner_defeat.png");
+            }
+
+            ImageView resultImageView = new ImageView(resultImage);
+
+            mainPane.getChildren().add(resultImageView);
+
+            resultImageView.setTranslateX((mainPane.getWidth() / 2) - 250);
+            resultImageView.setTranslateY((mainPane.getHeight() / 2) - 100);
+
+            resultImageView.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    if (event.getButton() == MouseButton.PRIMARY) {
+                        ClientHandler.getInstance().returnLobby();
+                    }
+                }
+            });
+        });
     }
 
     /**
@@ -343,6 +390,8 @@ public class BoardController implements Initializable, ControlledScreen {
         //Create a board object
         board = new Board();
 
+        chatBox.setItems(chatMessages);
+
         //Setup the player hands
         hboxPlayerHand.getParent().prefWidth(hboxPlayerHand.getPrefWidth());
         hboxPlayerHand.getParent().prefHeight(hboxPlayerHand.getPrefHeight());
@@ -374,14 +423,26 @@ public class BoardController implements Initializable, ControlledScreen {
             }
         });
 
+
+
         // Set on click listener to enemy info box (pane).
         enemyInfo.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
             attackEnemyDirectButtonAction();
         });
 
+        chatField.setOnAction((event) -> {
+            String newChatMessage = "[" + board.getPlayer().getName() + "]"  + LocalDateTime.now().getHour() + ":" + LocalDateTime.now().getMinute() + " :" + chatField.getText();
+            ClientHandler.sendMessage(newChatMessage);
+
+                });
+
+        attackUI = new AttackUI();
+
         // Update the UI
         updateUI();
     }
+
+
 
     /**
      * Registers the boardController with clientHandler
@@ -526,6 +587,10 @@ public class BoardController implements Initializable, ControlledScreen {
         }
     }
 
+    public void onEnter(){
+
+    }
+
 
     /**
      * This methode is called when a player right clicks on an card on the field
@@ -658,6 +723,12 @@ public class BoardController implements Initializable, ControlledScreen {
         });
     }
 
+    public void recieveMessage(String message){
+        Platform.runLater(() -> {
+            chatMessages.add(message);
+        });
+    }
+
     /**
      * Removes a card from the enemy hand (no index needs to be provided)
      */
@@ -672,5 +743,49 @@ public class BoardController implements Initializable, ControlledScreen {
     @Override
     public void setScreenParent(ScreenHandler screenParent) {
         screenHandler = screenParent;
+    }
+
+    /**
+     * Called when the mouse enters the node of an card placed on the enemy field
+     * Shows the AttackUI helper
+     *
+     * If there is currently a card selected, the game wil show the damage this card will do against
+     * the enemy card
+     */
+    public void enemyCardOnEnter(CardPane hoverCard) {
+        if(selectedCard != null) {
+            attackUI.onHoverEnter(selectedCard.getCard(), hoverCard.getCard(), mainPane);
+        }
+    }
+
+    /**
+     * Called when the mouse exits the node of an card placed on the enemy field
+     * Hides the AttackUI helper
+     */
+    public void enemyCardOnExit() {
+        attackUI.onHoverExit();
+    }
+
+    /**
+     * Called when the mouse moves in the node of an card placed on the enemy field
+     * Moves the AttackUI next to the mouse
+     */
+    public void enemyCardOnMove(double x, double y) {
+        attackUI.setTranslateX(x - 400);
+        attackUI.setTranslateY(y - 50);
+    }
+
+    public void onHelpClicked(Event event) {
+        Stage helpStage = new Stage();
+        helpStage.setTitle("Help");
+        Pane stagePane = new Pane();
+        Image image = new Image("com/elementstcg/client/gui/images/RULES.png");
+        ImageView imageView = new ImageView(image);
+
+        stagePane.getChildren().add(imageView);
+
+        helpStage.setScene(new Scene(stagePane));
+
+        helpStage.show();
     }
 }

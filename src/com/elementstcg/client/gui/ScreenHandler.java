@@ -40,7 +40,9 @@
 
 package com.elementstcg.client.gui;
 
+import com.elementstcg.client.gui.Controllers.LobbyController;
 import com.elementstcg.client.handler.ClientHandler;
+import com.elementstcg.client.handler.SoundHandler;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -65,7 +67,9 @@ public class ScreenHandler extends StackPane {
     //Holds the screens to be displayed
     private Stage stage;
     private HashMap<String, Node> screens = new HashMap<String, Node>();
-    
+
+    private LobbyController lobbyController;
+
     public ScreenHandler(Stage stage) {
         super();
         this.stage = stage;
@@ -90,6 +94,10 @@ public class ScreenHandler extends StackPane {
             FXMLLoader myLoader = new FXMLLoader(getClass().getResource(resource));
             Parent loadScreen = myLoader.load();
             ControlledScreen myScreenController = myLoader.getController();
+            if(name == "lobby") {
+                lobbyController = (LobbyController)myScreenController;
+            }
+
             myScreenController.setScreenParent(this);
             addScreen(name, loadScreen);
             return true;
@@ -138,6 +146,16 @@ public class ScreenHandler extends StackPane {
                         new KeyFrame(new Duration(2500), new KeyValue(opacity, 1.0)));
                 fadeIn.play();
             }
+
+            switch(name) {
+                case "board":
+                    SoundHandler.getInstance().playMusic("/src/com/elementstcg/client/music/battle.wav", true, true);
+                    break;
+                case "lobby":
+                    SoundHandler.getInstance().playMusic("/src/com/elementstcg/client/music/lobby.wav", true, true);
+                    lobbyController.updateStats();
+            }
+
             return true;
         } else {
             System.out.println("screen hasn't been loaded [" + name + "]");

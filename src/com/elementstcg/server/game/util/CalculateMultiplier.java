@@ -13,55 +13,36 @@ public class CalculateMultiplier {
 
     public static double calculatedMultplier(Card Enemy_c, Card Player_c) {
 
-        double multiplier = 0;
         double extraDamageValue = 2;
         double normalDamageValue = 1;
-        double lowDamageValue;
 
-        switch (Enemy_c.getElement()){
+        switch (Player_c.getElement()){
             case Fire:
-                if (Player_c.getElement() == Element.Air){
-                    multiplier = extraDamageValue;
-                }
-                else {
-                    multiplier = normalDamageValue;
+                if (Enemy_c.getElement() == Element.Air){
+                    return extraDamageValue;
                 }
                 break;
             case Earth:
-                if (Player_c.getElement() == Element.Water){
-                    multiplier = extraDamageValue;
-                }
-                else {
-                    multiplier = normalDamageValue;
+                if (Enemy_c.getElement() == Element.Water){
+                    return extraDamageValue;
                 }
                 break;
             case Water:
-                if (Player_c.getElement() == Element.Fire){
-                    multiplier = extraDamageValue;
-                }
-                else {
-                    multiplier = normalDamageValue;
+                if (Enemy_c.getElement() == Element.Fire){
+                    return extraDamageValue;
                 }
                 break;
             case Air:
-                if (Player_c.getElement() == Element.Thunder){
-                    multiplier = extraDamageValue;
-                }
-                else {
-                    multiplier = normalDamageValue;
+                if (Enemy_c.getElement() == Element.Thunder){
+                    return extraDamageValue;
                 }
                 break;
             case Thunder:
-                if (Player_c.getElement() == Element.Earth){
-                    multiplier = extraDamageValue;
-                }
-                else {
-                    multiplier = normalDamageValue;
+                if (Enemy_c.getElement() == Element.Earth){
+                    return extraDamageValue;
                 }
                 break;
         }
-
-        return multiplier;
+        return normalDamageValue;
     }
-
 }

@@ -26,8 +26,6 @@ public class Account extends Model implements Serializable {
 
     @Column(name = "password")
     private String password;
-    private transient String ip;
-    private transient int port;
 
     @Column(name = "email")
     private String email;
@@ -115,8 +113,6 @@ public class Account extends Model implements Serializable {
 
             this.username = username;
             this.password = password;
-            this.ip = ip;
-            this.port = port;
             this.elo = elo;
 
         }
@@ -149,24 +145,6 @@ public class Account extends Model implements Serializable {
         email = emailString;
     }
 
-
-    /**
-     * Returns the port field.
-     * can return -1.
-     * @return
-     */
-    public int getPort(){
-        return port;
-    }
-
-    /**
-     * Return the ip field.
-     * can return null.
-     * @return
-     */
-    public String getIp(){
-        return ip;
-    }
 
     /**
      * Return the userName field.
@@ -208,47 +186,8 @@ public class Account extends Model implements Serializable {
         this.gold += gold;
     }
 
-    /**
-     * Returns the amount of gold of the player.
-     * @return gold in int.
-     */
     public int getGold() {
-        return this.gold;
-    }
-
-    /**
-     * Sets the ip and port field.
-     * port must be a number between 0 and 65535.
-     * ip can't be empty.
-     * @param ip
-     * @param port
-     */
-    public void setIPAndPort(String ip, int port)
-    {
-        String testIp = ip.replace(".", "");
-        int count = ip.length() - testIp.length();
-
-        String[] ipArray = ip.split("\\.");
-        boolean tooBig = false;
-
-        for (String x : ipArray)
-        {
-            int y = Integer.parseInt(x);
-            if (y > 256 || y < 0 || ipArray.length < 4 || y == 255)
-            {
-                tooBig = true;
-            }
-        }
-
-        if (!ip.isEmpty() && count == 3 && tooBig == false) {
-            this.ip = ip;
-        }
-        if (port >= 1024 && port <= 65535) {
-            this.port = port;
-        }
-        else {
-            throw new IllegalArgumentException("port must be > 1024, ip can't be empty");
-        }
+        return gold;
     }
 
     public static Finder<Long, Account> find = new Finder<>(Account.class);

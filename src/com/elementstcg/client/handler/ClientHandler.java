@@ -1,24 +1,23 @@
 package com.elementstcg.client.handler;
 
 import com.elementstcg.client.Account;
-import com.elementstcg.client.util.DialogUtility;
-import com.elementstcg.shared.trait.Card;
 import com.elementstcg.client.gui.Controllers.BoardController;
 import com.elementstcg.client.gui.ScreenHandler;
 import com.elementstcg.client.gui.ScreensFramework;
-import com.elementstcg.shared.trait.ICard;
-import com.elementstcg.shared.trait.IClientHandler;
-import com.elementstcg.shared.trait.IResponse;
-import com.elementstcg.shared.trait.IServerHandler;
+import com.elementstcg.client.util.DialogUtility;
+import com.elementstcg.shared.trait.*;
 import javafx.application.Platform;
 
-import java.io.*;
-import java.lang.management.PlatformLoggingMXBean;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.List;
 import java.util.Properties;
 
 public class ClientHandler extends UnicastRemoteObject implements IClientHandler {
@@ -31,15 +30,17 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
     private static BoardController boardController;
     private static String sessionKey;
 
+    private static SoundHandler soundHandler = SoundHandler.getInstance();
+
     private ClientHandler() throws RemoteException {
         setupServerConnection();
     }
 
     public static ClientHandler getInstance() {
-        if(instance == null) {
+        if (instance == null) {
             try {
                 instance = new ClientHandler();
-            } catch(RemoteException ex) {
+            } catch (RemoteException ex) {
                 System.out.println(ex.getMessage());
                 System.out.println(ex.getStackTrace());
             }
@@ -56,14 +57,14 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
         return screenHandler;
     }
 
-    public boolean setupServerConnection () {
+    public boolean setupServerConnection() {
         File propsFile = new File("netconf.properties");
 
         String ip = "";
         int port = 0;
         String name = "";
 
-        if(!propsFile.exists()) {
+        if (!propsFile.exists()) {
             System.err.println("[Critical] netconf.properties file doesn't exist.");
             return false;
         }
@@ -81,8 +82,7 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
         }
 
 
-        if(!"".equals(ip) && !"".equals(port) && !"".equals(name) )
-        {
+        if (!"".equals(ip) && !"".equals(port) && !"".equals(name)) {
             try {
                 serverHandler = (IServerHandler) Naming.lookup("rmi://" + ip + ":" + port + "/" + name);
             } catch (RemoteException ex) {
@@ -98,15 +98,13 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
                 ex.printStackTrace();
                 ex.getMessage();
             }
-        }
-        else {
+        } else {
             System.out.println("[CRITICAL] ip, port or name was empty or null. Could not setup RMI connection!");
         }
 
-        if(serverHandler != null) {
+        if (serverHandler != null) {
             return true;
-        }
-        else {
+        } else {
             System.out.println("[CRITICAL] serverHandler was null, no connection");
             return false;
         }
@@ -117,13 +115,12 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
 
         try {
             response = serverHandler.login(this, username, password);
-            if(response.wasSuccessful()) {
+            if (response.wasSuccessful()) {
                 setSessionKey(response.getMessage());
                 System.out.println("Session:" + getSessionKey());
             }
             return response;
-        }
-        catch(RemoteException ex) {
+        } catch (RemoteException ex) {
             System.out.println(ex.getMessage());
             System.out.println(ex.getStackTrace());
         } catch (Exception ex) {
@@ -139,8 +136,7 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
         try {
             IResponse response = serverHandler.register(username, password, email);
             return response.wasSuccessful();
-        }
-        catch(RemoteException ex) {
+        } catch (RemoteException ex) {
             System.out.println(ex.getMessage());
             System.out.println(ex.getStackTrace());
         } catch (Exception ex) {
@@ -156,10 +152,10 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
         return serverHandler;
     }
 
-    public boolean setupMatch(String enemyName, boolean startTurn) throws RemoteException{
+    public boolean setupMatch(String enemyName, boolean startTurn) throws RemoteException {
         System.out.println("Setting up the board..");
         //Check if there already is an board screen (there shouldn't)
-        if(screenHandler.getScreen(ScreensFramework.screenBoardID) != null) {
+        if (screenHandler.getScreen(ScreensFramework.screenBoardID) != null) {
             screenHandler.unloadScreen(ScreensFramework.screenBoardID);
         }
         //Create a board screen
@@ -171,6 +167,8 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
 
         //Display screen
         screenHandler.setScreen(ScreensFramework.screenBoardID);
+
+        System.out.println(Account.getInstance().getUserName());
 
         Platform.runLater(() -> {
             DialogUtility.newDialog((startTurn ? "You start first!" : "Your opponent starts first!"));
@@ -200,16 +198,20 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
     public void removeCard(int pointer) throws RemoteException {
         boardController.removeCardPlayer(pointer);
     }
+
     public void setCardHp(int point, int hp) throws RemoteException {
         boardController.SetPlayerCardHp(point, hp);
 
     }
+
     public void removeCardFromHand(int index) throws RemoteException {
         boardController.RemoveCardFromHandPlayer(index);
     }
+
     public String getSessionKey() throws RemoteException {
         return sessionKey;
     }
+
     public void setSessionKey(String key) throws RemoteException {
         sessionKey = key;
     }
@@ -217,9 +219,11 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
     public void enemyUpdatePlayerHP(int hp) throws RemoteException {
         boardController.updateEnemyHp(hp);
     }
+
     public void enemyUpdateDeckCount(int count) throws RemoteException {
         boardController.updateEnemyDeckCount(count);
     }
+
     public void enemyAddCardToHand() throws RemoteException {
         //TODO: This is a placeholder until I have discussed this issue
         Card card = null;
@@ -236,10 +240,11 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
         boardController.putCardEnemy((Card) card, point);
     }
 
-   public void enemySetCardHp(int point, int hp) throws RemoteException {
+    public void enemySetCardHp(int point, int hp) throws RemoteException {
         boardController.SetEnemyCardHP(point, hp);
 
-   }
+    }
+
     public void enemyRemoveCardFromHand() throws RemoteException {
         boardController.RemoveCardFromEnemyHand();
     }
@@ -248,11 +253,11 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
         boardController.setTurn(isThisClientsTurn);
     }
 
-    public void setBoardController(BoardController BoardController){
+    public void setBoardController(BoardController BoardController) {
         boardController = BoardController;
     }
 
-    public static void AttackCard(int playerPoint, int enemyPoint){
+    public static void AttackCard(int playerPoint, int enemyPoint) {
         try {
             IResponse response = serverHandler.attackCard(sessionKey, playerPoint, enemyPoint);
             if (!response.wasSuccessful()) {
@@ -289,18 +294,47 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
             e.printStackTrace();
         }
     }
-    public void endMatch(String message) throws RemoteException {
+
+    public void endMatch(String message, boolean won) throws RemoteException {
         Platform.runLater(() -> {
             DialogUtility.newDialog(message);
         });
 
-        returnLobby();
+        boardController.SetGameOver(won);
+    }
+
+    public void recieveMessage(String message) throws RemoteException {
+        boardController.recieveMessage(message);
+
+    }
+
+    //lbGold
+    //LbElo
+    //lbRatio
+
+    static public List<String> requestPlayerStats(){
+        try {
+            return serverHandler.requestStats(sessionKey);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static void sendMessage(String message){
+        try {
+            serverHandler.sendMessage(sessionKey, message);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
      * Will change the current screen to the lobby and create a thread to kill this board after a second
      */
-    private void returnLobby() {
+    public void returnLobby() {
+
+        boardController = null;
 
         //Go to lobby
         screenHandler.setScreen(ScreensFramework.screenLobbyID);
@@ -320,5 +354,36 @@ public class ClientHandler extends UnicastRemoteObject implements IClientHandler
 
         //Start thread
         thread.start();
+    }
+
+    public void playSound(Sounds sound) {
+        switch(sound) {
+            case airSound:
+                soundHandler.playEffect("/src/com/elementstcg/client/music/airSound.wav");
+                break;
+            case waterSound:
+                soundHandler.playEffect("/src/com/elementstcg/client/music/waterSound.wav");
+                break;
+            case fireSound:
+                soundHandler.playEffect("/src/com/elementstcg/client/music/fireSound.wav");
+                break;
+            case earthSound:
+                soundHandler.playEffect("/src/com/elementstcg/client/music/earthSound.wav");
+                break;
+            case electricSound:
+                soundHandler.playEffect("/src/com/elementstcg/client/music/electricSound.wav");
+                break;
+            case victorySound:
+                soundHandler.playEffect("/src/com/elementstcg/client/music/victorySound.wav");
+                break;
+            case kill:
+                soundHandler.killAllEffecten();
+                break;
+
+        }
+    }
+
+    public boolean ping() {
+        return true;
     }
 }

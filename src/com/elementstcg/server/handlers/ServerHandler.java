@@ -2,15 +2,11 @@ package com.elementstcg.server.handlers;
 
 import com.elementstcg.server.game.Account;
 import com.elementstcg.server.game.Board;
-import com.elementstcg.shared.trait.Card;
-import com.elementstcg.server.game.util.CustomException.ExceedCapacityException;
-import com.elementstcg.server.game.util.CustomException.OccupiedFieldException;
 import com.elementstcg.server.game.Player;
 import com.elementstcg.server.game.util.CustomException.EmptyFieldException;
-import com.elementstcg.shared.trait.ICard;
-import com.elementstcg.shared.trait.IClientHandler;
-import com.elementstcg.shared.trait.IResponse;
-import com.elementstcg.shared.trait.IServerHandler;
+import com.elementstcg.server.game.util.CustomException.ExceedCapacityException;
+import com.elementstcg.server.game.util.CustomException.OccupiedFieldException;
+import com.elementstcg.shared.trait.*;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -58,6 +54,53 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
         games = new HashMap<>();
         searchingPlayers = new HashMap<>();
 
+        TimerTask checkAlive = new TimerTask() {
+            @Override
+            public void run() {
+                String currentSession;
+                List<String> sessionToDelete = new ArrayList<>();
+                for(Map.Entry<String, Session> entry : clients.entrySet()) {
+                    try {
+                        currentSession = entry.getKey();
+
+                        entry.getValue().getClient().ping();
+                    } catch(RemoteException ex) {
+
+
+                        if (searchingPlayers.containsKey(entry.getKey())) {
+                            searchingPlayers.remove(entry.getKey());
+                        }
+
+                        // Removes the game if there's any.
+                        if (games.containsKey(entry.getValue().getBoardKey())) {
+                            Board game = games.get(entry.getValue().getBoardKey());
+
+                            Session otherPlayer = (!entry.getValue().equals(game.getPlayerOne().getSession()) ? game.getPlayerOne().getSession() : game.getPlayerTwo().getSession());
+                            if (otherPlayer.getClient() != null) {
+                                try {
+                                    otherPlayer.getClient().endMatch("Enemy forfeited!", true);
+                                } catch (RemoteException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                            otherPlayer.setBoardKey(null);
+                            games.remove(game.getSessionKey());
+                        }
+
+                        sessionToDelete.add(entry.getKey());
+                    }
+                }
+
+                // Removing all keys now.
+                for(String sKey : sessionToDelete) {
+                    clients.remove(sKey);
+                }
+            }
+        };
+
+        Timer timer = new Timer();
+        timer.schedule(checkAlive, 10, 10 * 1000);
     }
 
     public IResponse login(IClientHandler client, String username, String password) throws RemoteException {
@@ -169,6 +212,11 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
 
                 card = player.getHand().playCard(selected); // Actual plays the card on the field (removing from the hand etc...)
                 board.putCardPlayer(point, card, player);
+
+
+                String messageX;
+                messageX = player.getName() + " Places " + card.getName();
+                sendMessage(key, messageX);
                 //System.out.println(player.getName() + " placed card " + player.getHand().getCard(selected).getName());
 
                 caller.getClient().removeCardFromHand(selected);
@@ -305,6 +353,7 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
             } catch (ExceedCapacityException e) {
                 e.printStackTrace();
             }
+            sendMessage(key, player.getName() + " Replaced " + oldCard.getName() + "with " + card.getName());
             return new Response(true);
         } else {
             return new Response(false, "It's not your turn");
@@ -315,6 +364,10 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
     public IResponse attackCard(String key, int point, int enemyPoint) throws RemoteException {
         Session caller = clients.get(key);
         Board board = games.get(caller.getBoardKey());
+        Card selectedCard;
+        Card enemyCard;
+        Player attacker;
+        Player defender;
 
 
         if((board.getTurn() && board.getPlayerOne().getSession().equals(caller)) ||
@@ -326,11 +379,12 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
             }
 
             // Getting the right variables (player).
-            Player attacker = (board.getPlayerOne().getSession().equals(caller) ? board.getPlayerOne() : board.getPlayerTwo());
-            Player defender = (board.getPlayerOne().getSession().equals(caller) ? board.getPlayerTwo() : board.getPlayerOne());
+            attacker = (board.getPlayerOne().getSession().equals(caller) ? board.getPlayerOne() : board.getPlayerTwo());
+            defender = (board.getPlayerOne().getSession().equals(caller) ? board.getPlayerTwo() : board.getPlayerOne());
             boolean isPlayerOne = (board.getPlayerOne().equals(attacker) ? true : false);
 
-            Card selectedCard = (isPlayerOne ? board.getPlayerOneField().get(point) : board.getPlayerTwoField().get(point));
+            selectedCard = (isPlayerOne ? board.getPlayerOneField().get(point) : board.getPlayerTwoField().get(point));
+            enemyCard = (isPlayerOne ? board.getPlayerTwoField().get(enemyPoint) : board.getPlayerOneField().get(enemyPoint));
 
             if(selectedCard.getAttacked()) {
                 return new Response(false, 3, "The selected card already attacked this turn!");
@@ -340,7 +394,9 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
                 board.attackCard(attacker, point, enemyPoint, () -> {
                     try {
                         attacker.getSession().getClient().enemyRemoveCard(enemyPoint);
+                        attacker.getSession().getClient().playSound(getElementSound(selectedCard.getElement()));
                         defender.getSession().getClient().removeCard(enemyPoint);
+                        defender.getSession().getClient().playSound(getElementSound(selectedCard.getElement()));
                     } catch (RemoteException e) {
                         e.printStackTrace();
                     }
@@ -352,12 +408,14 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
             Card defenderCard = (isPlayerOne ? board.getPlayerTwoField().get(enemyPoint) : board.getPlayerOneField().get(enemyPoint));
             if(defenderCard != null) {
                 attacker.getSession().getClient().enemySetCardHp(enemyPoint, defenderCard.getHP());
+                attacker.getSession().getClient().playSound(getElementSound(selectedCard.getElement()));
                 defender.getSession().getClient().setCardHp(enemyPoint, defenderCard.getHP());
+                defender.getSession().getClient().playSound(getElementSound(selectedCard.getElement()));
             }
         } else {
             return new Response(false, 1, "This is not your turn!");
         }
-
+        sendMessage(key, attacker.getName() + " attacks with " + selectedCard.getName() + "on " + enemyCard.getName());
         return new Response(true, "You damaged your opponent!");
     }
 
@@ -444,11 +502,11 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
 
                     // Sending the endMatch message.
                     if(board.getPlayerOne().getHp() < 1) {
-                        board.getPlayerOne().getSession().getClient().endMatch(loseMessage);
-                        board.getPlayerTwo().getSession().getClient().endMatch(winMessage);
+                        board.getPlayerOne().getSession().getClient().endMatch(loseMessage, false);
+                        board.getPlayerTwo().getSession().getClient().endMatch(winMessage, true);
                     } else {
-                        board.getPlayerOne().getSession().getClient().endMatch(winMessage);
-                        board.getPlayerTwo().getSession().getClient().endMatch(loseMessage);
+                        board.getPlayerOne().getSession().getClient().endMatch(winMessage, true);
+                        board.getPlayerTwo().getSession().getClient().endMatch(loseMessage, false);
                     }
 
                     // Removing the board session.
@@ -535,13 +593,14 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
 
         boolean isPlayerOne = (board.getPlayerOne().getSession().equals(caller) ? true : false);
         String message = "You've won! %s chickened out!!";
+        sendMessage(key, message);
 
         if(isPlayerOne) {
             message = String.format(message, board.getPlayerOne().getName());
-            board.getPlayerTwo().getSession().getClient().endMatch(message);
+            board.getPlayerTwo().getSession().getClient().endMatch(message, true);
         } else {
             message = String.format(message, board.getPlayerTwo().getName());
-            board.getPlayerOne().getSession().getClient().endMatch(message);
+            board.getPlayerOne().getSession().getClient().endMatch(message, true);
         }
 
         removeBoardSession(board);
@@ -549,10 +608,50 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
         return new Response(true);
     }
 
+    public IResponse sendMessage(String key, String message) throws RemoteException {
+        Session caller = clients.get(key);
+        Board board = games.get(caller.getBoardKey());
+
+        board.getPlayerOne().getSession().getClient().recieveMessage(message);
+        board.getPlayerTwo().getSession().getClient().recieveMessage(message);
+        return new Response(true);
+    }
+
+    @Override
+    public List<String> requestStats(String key) throws RemoteException {
+        if(!clients.containsKey(key))
+            throw new IllegalArgumentException("Session key doesn't exist.");
+        Session caller = clients.get(key);
+
+        List<String> output = new ArrayList<>();
+        output.add(String.valueOf(caller.getAccount().getElo()));
+        output.add("N/A"); // The server doesn't keep track of the ratio, yet.
+        output.add(String.valueOf(caller.getAccount().getGold()));
+        output.add(caller.getAccount().getUserName());
+        return output;
+    }
+
     private void removeBoardSession(Board board) {
         board.getPlayerOne().getSession().setBoardKey(null);
         board.getPlayerTwo().getSession().setBoardKey(null);
 
         games.remove(board.getSessionKey());
+    }
+
+    private Sounds getElementSound(Element element) {
+        switch (element) {
+            case Fire:
+                return Sounds.fireSound;
+            case Air:
+                return Sounds.airSound;
+            case Water:
+                return Sounds.waterSound;
+            case Earth:
+                return Sounds.earthSound;
+            case Thunder:
+                return Sounds.electricSound;
+        }
+
+        return Sounds.airSound;
     }
 }

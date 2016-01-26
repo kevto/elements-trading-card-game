@@ -1,10 +1,8 @@
 package com.elementstcg.shared.trait;
 
-import com.elementstcg.shared.trait.ICard;
-
-import java.lang.Boolean;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.List;
 
 /**
  * THIS INTERFACE IS USED BY THE SERVER TO COMMUNICATE WITH THE CLIENT.
@@ -126,5 +124,29 @@ public interface IClientHandler extends Remote {
      */
     public void nextTurn(Boolean isThisClientsTurn) throws RemoteException;
 
-    public void endMatch(String message) throws RemoteException;
+    /**
+     * This method is used to end a match, for example if a player quits or wins
+     * @param message This parameter is the message the server sends to the client
+     * @param won This parameter is if the player won or lost
+     * @throws RemoteException
+     */
+    public void endMatch(String message, boolean won) throws RemoteException;
+
+
+    /**
+     * This method is used by the server to send a client a chat message.
+     *
+     * @param message The chat message
+     * @throws RemoteException
+     */
+    public void recieveMessage(String message) throws RemoteException;
+
+    public void playSound(Sounds sound) throws RemoteException;
+
+    /**
+     * Pings the client to see if it's still alive.
+     * @return true or false if he could return the ping.
+     * @throws RemoteException
+     */
+    boolean ping() throws RemoteException;
 }

@@ -96,8 +96,8 @@ public class LoginController implements Initializable, ControlledScreen {
             if (username.isEmpty() || password.isEmpty() || email.isEmpty())  {
                 lblMessage.setText("Please enter all fields.");
             }
-            else if (username.length() < 6){
-                lblMessage.setText("Username must be at least 6 characters.");
+            else if (username.length() < 6 || username.length() > 20){
+                lblMessage.setText("Username must between 6 and 20 characters.");
             }
             else if (password.length() < 8){
                 lblMessage.setText("Password must be at least 8 characters.");

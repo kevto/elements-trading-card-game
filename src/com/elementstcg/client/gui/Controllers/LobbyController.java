@@ -11,7 +11,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 
 import java.net.URL;
-import java.rmi.RemoteException;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -31,6 +31,11 @@ public class LobbyController implements Initializable, ControlledScreen {
     @FXML Button ButtonPlayVsAi;
     @FXML Button ButtonNormalGame;
     @FXML Label lblSearchText;
+    @FXML Label lbGold;
+    @FXML Label lbElo;
+    @FXML Label lbRatio;
+    @FXML Label lbUsername;
+
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -61,7 +66,7 @@ public class LobbyController implements Initializable, ControlledScreen {
     class UpponTask extends TimerTask {
         public void run() {
             waitTime++;
-            System.out.println(waitTime);
+            //System.out.println(waitTime);
             Platform.runLater(
                     new Runnable() {
                         @Override
@@ -97,6 +102,18 @@ public class LobbyController implements Initializable, ControlledScreen {
         //TODO optinonal implementation
     }
 
+    public void updateStats(){
+        List<String> playerStats = clientHandler.requestPlayerStats();
+        Platform.runLater(() -> {
+            if (playerStats != null) {
+                lbElo.setText(playerStats.get(0));
+                lbRatio.setText(playerStats.get(1));
+                lbGold.setText(playerStats.get(2));
+                lbUsername.setText(playerStats.get(3));
+            }
+        });
+    }
+
     /**
      * Button event occurs when the user clicks "NORMAL GAME"
      * Queues the user for searching match against other players.
@@ -105,7 +122,6 @@ public class LobbyController implements Initializable, ControlledScreen {
     public void clickedNormalGame(Event event) {
         findMatch();
         lblSearchText.setVisible(true);
-
     }
 
     /**
