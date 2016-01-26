@@ -627,6 +627,7 @@ public class ServerHandler extends UnicastRemoteObject implements IServerHandler
         output.add(String.valueOf(caller.getAccount().getElo()));
         output.add("N/A"); // The server doesn't keep track of the ratio, yet.
         output.add(String.valueOf(caller.getAccount().getGold()));
+        output.add(caller.getAccount().getUserName());
         return output;
     }
 

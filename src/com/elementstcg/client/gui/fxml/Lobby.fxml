@@ -35,12 +35,12 @@
          </font>
       </Label>
       <Label fx:id="lblPlayerWelcome" layoutX="350.0" layoutY="14.0" prefHeight="17.0" prefWidth="212.0" textFill="#dadada" />
-      <Label fx:id="lbUsername" alignment="CENTER" contentDisplay="CENTER" layoutX="333.0" layoutY="537.0" prefHeight="27.0" prefWidth="355.0" text="Username" textFill="WHITE">
+      <Label fx:id="lbUsername" alignment="CENTER" contentDisplay="CENTER" layoutX="333.0" layoutY="537.0" prefHeight="27.0" prefWidth="355.0" text=" " textFill="WHITE">
          <font>
             <Font name="BebasNeueRegular" size="24.0" />
          </font>
       </Label>
-      <Label fx:id="lbGold" contentDisplay="CENTER" layoutX="363.0" layoutY="575.0" prefHeight="29.0" prefWidth="152.0" text="1337" textFill="#fff204">
+      <Label fx:id="lbGold" contentDisplay="CENTER" layoutX="363.0" layoutY="575.0" prefHeight="29.0" prefWidth="152.0" text=" " textFill="#fff204">
          <font>
             <Font name="BebasNeueRegular" size="24.0" />
          </font>
@@ -55,12 +55,12 @@
             <Image url="@../images/atk_icon.png" />
          </image>
       </ImageView>
-      <Label fx:id="lbRatio" alignment="CENTER_RIGHT" contentDisplay="CENTER" layoutX="503.0" layoutY="575.0" prefHeight="29.0" prefWidth="152.0" text="1337" textFill="#404040">
+      <Label fx:id="lbRatio" alignment="CENTER_RIGHT" contentDisplay="CENTER" layoutX="503.0" layoutY="575.0" prefHeight="29.0" prefWidth="152.0" text=" " textFill="#404040">
          <font>
             <Font name="BebasNeueRegular" size="24.0" />
          </font>
       </Label>
-      <Label fx:id="lbElo" alignment="CENTER" contentDisplay="CENTER" layoutX="434.0" layoutY="555.0" prefHeight="29.0" prefWidth="152.0" text="&lt;ELO&gt;" textFill="#9641ff">
+      <Label fx:id="lbElo" alignment="CENTER" contentDisplay="CENTER" layoutX="434.0" layoutY="575.0" prefHeight="29.0" prefWidth="152.0" text=" " textFill="#9641ff">
          <font>
             <Font name="BebasNeueRegular" size="18.0" />
          </font>
